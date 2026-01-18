@@ -1,10 +1,12 @@
 import { google } from '@ai-sdk/google'
 import { generateText, Output } from 'ai'
 import { articleAnalysisSchema } from '@/lib/schemas'
-import { createCourse, updateCourseAnalysis } from '@/lib/courseService'
-import { createProgress } from '@/lib/progressService'
+import { ConvexHttpClient } from 'convex/browser'
+import { api } from '../../../../convex/_generated/api'
 
 export const maxDuration = 60
+
+const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!)
 
 const ANALYSIS_PROMPT = `You are an expert English language teaching assistant specializing in CEFR A2-B1 level content analysis.
 
@@ -66,17 +68,19 @@ export async function POST(req: Request) {
             return Response.json({ error: 'Analysis failed to produce output' }, { status: 500 })
         }
 
-        // Save course to database
-        const courseId = await createCourse(
-            text,
-            output.title,
-            output.difficulty.level,
-            output.difficulty.wordCount,
-            output.analysis
-        )
+        // Save course to Convex database
+        const courseId = await convex.mutation(api.courses.create, {
+            content: text,
+            title: output.title,
+            difficulty: output.difficulty.level,
+            wordCount: output.difficulty.wordCount,
+            analyzedData: output.analysis,
+        })
 
         // Create initial progress
-        await createProgress(courseId)
+        await convex.mutation(api.progress.create, {
+            courseId,
+        })
 
         return Response.json({
             courseId,

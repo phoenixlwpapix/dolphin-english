@@ -1,44 +1,34 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { useQuery } from 'convex/react'
+import { api } from '../../convex/_generated/api'
 import { Header } from '@/components/layout'
 import { Button, Card, CardContent, ProgressBar } from '@/components/ui'
 import { useI18n } from '@/lib/i18n'
-import { getCoursesWithProgress } from '@/lib/courseService'
-import { getProgressPercentage } from '@/lib/progressService'
-import type { Course, Progress } from '@/db'
 import { CreateCourseModal } from '@/components/course/CreateCourseModal'
 
-type CourseWithProgress = Course & { progress?: Progress }
+const TOTAL_MODULES = 6
+
+function getProgressPercentage(completedModules: number[] | undefined): number {
+  if (!completedModules) return 0
+  return Math.round((completedModules.length / TOTAL_MODULES) * 100)
+}
 
 export default function HomePage() {
   const { t } = useI18n()
-  const [courses, setCourses] = useState<CourseWithProgress[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const coursesData = useQuery(api.courses.list)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
-  useEffect(() => {
-    loadCourses()
-  }, [])
+  const isLoading = coursesData === undefined
 
-  async function loadCourses() {
-    try {
-      const data = await getCoursesWithProgress()
-      setCourses(data)
-    } catch (error) {
-      console.error('Failed to load courses:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  function formatDate(date: Date): string {
+  function formatDate(timestamp: number): string {
     return new Intl.DateTimeFormat('zh-CN', {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    }).format(new Date(date))
+    }).format(new Date(timestamp))
   }
 
   return (
@@ -59,7 +49,7 @@ export default function HomePage() {
           <div className="flex items-center justify-center py-20">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500" />
           </div>
-        ) : courses.length === 0 ? (
+        ) : coursesData.length === 0 ? (
           // Empty state
           <Card variant="outlined" className="py-16 text-center">
             <CardContent>
@@ -91,11 +81,10 @@ export default function HomePage() {
         ) : (
           // Course grid
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {courses.map((course) => (
+            {coursesData.map((course) => (
               <CourseCard
-                key={course.id}
+                key={course._id}
                 course={course}
-                progress={course.progress}
                 t={t}
                 formatDate={formatDate}
               />
@@ -109,22 +98,34 @@ export default function HomePage() {
         onClose={() => setIsCreateModalOpen(false)}
         onSuccess={() => {
           setIsCreateModalOpen(false)
-          loadCourses()
+          // Convex will automatically refetch due to real-time subscription
         }}
       />
     </div>
   )
 }
 
-interface CourseCardProps {
-  course: Course
-  progress?: Progress
-  t: ReturnType<typeof useI18n>['t']
-  formatDate: (date: Date) => string
+interface CourseWithProgress {
+  _id: string
+  title: string
+  difficulty: 'A2' | 'A2+' | 'B1'
+  wordCount: number
+  _creationTime: number
+  progress: {
+    currentModule: number
+    completedModules: number[]
+    _creationTime: number
+  } | null
 }
 
-function CourseCard({ course, progress, t, formatDate }: CourseCardProps) {
-  const progressPercent = getProgressPercentage(progress)
+interface CourseCardProps {
+  course: CourseWithProgress
+  t: ReturnType<typeof useI18n>['t']
+  formatDate: (timestamp: number) => string
+}
+
+function CourseCard({ course, progress, t, formatDate }: CourseCardProps & { progress?: CourseWithProgress['progress'] }) {
+  const progressPercent = getProgressPercentage(course.progress?.completedModules)
 
   const difficultyColors = {
     A2: 'bg-success/20 text-success',
@@ -133,7 +134,7 @@ function CourseCard({ course, progress, t, formatDate }: CourseCardProps) {
   }
 
   return (
-    <a href={`/course/${course.id}`}>
+    <a href={`/course/${course._id}`}>
       <Card interactive className="h-full">
         <CardContent>
           {/* Header */}
@@ -154,9 +155,9 @@ function CourseCard({ course, progress, t, formatDate }: CourseCardProps) {
           {/* Stats */}
           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
             <span>{course.wordCount} {t.create.wordCount}</span>
-            {progress && (
+            {course.progress && (
               <span>
-                {t.home.lastStudied}: {formatDate(progress.lastAccessedAt)}
+                {t.home.lastStudied}: {formatDate(course.progress._creationTime)}
               </span>
             )}
           </div>

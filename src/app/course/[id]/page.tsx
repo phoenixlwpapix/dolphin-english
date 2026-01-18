@@ -1,13 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { useQuery, useMutation } from 'convex/react'
+import { api } from '../../../../convex/_generated/api'
 import { Header } from '@/components/layout'
 import { Button, Card, ModuleSteps } from '@/components/ui'
 import { useI18n } from '@/lib/i18n'
-import { getCourse } from '@/lib/courseService'
-import { getProgress, completeModule, resetProgress, createProgress } from '@/lib/progressService'
-import type { Course, Progress } from '@/db'
+import type { Id } from '../../../../convex/_generated/dataModel'
 
 // Module components
 import {
@@ -20,17 +19,20 @@ import {
 } from '@/components/modules'
 
 const MODULE_TIMES = [2, 6, 12, 5, 5, 2] // in minutes
+const TOTAL_MODULES = 6
 
 export default function CoursePage() {
     const params = useParams()
     const router = useRouter()
     const { t } = useI18n()
-    const courseId = Number(params.id)
+    const courseId = params.id as Id<"courses">
 
-    const [course, setCourse] = useState<Course | null>(null)
-    const [progress, setProgress] = useState<Progress | null>(null)
-    const [isLoading, setIsLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
+    const course = useQuery(api.courses.get, { id: courseId })
+    const progress = useQuery(api.progress.get, { courseId })
+
+    const completeModuleMutation = useMutation(api.progress.completeModule)
+    const resetProgressMutation = useMutation(api.progress.reset)
+    const updateCurrentModuleMutation = useMutation(api.progress.updateCurrentModule)
 
     const moduleNames = [
         t.modules.objectives,
@@ -41,47 +43,19 @@ export default function CoursePage() {
         t.modules.reproduction,
     ]
 
-    useEffect(() => {
-        loadData()
-    }, [courseId])
-
-    async function loadData() {
-        try {
-            const courseData = await getCourse(courseId)
-            if (!courseData) {
-                setError('Course not found')
-                return
-            }
-            setCourse(courseData)
-
-            let progressData = await getProgress(courseId)
-            if (!progressData) {
-                await createProgress(courseId)
-                progressData = await getProgress(courseId)
-            }
-            setProgress(progressData ?? null)
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to load course')
-        } finally {
-            setIsLoading(false)
-        }
-    }
+    const isLoading = course === undefined || progress === undefined
 
     async function handleModuleComplete(moduleNumber: number) {
-        await completeModule(courseId, moduleNumber)
-        const updatedProgress = await getProgress(courseId)
-        setProgress(updatedProgress ?? null)
+        await completeModuleMutation({ courseId, moduleNumber })
     }
 
     async function handleRestart() {
-        await resetProgress(courseId)
-        const updatedProgress = await getProgress(courseId)
-        setProgress(updatedProgress ?? null)
+        await resetProgressMutation({ courseId })
     }
 
     function handleModuleClick(moduleNumber: number) {
         if (progress && moduleNumber <= progress.currentModule) {
-            setProgress({ ...progress, currentModule: moduleNumber })
+            updateCurrentModuleMutation({ courseId, moduleNumber })
         }
     }
 
@@ -93,13 +67,13 @@ export default function CoursePage() {
         )
     }
 
-    if (error || !course || !course.analyzedData) {
+    if (!course || !course.analyzedData) {
         return (
             <div className="min-h-screen bg-background">
                 <Header />
                 <main className="container mx-auto px-4 py-8">
                     <Card className="py-16 text-center">
-                        <h2 className="text-xl font-semibold text-foreground mb-2">{error || 'Course not ready'}</h2>
+                        <h2 className="text-xl font-semibold text-foreground mb-2">Course not ready</h2>
                         <p className="text-muted-foreground mb-4">The course could not be loaded or is still being analyzed.</p>
                         <Button onClick={() => router.push('/')}>{t.common.back}</Button>
                     </Card>
@@ -109,7 +83,7 @@ export default function CoursePage() {
     }
 
     const currentModule = progress?.currentModule ?? 1
-    const isComplete = progress?.completedModules.length === 6
+    const isComplete = progress?.completedModules.length === TOTAL_MODULES
 
     return (
         <div className="min-h-screen bg-background">

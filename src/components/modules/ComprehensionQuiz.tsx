@@ -1,15 +1,22 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { useMutation } from 'convex/react'
+import { api } from '../../../convex/_generated/api'
 import { Card, CardContent, Button } from '@/components/ui'
 import { useI18n } from '@/lib/i18n'
-import { saveQuizResults } from '@/lib/progressService'
 import type { QuizQuestion } from '@/lib/schemas'
-import type { QuizResult } from '@/db'
+import type { Id } from '../../../convex/_generated/dataModel'
+
+interface QuizResult {
+    questionId: string
+    selectedAnswer: number
+    isCorrect: boolean
+}
 
 interface ComprehensionQuizProps {
     questions: QuizQuestion[]
-    courseId: number
+    courseId: Id<"courses">
     onComplete: () => void
 }
 
@@ -21,6 +28,8 @@ export function ComprehensionQuiz({ questions, courseId, onComplete }: Comprehen
     const [showReference, setShowReference] = useState(false)
     const [results, setResults] = useState<QuizResult[]>([])
     const [isComplete, setIsComplete] = useState(false)
+
+    const saveQuizResultsMutation = useMutation(api.progress.saveQuizResults)
 
     const question = questions[currentQuestion]
     const isCorrect = selectedAnswer === question.correctAnswer
@@ -41,7 +50,7 @@ export function ComprehensionQuiz({ questions, courseId, onComplete }: Comprehen
     const handleNext = useCallback(async () => {
         if (isLastQuestion) {
             const finalResults = [...results]
-            await saveQuizResults(courseId, finalResults)
+            await saveQuizResultsMutation({ courseId, results: finalResults })
             setIsComplete(true)
         } else {
             setCurrentQuestion(currentQuestion + 1)
@@ -49,7 +58,7 @@ export function ComprehensionQuiz({ questions, courseId, onComplete }: Comprehen
             setIsChecked(false)
             setShowReference(false)
         }
-    }, [isLastQuestion, results, courseId, currentQuestion])
+    }, [isLastQuestion, results, courseId, currentQuestion, saveQuizResultsMutation])
 
     const score = results.filter((r) => r.isCorrect).length
     const passingScore = Math.ceil(questions.length * 0.6) // 60% to pass

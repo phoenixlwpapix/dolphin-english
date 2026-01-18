@@ -8,7 +8,7 @@ import { useI18n } from '@/lib/i18n'
 interface CreateCourseModalProps {
     isOpen: boolean
     onClose: () => void
-    onSuccess: (courseId: number) => void
+    onSuccess: (courseId: string) => void
 }
 
 type InputMode = 'text' | 'image'

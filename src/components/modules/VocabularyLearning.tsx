@@ -1,15 +1,17 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { useMutation } from 'convex/react'
+import { api } from '../../../convex/_generated/api'
 import { Card, CardContent, Button } from '@/components/ui'
 import { useI18n } from '@/lib/i18n'
 import { tts } from '@/lib/tts'
-import { recordVocabularyClick } from '@/lib/progressService'
 import type { VocabularyItem } from '@/lib/schemas'
+import type { Id } from '../../../convex/_generated/dataModel'
 
 interface VocabularyLearningProps {
     vocabulary: VocabularyItem[]
-    courseId: number
+    courseId: Id<"courses">
     onComplete: () => void
 }
 
@@ -17,6 +19,8 @@ export function VocabularyLearning({ vocabulary, courseId, onComplete }: Vocabul
     const { t } = useI18n()
     const [viewedWords, setViewedWords] = useState<Set<string>>(new Set())
     const [expandedWord, setExpandedWord] = useState<string | null>(null)
+
+    const recordVocabularyClickMutation = useMutation(api.progress.recordVocabularyClick)
 
     const categoryLabels = {
         essential: { label: t.vocabulary.essential, color: 'bg-error/20 text-error' },
@@ -33,10 +37,10 @@ export function VocabularyLearning({ vocabulary, courseId, onComplete }: Vocabul
     const handleWordClick = useCallback(async (word: string) => {
         if (!viewedWords.has(word)) {
             setViewedWords((prev) => new Set([...prev, word]))
-            await recordVocabularyClick(courseId, word)
+            await recordVocabularyClickMutation({ courseId, word })
         }
         setExpandedWord(expandedWord === word ? null : word)
-    }, [viewedWords, expandedWord, courseId])
+    }, [viewedWords, expandedWord, courseId, recordVocabularyClickMutation])
 
     const handlePlayPronunciation = useCallback((word: string, e: React.MouseEvent) => {
         e.stopPropagation()
