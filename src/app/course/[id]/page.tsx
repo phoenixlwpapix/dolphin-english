@@ -1,0 +1,204 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { Header } from '@/components/layout'
+import { Button, Card, ModuleSteps } from '@/components/ui'
+import { useI18n } from '@/lib/i18n'
+import { getCourse } from '@/lib/courseService'
+import { getProgress, completeModule, resetProgress, createProgress } from '@/lib/progressService'
+import type { Course, Progress } from '@/db'
+
+// Module components
+import { LearningObjectives } from '@/components/modules/LearningObjectives'
+import { FullListening } from '@/components/modules/FullListening'
+import { ParagraphAnalysis } from '@/components/modules/ParagraphAnalysis'
+import { VocabularyLearning } from '@/components/modules/VocabularyLearning'
+import { ComprehensionQuiz } from '@/components/modules/ComprehensionQuiz'
+import { ContentReproduction } from '@/components/modules/ContentReproduction'
+
+const MODULE_TIMES = [2, 6, 12, 5, 5, 2] // in minutes
+
+export default function CoursePage() {
+    const params = useParams()
+    const router = useRouter()
+    const { t } = useI18n()
+    const courseId = Number(params.id)
+
+    const [course, setCourse] = useState<Course | null>(null)
+    const [progress, setProgress] = useState<Progress | null>(null)
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    const moduleNames = [
+        t.modules.objectives,
+        t.modules.listening,
+        t.modules.analysis,
+        t.modules.vocabulary,
+        t.modules.quiz,
+        t.modules.reproduction,
+    ]
+
+    useEffect(() => {
+        loadData()
+    }, [courseId])
+
+    async function loadData() {
+        try {
+            const courseData = await getCourse(courseId)
+            if (!courseData) {
+                setError('Course not found')
+                return
+            }
+            setCourse(courseData)
+
+            let progressData = await getProgress(courseId)
+            if (!progressData) {
+                await createProgress(courseId)
+                progressData = await getProgress(courseId)
+            }
+            setProgress(progressData ?? null)
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to load course')
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    async function handleModuleComplete(moduleNumber: number) {
+        await completeModule(courseId, moduleNumber)
+        const updatedProgress = await getProgress(courseId)
+        setProgress(updatedProgress ?? null)
+    }
+
+    async function handleRestart() {
+        await resetProgress(courseId)
+        const updatedProgress = await getProgress(courseId)
+        setProgress(updatedProgress ?? null)
+    }
+
+    function handleModuleClick(moduleNumber: number) {
+        if (progress && moduleNumber <= progress.currentModule) {
+            setProgress({ ...progress, currentModule: moduleNumber })
+        }
+    }
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500" />
+            </div>
+        )
+    }
+
+    if (error || !course || !course.analyzedData) {
+        return (
+            <div className="min-h-screen bg-background">
+                <Header />
+                <main className="container mx-auto px-4 py-8">
+                    <Card className="py-16 text-center">
+                        <h2 className="text-xl font-semibold text-foreground mb-2">{error || 'Course not ready'}</h2>
+                        <p className="text-muted mb-4">The course could not be loaded or is still being analyzed.</p>
+                        <Button onClick={() => router.push('/')}>{t.common.back}</Button>
+                    </Card>
+                </main>
+            </div>
+        )
+    }
+
+    const currentModule = progress?.currentModule ?? 1
+    const isComplete = progress?.completedModules.length === 6
+
+    return (
+        <div className="min-h-screen bg-background">
+            <Header>
+                <Button variant="ghost" onClick={() => router.push('/')}>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    {t.common.back}
+                </Button>
+            </Header>
+
+            <main className="container mx-auto px-4 py-8 max-w-4xl">
+                {/* Course header */}
+                <div className="mb-8">
+                    <div className="flex items-start justify-between mb-4">
+                        <div>
+                            <h1 className="text-2xl font-bold text-foreground mb-2">{course.title}</h1>
+                            <div className="flex items-center gap-4 text-sm text-muted">
+                                <span className="px-2 py-0.5 rounded-full bg-primary-100 text-primary-700">
+                                    {course.difficulty}
+                                </span>
+                                <span>{course.wordCount} words</span>
+                                <span>
+                                    {t.course.totalTime}: {MODULE_TIMES.reduce((a, b) => a + b, 0)} {t.course.minutes}
+                                </span>
+                            </div>
+                        </div>
+                        {isComplete && (
+                            <Button variant="secondary" size="sm" onClick={handleRestart}>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                {t.common.restart}
+                            </Button>
+                        )}
+                    </div>
+
+                    {/* Module progress */}
+                    <Card padding="lg" className="mb-8">
+                        <ModuleSteps
+                            currentModule={currentModule}
+                            completedModules={progress?.completedModules ?? []}
+                            moduleNames={moduleNames}
+                            onModuleClick={handleModuleClick}
+                        />
+                    </Card>
+                </div>
+
+                {/* Current module content */}
+                <div className="mb-8">
+                    {currentModule === 1 && (
+                        <LearningObjectives
+                            objectives={course.analyzedData.learningObjectives}
+                            onComplete={() => handleModuleComplete(1)}
+                        />
+                    )}
+                    {currentModule === 2 && (
+                        <FullListening
+                            content={course.content}
+                            onComplete={() => handleModuleComplete(2)}
+                        />
+                    )}
+                    {currentModule === 3 && (
+                        <ParagraphAnalysis
+                            paragraphs={course.analyzedData.paragraphs}
+                            onComplete={() => handleModuleComplete(3)}
+                        />
+                    )}
+                    {currentModule === 4 && (
+                        <VocabularyLearning
+                            vocabulary={course.analyzedData.vocabulary}
+                            courseId={courseId}
+                            onComplete={() => handleModuleComplete(4)}
+                        />
+                    )}
+                    {currentModule === 5 && (
+                        <ComprehensionQuiz
+                            questions={course.analyzedData.quizQuestions}
+                            courseId={courseId}
+                            onComplete={() => handleModuleComplete(5)}
+                        />
+                    )}
+                    {currentModule === 6 && (
+                        <ContentReproduction
+                            paragraphs={course.analyzedData.paragraphs}
+                            onComplete={() => handleModuleComplete(6)}
+                        />
+                    )}
+                </div>
+            </main>
+        </div>
+    )
+}
