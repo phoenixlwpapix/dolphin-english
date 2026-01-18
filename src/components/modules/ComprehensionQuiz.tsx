@@ -135,7 +135,7 @@ export function ComprehensionQuiz({ questions, courseId, onComplete }: Comprehen
 
                 {/* Question */}
                 <div className="mb-6">
-                    <h3 className="text-lg font-medium text-foreground mb-4">{question.question}</h3>
+                    <h3 className="text-xl font-medium text-foreground mb-4">{question.question}</h3>
 
                     <div className="space-y-2">
                         {question.options.map((option, index) => {
@@ -165,7 +165,7 @@ export function ComprehensionQuiz({ questions, courseId, onComplete }: Comprehen
                                         <span className="w-6 h-6 rounded-full border border-current flex items-center justify-center text-sm font-medium shrink-0">
                                             {String.fromCharCode(65 + index)}
                                         </span>
-                                        <span className="text-foreground">{option}</span>
+                                        <span className="text-foreground text-lg">{option}</span>
                                     </span>
                                 </button>
                             )
@@ -203,7 +203,7 @@ export function ComprehensionQuiz({ questions, courseId, onComplete }: Comprehen
 
                         {showReference && (
                             <div className="mt-3 p-3 bg-background rounded border border-border">
-                                <p className="text-sm text-muted-foreground italic">&ldquo;{question.sourceReference}&rdquo;</p>
+                                <p className="text-base text-muted-foreground italic">&ldquo;{question.sourceReference}&rdquo;</p>
                             </div>
                         )}
                     </div>

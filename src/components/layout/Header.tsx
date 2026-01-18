@@ -22,6 +22,7 @@ export function Header({ children }: HeaderProps) {
                             src="/logo.png"
                             alt="Dolphin English Logo"
                             fill
+                            sizes="48px"
                             className="object-contain"
                             priority
                         />

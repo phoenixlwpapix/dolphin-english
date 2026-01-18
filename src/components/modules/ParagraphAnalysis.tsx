@@ -110,7 +110,7 @@ export function ParagraphAnalysis({ paragraphs, onComplete }: ParagraphAnalysisP
                 <div className="space-y-6">
                     {/* Original text */}
                     <div className="bg-surface rounded-lg p-4">
-                        <p className="text-foreground leading-relaxed">{paragraph.text}</p>
+                        <p className="text-foreground leading-relaxed text-xl">{paragraph.text}</p>
 
                         {/* Read along button */}
                         <div className="mt-4 flex gap-2">
@@ -137,7 +137,7 @@ export function ParagraphAnalysis({ paragraphs, onComplete }: ParagraphAnalysisP
                         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">
                             {t.analysis.summary}
                         </h3>
-                        <p className="text-foreground bg-primary-50 dark:bg-primary-900/20 rounded-lg p-3 border-l-4 border-primary-500">
+                        <p className="text-foreground bg-primary-50 dark:bg-primary-900/20 rounded-lg p-3 border-l-4 border-primary-500 text-lg">
                             {paragraph.summary}
                         </p>
                     </div>
@@ -155,9 +155,9 @@ export function ParagraphAnalysis({ paragraphs, onComplete }: ParagraphAnalysisP
                                             {index + 1}
                                         </div>
                                         <div className="flex-1">
-                                            <h4 className="font-semibold text-foreground">{point.point}</h4>
-                                            <p className="text-sm text-muted-foreground mt-1">{point.explanation}</p>
-                                            <p className="text-sm text-primary-600 mt-2 italic">
+                                            <h4 className="font-semibold text-foreground text-lg">{point.point}</h4>
+                                            <p className="text-base text-muted-foreground mt-1">{point.explanation}</p>
+                                            <p className="text-base text-primary-600 mt-2 italic">
                                                 &ldquo;{point.example}&rdquo;
                                             </p>
                                         </div>

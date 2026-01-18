@@ -174,7 +174,7 @@ function TimelineExercise({ items, onComplete, t }: TimelineExerciseProps) {
                             <span className="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-bold shrink-0">
                                 {index + 1}
                             </span>
-                            <span className="text-foreground text-sm">{item.summary}</span>
+                            <span className="text-foreground text-base">{item.summary}</span>
                         </div>
                     )
                 })}
@@ -229,7 +229,7 @@ function KeywordExercise({ paragraphs, onComplete, t }: KeywordExerciseProps) {
                 {keywords.map((keyword, i) => (
                     <span
                         key={i}
-                        className="px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-sm font-medium"
+                        className="px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-base font-medium"
                     >
                         {keyword}
                     </span>
@@ -240,7 +240,7 @@ function KeywordExercise({ paragraphs, onComplete, t }: KeywordExerciseProps) {
                 <p className="text-sm text-muted-foreground mb-2">Key summaries from the article:</p>
                 <ul className="space-y-2">
                     {paragraphs.map((p, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-foreground">
+                        <li key={i} className="flex items-start gap-2 text-base text-foreground">
                             <span className="text-primary-500">•</span>
                             <span>{p.summary}</span>
                         </li>

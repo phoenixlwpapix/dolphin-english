@@ -34,7 +34,7 @@ export function LearningObjectives({ objectives, onComplete }: LearningObjective
                             <div className="w-6 h-6 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-medium shrink-0 mt-0.5">
                                 {index + 1}
                             </div>
-                            <span className="text-foreground leading-relaxed">{objective}</span>
+                            <span className="text-foreground leading-relaxed text-lg">{objective}</span>
                         </li>
                     ))}
                 </ul>

@@ -132,8 +132,8 @@ function VocabularyCard({ vocab, isExpanded, isViewed, onClick, onPlayPronunciat
         >
             <div className="p-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <span className="font-semibold text-foreground">{vocab.word}</span>
-                    <span className="text-sm text-muted-foreground">{vocab.pronunciation}</span>
+                    <span className="font-bold text-foreground text-lg">{vocab.word}</span>
+                    <span className="text-base text-muted-foreground">{vocab.pronunciation}</span>
                     {isViewed && (
                         <svg className="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -154,12 +154,12 @@ function VocabularyCard({ vocab, isExpanded, isViewed, onClick, onPlayPronunciat
             {isExpanded && (
                 <div className="px-3 pb-3 pt-0 border-t border-border/50 space-y-2">
                     <div>
-                        <span className="text-xs text-muted-foreground uppercase">{t.vocabulary.definition}</span>
-                        <p className="text-foreground">{vocab.definition}</p>
+                        <span className="text-sm text-muted-foreground uppercase">{t.vocabulary.definition}</span>
+                        <p className="text-foreground text-base">{vocab.definition}</p>
                     </div>
                     <div>
-                        <span className="text-xs text-muted-foreground uppercase">{t.vocabulary.example}</span>
-                        <p className="text-primary-600 italic">&ldquo;{vocab.originalSentence}&rdquo;</p>
+                        <span className="text-sm text-muted-foreground uppercase">{t.vocabulary.example}</span>
+                        <p className="text-primary-600 italic text-base">&ldquo;{vocab.originalSentence}&rdquo;</p>
                     </div>
                 </div>
             )}

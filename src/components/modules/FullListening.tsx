@@ -160,7 +160,7 @@ export function FullListening({ content, onComplete }: FullListeningProps) {
                 {/* Article content with highlighting */}
                 <div
                     ref={contentRef}
-                    className="bg-surface rounded-lg p-6 leading-relaxed text-foreground text-lg max-h-96 overflow-y-auto"
+                    className="bg-surface rounded-lg p-6 leading-relaxed text-foreground text-2xl max-h-96 overflow-y-auto"
                 >
                     {words.map((word, index) => (
                         <span
