@@ -39,9 +39,20 @@ class TTSController {
 
         // Get English voice if available
         const voices = this.synth.getVoices()
-        const englishVoice = voices.find(v => v.lang.startsWith('en'))
-        if (englishVoice) {
-            this.utterance.voice = englishVoice
+        const englishVoices = voices.filter(v => v.lang.startsWith('en'))
+
+        // Priorities for female voices: Zira (Windows), Google US English (Chrome), Samantha (macOS)
+        const femaleVoice = englishVoices.find(v =>
+            v.name.includes('Microsoft Zira') ||
+            v.name.includes('Google US English') ||
+            v.name.includes('Samantha') ||
+            v.name.toLowerCase().includes('female')
+        )
+
+        const selectedVoice = femaleVoice || englishVoices[0]
+
+        if (selectedVoice) {
+            this.utterance.voice = selectedVoice
         }
 
         // Event handlers

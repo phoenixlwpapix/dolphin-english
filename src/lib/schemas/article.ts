@@ -20,6 +20,7 @@ export const vocabularyItemSchema = z.object({
     word: z.string().describe('The vocabulary word'),
     pronunciation: z.string().describe('Phonetic pronunciation, e.g., /ˈwɜːrdz/'),
     definition: z.string().describe('Simple English definition'),
+    definitionCN: z.string().optional().describe('Short Chinese definition'),
     originalSentence: z.string().describe('The sentence from the article containing this word'),
     category: z.enum(['essential', 'transferable', 'extended']).describe(
         'essential: must understand for this article, transferable: useful for other contexts, extended: for advanced learners'

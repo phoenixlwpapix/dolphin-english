@@ -13,6 +13,8 @@ export interface Translations {
         previous: string
         complete: string
         restart: string
+        created: string
+        deleteCourse: string
     }
     app: {
         title: string
@@ -126,6 +128,8 @@ export const zh: Translations = {
         previous: '上一步',
         complete: '完成',
         restart: '重新开始',
+        created: '创建时间',
+        deleteCourse: '删除课程',
     },
 
     // App

@@ -127,51 +127,62 @@ interface CourseCardProps {
 function CourseCard({ course, progress, t, formatDate }: CourseCardProps & { progress?: CourseWithProgress['progress'] }) {
   const progressPercent = getProgressPercentage(course.progress?.completedModules)
 
-  const difficultyColors = {
-    A2: 'bg-success/20 text-success',
-    'A2+': 'bg-warning/20 text-warning',
-    B1: 'bg-info/20 text-info',
+  const difficultyConfig = {
+    A2: { color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 dark:text-emerald-400', label: 'Elementary' },
+    'A2+': { color: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 dark:text-amber-400', label: 'Upper Elementary' },
+    B1: { color: 'text-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-400', label: 'Intermediate' },
   }
 
+  const config = difficultyConfig[course.difficulty]
+
   return (
-    <a href={`/course/${course._id}`}>
-      <Card interactive className="h-full">
-        <CardContent>
+    <a href={`/course/${course._id}`} className="block group">
+      <Card interactive className="h-full border-transparent ring-1 ring-border transition-all duration-300 ease-out group-hover:shadow-xl group-hover:-translate-y-1 group-hover:border-primary/20 dark:group-hover:border-primary/40 overflow-hidden">
+        <div className={`h-2 w-full ${course.difficulty === 'A2' ? 'bg-emerald-500' : course.difficulty === 'A2+' ? 'bg-amber-500' : 'bg-blue-500'}`} />
+        <CardContent className="p-6">
           {/* Header */}
-          <div className="flex items-start justify-between mb-3">
-            <h3 className="font-semibold text-foreground line-clamp-2 flex-1 pr-2">
+          <div className="flex items-start justify-between mb-4 gap-4">
+            <h3 className="text-lg font-bold text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors">
               {course.title}
             </h3>
             <span
               className={`
-                px-2 py-0.5 rounded-full text-xs font-medium shrink-0
-                ${difficultyColors[course.difficulty]}
+                px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wide shrink-0
+                ${config.color}
               `}
             >
               {course.difficulty}
             </span>
           </div>
 
-          {/* Stats */}
-          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-            <span>{course.wordCount} {t.create.wordCount}</span>
-            {course.progress && (
-              <span>
-                {t.home.lastStudied}: {formatDate(course.progress._creationTime)}
-              </span>
-            )}
+          {/* Creation Date & Stats */}
+          <div className="flex flex-col gap-3 mb-6">
+            <div className="flex items-center text-xs text-muted-foreground font-medium">
+              <svg className="w-3.5 h-3.5 mr-1.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>{t.common?.created || 'Created'}: {formatDate(course._creationTime)}</span>
+            </div>
+
+            <div className="flex items-center text-xs text-muted-foreground font-medium">
+              <svg className="w-3.5 h-3.5 mr-1.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              <span>{course.wordCount} {t.create.wordCount}</span>
+            </div>
           </div>
 
           {/* Progress */}
-          <div className="space-y-1">
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{t.home.progress}</span>
-              <span>{progressPercent}%</span>
+          <div className="mt-auto">
+            <div className="flex justify-between items-end mb-2">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t.home.progress}</span>
+              <span className="text-sm font-bold text-foreground">{progressPercent}%</span>
             </div>
             <ProgressBar
               value={progressPercent}
               size="sm"
               variant={progressPercent === 100 ? 'success' : 'default'}
+              className="h-1.5"
             />
           </div>
         </CardContent>

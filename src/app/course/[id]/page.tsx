@@ -1,10 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '../../../../convex/_generated/api'
 import { Header } from '@/components/layout'
-import { Button, Card, ModuleSteps } from '@/components/ui'
+import { Button, Card, ModuleSteps, ConfirmModal } from '@/components/ui'
 import { useI18n } from '@/lib/i18n'
 import type { Id } from '../../../../convex/_generated/dataModel'
 
@@ -27,12 +28,20 @@ export default function CoursePage() {
     const { t } = useI18n()
     const courseId = params.id as Id<"courses">
 
+    const [confirmState, setConfirmState] = useState<{
+        isOpen: boolean
+        type: 'restart' | 'delete' | null
+    }>({ isOpen: false, type: null })
+
+    const [isActionLoading, setIsActionLoading] = useState(false)
+
     const course = useQuery(api.courses.get, { id: courseId })
     const progress = useQuery(api.progress.get, { courseId })
 
     const completeModuleMutation = useMutation(api.progress.completeModule)
     const resetProgressMutation = useMutation(api.progress.reset)
     const updateCurrentModuleMutation = useMutation(api.progress.updateCurrentModule)
+    const deleteCourseMutation = useMutation(api.courses.remove)
 
     const moduleNames = [
         t.modules.objectives,
@@ -49,8 +58,31 @@ export default function CoursePage() {
         await completeModuleMutation({ courseId, moduleNumber })
     }
 
-    async function handleRestart() {
-        await resetProgressMutation({ courseId })
+    function handleRestart() {
+        setConfirmState({ isOpen: true, type: 'restart' })
+    }
+
+    function handleDelete() {
+        setConfirmState({ isOpen: true, type: 'delete' })
+    }
+
+    async function handleConfirm() {
+        if (!confirmState.type) return
+
+        setIsActionLoading(true)
+        try {
+            if (confirmState.type === 'restart') {
+                await resetProgressMutation({ courseId })
+                setConfirmState({ isOpen: false, type: null })
+            } else if (confirmState.type === 'delete') {
+                await deleteCourseMutation({ id: courseId })
+                router.push('/')
+            }
+        } catch (error) {
+            console.error('Action failed:', error)
+        } finally {
+            setIsActionLoading(false)
+        }
     }
 
     function handleModuleClick(moduleNumber: number) {
@@ -134,16 +166,27 @@ export default function CoursePage() {
                                     />
                                 </div>
 
-                                {isComplete && (
-                                    <div className="border-t border-border/50 pt-6">
+                                <div className="border-t border-border/50 pt-6 space-y-3">
+                                    {isComplete && (
                                         <Button variant="secondary" className="w-full justify-center" onClick={handleRestart}>
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                             </svg>
                                             {t.common.restart}
                                         </Button>
-                                    </div>
-                                )}
+                                    )}
+
+                                    <Button
+                                        variant="danger"
+                                        className="w-full justify-center"
+                                        onClick={handleDelete}
+                                    >
+                                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                        {t.common.deleteCourse}
+                                    </Button>
+                                </div>
                             </Card>
                         </div>
                     </div>
@@ -159,13 +202,20 @@ export default function CoursePage() {
                                     </svg>
                                 </Button>
                                 <h1 className="text-lg font-bold text-foreground text-center flex-1 mx-2 truncate">{course.title}</h1>
-                                {isComplete && (
-                                    <Button variant="ghost" size="sm" onClick={handleRestart}>
+                                <div className="flex items-center gap-1">
+                                    {isComplete && (
+                                        <Button variant="ghost" size="sm" onClick={handleRestart}>
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                            </svg>
+                                        </Button>
+                                    )}
+                                    <Button variant="danger" size="sm" onClick={handleDelete}>
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
                                     </Button>
-                                )}
+                                </div>
                             </div>
 
                             <Card padding="md" className="mb-6">
@@ -190,6 +240,7 @@ export default function CoursePage() {
                             {currentModule === 2 && (
                                 <FullListening
                                     content={course.content}
+                                    vocabulary={course.analyzedData.vocabulary}
                                     onComplete={() => handleModuleComplete(2)}
                                 />
                             )}
@@ -223,6 +274,22 @@ export default function CoursePage() {
                     </div>
                 </div>
             </main>
+
+            <ConfirmModal
+                isOpen={confirmState.isOpen}
+                onClose={() => setConfirmState({ ...confirmState, isOpen: false })}
+                onConfirm={handleConfirm}
+                title={confirmState.type === 'restart' ? t.common.restart : t.common.delete}
+                description={
+                    confirmState.type === 'restart'
+                        ? `${t.common.restart}? ${t.common.confirm}?`
+                        : `${t.common.delete}? ${t.common.confirm}?`
+                }
+                confirmText={t.common.confirm}
+                cancelText={t.common.cancel}
+                variant={confirmState.type === 'delete' ? 'destructive' : 'default'}
+                isLoading={isActionLoading}
+            />
         </div>
     )
 }

@@ -19,6 +19,7 @@ const vocabularyValidator = v.object({
     word: v.string(),
     pronunciation: v.string(),
     definition: v.string(),
+    definitionCN: v.optional(v.string()),
     originalSentence: v.string(),
     category: v.union(v.literal("essential"), v.literal("transferable"), v.literal("extended")),
 })

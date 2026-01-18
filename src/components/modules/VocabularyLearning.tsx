@@ -156,6 +156,9 @@ function VocabularyCard({ vocab, isExpanded, isViewed, onClick, onPlayPronunciat
                     <div>
                         <span className="text-sm text-muted-foreground uppercase">{t.vocabulary.definition}</span>
                         <p className="text-foreground text-base">{vocab.definition}</p>
+                        {vocab.definitionCN && (
+                            <p className="text-muted-foreground text-sm mt-1">{vocab.definitionCN}</p>
+                        )}
                     </div>
                     <div>
                         <span className="text-sm text-muted-foreground uppercase">{t.vocabulary.example}</span>

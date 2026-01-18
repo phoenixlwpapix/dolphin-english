@@ -3,3 +3,4 @@ export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 export { Modal } from './Modal'
 export { ProgressBar, ModuleSteps } from './Progress'
 export { LanguageSwitcher } from './LanguageSwitcher'
+export { ConfirmModal } from './ConfirmModal'
