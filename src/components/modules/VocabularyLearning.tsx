@@ -49,9 +49,9 @@ export function VocabularyLearning({ vocabulary, courseId, onComplete }: Vocabul
 
         return (
             <div className="mb-6">
-                <h3 className="text-sm font-semibold text-muted uppercase tracking-wide mb-3 flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 flex items-center gap-2">
                     <span className={`px-2 py-0.5 rounded-full text-xs ${color}`}>{label}</span>
-                    <span className="text-xs text-muted">({words.length})</span>
+                    <span className="text-xs text-muted-foreground">({words.length})</span>
                 </h3>
                 <div className="space-y-2">
                     {words.map((vocab) => (
@@ -81,12 +81,12 @@ export function VocabularyLearning({ vocabulary, courseId, onComplete }: Vocabul
                     </div>
                     <div>
                         <h2 className="text-xl font-bold text-foreground">{t.vocabulary.title}</h2>
-                        <p className="text-sm text-muted">{t.course.module} 4 · 5 {t.course.minutes}</p>
+                        <p className="text-sm text-muted-foreground">{t.course.module} 4 · 5 {t.course.minutes}</p>
                     </div>
                 </div>
 
                 {/* Progress hint */}
-                <div className="mb-6 text-sm text-muted">
+                <div className="mb-6 text-sm text-muted-foreground">
                     {viewedWords.size} / {vocabulary.length} words reviewed
                 </div>
 
@@ -129,7 +129,7 @@ function VocabularyCard({ vocab, isExpanded, isViewed, onClick, onPlayPronunciat
             <div className="p-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <span className="font-semibold text-foreground">{vocab.word}</span>
-                    <span className="text-sm text-muted">{vocab.pronunciation}</span>
+                    <span className="text-sm text-muted-foreground">{vocab.pronunciation}</span>
                     {isViewed && (
                         <svg className="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -150,11 +150,11 @@ function VocabularyCard({ vocab, isExpanded, isViewed, onClick, onPlayPronunciat
             {isExpanded && (
                 <div className="px-3 pb-3 pt-0 border-t border-border/50 space-y-2">
                     <div>
-                        <span className="text-xs text-muted uppercase">{t.vocabulary.definition}</span>
+                        <span className="text-xs text-muted-foreground uppercase">{t.vocabulary.definition}</span>
                         <p className="text-foreground">{vocab.definition}</p>
                     </div>
                     <div>
-                        <span className="text-xs text-muted uppercase">{t.vocabulary.example}</span>
+                        <span className="text-xs text-muted-foreground uppercase">{t.vocabulary.example}</span>
                         <p className="text-primary-600 italic">&ldquo;{vocab.originalSentence}&rdquo;</p>
                     </div>
                 </div>

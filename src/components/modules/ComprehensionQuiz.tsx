@@ -80,7 +80,7 @@ export function ComprehensionQuiz({ questions, courseId, onComplete }: Comprehen
                     <h2 className="text-2xl font-bold text-foreground mb-2">
                         {passed ? t.quiz.passed : t.quiz.tryAgain}
                     </h2>
-                    <p className="text-lg text-muted mb-6">
+                    <p className="text-lg text-muted-foreground mb-6">
                         {t.quiz.score}: {score} / {questions.length}
                     </p>
 
@@ -112,12 +112,12 @@ export function ComprehensionQuiz({ questions, courseId, onComplete }: Comprehen
                     </div>
                     <div>
                         <h2 className="text-xl font-bold text-foreground">{t.quiz.title}</h2>
-                        <p className="text-sm text-muted">{t.course.module} 5 · 5 {t.course.minutes}</p>
+                        <p className="text-sm text-muted-foreground">{t.course.module} 5 · 5 {t.course.minutes}</p>
                     </div>
                 </div>
 
                 {/* Progress */}
-                <div className="flex items-center justify-between mb-6 text-sm text-muted">
+                <div className="flex items-center justify-between mb-6 text-sm text-muted-foreground">
                     <span>
                         {t.quiz.question} {currentQuestion + 1} {t.quiz.of} {questions.length}
                     </span>
@@ -194,7 +194,7 @@ export function ComprehensionQuiz({ questions, courseId, onComplete }: Comprehen
 
                         {showReference && (
                             <div className="mt-3 p-3 bg-background rounded border border-border">
-                                <p className="text-sm text-muted italic">&ldquo;{question.sourceReference}&rdquo;</p>
+                                <p className="text-sm text-muted-foreground italic">&ldquo;{question.sourceReference}&rdquo;</p>
                             </div>
                         )}
                     </div>

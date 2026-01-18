@@ -7,16 +7,16 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const variantClasses = {
-    default: 'bg-surface border border-border',
-    elevated: 'bg-white shadow-md dark:bg-surface',
-    outlined: 'bg-transparent border-2 border-border',
+    default: 'bg-surface', // White/Surface, no border
+    elevated: 'bg-white', // Same as default effectively
+    outlined: 'bg-transparent border-4 border-muted', // Thick border if used
 }
 
 const paddingClasses = {
     none: '',
-    sm: 'p-3',
-    md: 'p-4',
-    lg: 'p-6',
+    sm: 'p-4',
+    md: 'p-6', // Generous padding
+    lg: 'p-8',
 }
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
@@ -25,10 +25,10 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
             <div
                 ref={ref}
                 className={`
-          rounded-xl
+          rounded-lg
           ${variantClasses[variant]}
           ${paddingClasses[padding]}
-          ${interactive ? 'cursor-pointer hover:shadow-lg hover:border-primary-300 transition-all duration-200' : ''}
+          ${interactive ? 'group cursor-pointer hover:scale-[1.02] hover:bg-gray-50 transition-all duration-200' : ''}
           ${className}
         `}
                 {...props}
@@ -60,7 +60,7 @@ export function CardTitle({ className = '', children, ...props }: HTMLAttributes
 
 export function CardDescription({ className = '', children, ...props }: HTMLAttributes<HTMLParagraphElement>) {
     return (
-        <p className={`text-sm text-muted mt-1 ${className}`} {...props}>
+        <p className={`text-sm text-muted-foreground mt-1 ${className}`} {...props}>
             {children}
         </p>
     )

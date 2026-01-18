@@ -22,11 +22,11 @@ export function LearningObjectives({ objectives, onComplete }: LearningObjective
                     </div>
                     <div>
                         <h2 className="text-xl font-bold text-foreground">{t.objectives.title}</h2>
-                        <p className="text-sm text-muted">{t.course.module} 1 · 2 {t.course.minutes}</p>
+                        <p className="text-sm text-muted-foreground">{t.course.module} 1 · 2 {t.course.minutes}</p>
                     </div>
                 </div>
 
-                <p className="text-muted mb-6">{t.objectives.afterLearning}</p>
+                <p className="text-muted-foreground mb-6">{t.objectives.afterLearning}</p>
 
                 <ul className="space-y-4 mb-8">
                     {objectives.map((objective, index) => (

@@ -81,7 +81,7 @@ export function ParagraphAnalysis({ paragraphs, onComplete }: ParagraphAnalysisP
                     </div>
                     <div>
                         <h2 className="text-xl font-bold text-foreground">{t.analysis.title}</h2>
-                        <p className="text-sm text-muted">{t.course.module} 3 · 12 {t.course.minutes}</p>
+                        <p className="text-sm text-muted-foreground">{t.course.module} 3 · 12 {t.course.minutes}</p>
                     </div>
                 </div>
 
@@ -97,7 +97,7 @@ export function ParagraphAnalysis({ paragraphs, onComplete }: ParagraphAnalysisP
                                     ? 'bg-primary-500 text-white'
                                     : completedParagraphs.includes(index)
                                         ? 'bg-success/20 text-success'
-                                        : 'bg-surface text-muted hover:text-foreground'
+                                        : 'bg-surface text-muted-foreground hover:text-foreground'
                                 }
               `}
                         >
@@ -134,7 +134,7 @@ export function ParagraphAnalysis({ paragraphs, onComplete }: ParagraphAnalysisP
 
                     {/* Summary */}
                     <div>
-                        <h3 className="text-sm font-semibold text-muted uppercase tracking-wide mb-2">
+                        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">
                             {t.analysis.summary}
                         </h3>
                         <p className="text-foreground bg-primary-50 dark:bg-primary-900/20 rounded-lg p-3 border-l-4 border-primary-500">
@@ -144,7 +144,7 @@ export function ParagraphAnalysis({ paragraphs, onComplete }: ParagraphAnalysisP
 
                     {/* Language points */}
                     <div>
-                        <h3 className="text-sm font-semibold text-muted uppercase tracking-wide mb-3">
+                        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
                             {t.analysis.languagePoints}
                         </h3>
                         <div className="space-y-3">
@@ -156,7 +156,7 @@ export function ParagraphAnalysis({ paragraphs, onComplete }: ParagraphAnalysisP
                                         </div>
                                         <div className="flex-1">
                                             <h4 className="font-semibold text-foreground">{point.point}</h4>
-                                            <p className="text-sm text-muted mt-1">{point.explanation}</p>
+                                            <p className="text-sm text-muted-foreground mt-1">{point.explanation}</p>
                                             <p className="text-sm text-primary-600 mt-2 italic">
                                                 &ldquo;{point.example}&rdquo;
                                             </p>

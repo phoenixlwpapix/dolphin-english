@@ -30,7 +30,7 @@ export function ProgressBar({
     return (
         <div className={`w-full ${className}`}>
             {showLabel && (
-                <div className="flex justify-between text-sm text-muted mb-1">
+                <div className="flex justify-between text-sm text-muted-foreground mb-1">
                     <span>Progress</span>
                     <span>{Math.round(clampedValue)}%</span>
                 </div>
@@ -78,15 +78,15 @@ export function ModuleSteps({
                             onClick={() => isAccessible && onModuleClick?.(moduleNum)}
                             disabled={!isAccessible}
                             className={`
-                w-10 h-10 rounded-full flex items-center justify-center
-                font-semibold text-sm transition-all duration-200
+                w-12 h-12 rounded-lg flex items-center justify-center
+                font-bold text-lg transition-all duration-200
                 ${isCompleted
-                                    ? 'bg-success text-white completed'
+                                    ? 'bg-secondary text-white completed hover:scale-105'
                                     : isCurrent
-                                        ? 'bg-primary-500 text-white ring-4 ring-primary-200'
+                                        ? 'bg-primary text-white scale-110'
                                         : isAccessible
-                                            ? 'bg-surface text-foreground border border-border hover:border-primary-300'
-                                            : 'bg-surface text-muted border border-border cursor-not-allowed opacity-50'
+                                            ? 'bg-surface text-foreground border-4 border-muted hover:border-primary-300 hover:scale-105'
+                                            : 'bg-muted text-muted-foreground opacity-50 cursor-not-allowed'
                                 }
               `}
                             aria-label={`${moduleNames[moduleNum - 1] || `Module ${moduleNum}`}${isCompleted ? ' (completed)' : isCurrent ? ' (current)' : ''}`}
@@ -100,7 +100,7 @@ export function ModuleSteps({
                             )}
                         </button>
                         <span
-                            className={`mt-2 text-xs text-center max-w-[80px] truncate ${isCurrent ? 'text-primary-600 font-medium' : 'text-muted'
+                            className={`mt-2 text-xs text-center max-w-[80px] truncate ${isCurrent ? 'text-primary-600 font-medium' : 'text-muted-foreground'
                                 }`}
                         >
                             {moduleNames[moduleNum - 1]}

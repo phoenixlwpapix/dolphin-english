@@ -47,7 +47,7 @@ export function ContentReproduction({ paragraphs, onComplete }: ContentReproduct
                     </div>
 
                     <h2 className="text-2xl font-bold text-foreground mb-2">{t.common.complete}!</h2>
-                    <p className="text-muted mb-6">You have completed all learning modules for this article.</p>
+                    <p className="text-muted-foreground mb-6">You have completed all learning modules for this article.</p>
 
                     <Button onClick={onComplete} size="lg">
                         {t.common.complete}
@@ -71,7 +71,7 @@ export function ContentReproduction({ paragraphs, onComplete }: ContentReproduct
                     </div>
                     <div>
                         <h2 className="text-xl font-bold text-foreground">{t.reproduction.title}</h2>
-                        <p className="text-sm text-muted">{t.course.module} 6 · 2 {t.course.minutes}</p>
+                        <p className="text-sm text-muted-foreground">{t.course.module} 6 · 2 {t.course.minutes}</p>
                     </div>
                 </div>
 
@@ -86,7 +86,7 @@ export function ContentReproduction({ paragraphs, onComplete }: ContentReproduct
                                     ? 'bg-primary-500 text-white'
                                     : i < currentExercise
                                         ? 'bg-success/20 text-success'
-                                        : 'bg-surface text-muted'
+                                        : 'bg-surface text-muted-foreground'
                                 }
               `}
                         >
@@ -149,7 +149,7 @@ function TimelineExercise({ items, onComplete, t }: TimelineExerciseProps) {
 
     return (
         <div>
-            <p className="text-muted mb-4">{t.reproduction.dragToSort}</p>
+            <p className="text-muted-foreground mb-4">{t.reproduction.dragToSort}</p>
 
             <div className="space-y-2 mb-6">
                 {orderedItems.map((item, index) => {
@@ -221,7 +221,7 @@ function KeywordExercise({ paragraphs, onComplete, t }: KeywordExerciseProps) {
 
     return (
         <div>
-            <p className="text-muted mb-4">
+            <p className="text-muted-foreground mb-4">
                 Use these keywords to retell the main ideas of the article:
             </p>
 
@@ -237,7 +237,7 @@ function KeywordExercise({ paragraphs, onComplete, t }: KeywordExerciseProps) {
             </div>
 
             <div className="bg-surface rounded-lg p-4 mb-6">
-                <p className="text-sm text-muted mb-2">Key summaries from the article:</p>
+                <p className="text-sm text-muted-foreground mb-2">Key summaries from the article:</p>
                 <ul className="space-y-2">
                     {paragraphs.map((p, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-foreground">

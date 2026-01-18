@@ -79,7 +79,7 @@ export default function HomePage() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">{t.home.noCourses}</h3>
-              <p className="text-muted mb-6">{t.home.noCoursesDesc}</p>
+              <p className="text-muted-foreground mb-6">{t.home.noCoursesDesc}</p>
               <Button size="lg" onClick={() => setIsCreateModalOpen(true)}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -152,7 +152,7 @@ function CourseCard({ course, progress, t, formatDate }: CourseCardProps) {
           </div>
 
           {/* Stats */}
-          <div className="flex items-center gap-4 text-sm text-muted mb-4">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
             <span>{course.wordCount} {t.create.wordCount}</span>
             {progress && (
               <span>
@@ -163,7 +163,7 @@ function CourseCard({ course, progress, t, formatDate }: CourseCardProps) {
 
           {/* Progress */}
           <div className="space-y-1">
-            <div className="flex justify-between text-xs text-muted">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>{t.home.progress}</span>
               <span>{progressPercent}%</span>
             </div>

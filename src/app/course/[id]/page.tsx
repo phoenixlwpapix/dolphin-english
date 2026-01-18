@@ -10,12 +10,14 @@ import { getProgress, completeModule, resetProgress, createProgress } from '@/li
 import type { Course, Progress } from '@/db'
 
 // Module components
-import { LearningObjectives } from '@/components/modules/LearningObjectives'
-import { FullListening } from '@/components/modules/FullListening'
-import { ParagraphAnalysis } from '@/components/modules/ParagraphAnalysis'
-import { VocabularyLearning } from '@/components/modules/VocabularyLearning'
-import { ComprehensionQuiz } from '@/components/modules/ComprehensionQuiz'
-import { ContentReproduction } from '@/components/modules/ContentReproduction'
+import {
+    LearningObjectives,
+    FullListening,
+    ParagraphAnalysis,
+    VocabularyLearning,
+    ComprehensionQuiz,
+    ContentReproduction
+} from '@/components/modules'
 
 const MODULE_TIMES = [2, 6, 12, 5, 5, 2] // in minutes
 
@@ -98,7 +100,7 @@ export default function CoursePage() {
                 <main className="container mx-auto px-4 py-8">
                     <Card className="py-16 text-center">
                         <h2 className="text-xl font-semibold text-foreground mb-2">{error || 'Course not ready'}</h2>
-                        <p className="text-muted mb-4">The course could not be loaded or is still being analyzed.</p>
+                        <p className="text-muted-foreground mb-4">The course could not be loaded or is still being analyzed.</p>
                         <Button onClick={() => router.push('/')}>{t.common.back}</Button>
                     </Card>
                 </main>
@@ -126,7 +128,7 @@ export default function CoursePage() {
                     <div className="flex items-start justify-between mb-4">
                         <div>
                             <h1 className="text-2xl font-bold text-foreground mb-2">{course.title}</h1>
-                            <div className="flex items-center gap-4 text-sm text-muted">
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                 <span className="px-2 py-0.5 rounded-full bg-primary-100 text-primary-700">
                                     {course.difficulty}
                                 </span>

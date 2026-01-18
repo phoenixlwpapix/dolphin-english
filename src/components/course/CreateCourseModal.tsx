@@ -26,7 +26,7 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
     const wordCount = text.trim().split(/\s+/).filter(Boolean).length
 
     function getWordCountStatus(): { color: string; message: string } {
-        if (wordCount === 0) return { color: 'text-muted', message: t.create.recommended }
+        if (wordCount === 0) return { color: 'text-muted-foreground', message: t.create.recommended }
         if (wordCount < 350) return { color: 'text-warning', message: t.create.tooShort }
         if (wordCount > 600) return { color: 'text-warning', message: t.create.tooLong }
         return { color: 'text-success', message: t.create.recommended }
@@ -141,7 +141,7 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
             flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors
             ${mode === 'text'
                             ? 'bg-primary-500 text-white'
-                            : 'bg-surface text-muted hover:text-foreground'
+                            : 'bg-surface text-muted-foreground hover:text-foreground'
                         }
           `}
                 >
@@ -163,7 +163,7 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
             flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors
             ${mode === 'image'
                             ? 'bg-primary-500 text-white'
-                            : 'bg-surface text-muted hover:text-foreground'
+                            : 'bg-surface text-muted-foreground hover:text-foreground'
                         }
           `}
                 >
@@ -189,16 +189,16 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                         onChange={(e) => setText(e.target.value)}
                         placeholder={t.create.textPlaceholder}
                         className="
-              w-full h-64 p-4 rounded-lg border border-border bg-surface
-              text-foreground placeholder:text-muted resize-none
-              focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
+              w-full h-64 p-4 rounded-lg bg-muted border-none
+              text-foreground placeholder:text-muted-foreground resize-none
+              focus:bg-background focus:outline-none focus:ring-0 focus:border-2 focus:border-primary
             "
                         disabled={isAnalyzing}
                     />
 
                     {/* Word count */}
                     <div className="flex justify-between items-center text-sm">
-                        <span className="text-muted">
+                        <span className="text-muted-foreground">
                             {t.create.wordCount}: <span className="font-medium text-foreground">{wordCount}</span>
                         </span>
                         <span className={getWordCountStatus().color}>{getWordCountStatus().message}</span>
@@ -229,7 +229,7 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                         ) : (
                             <>
                                 <svg
-                                    className="w-12 h-12 text-muted"
+                                    className="w-12 h-12 text-muted-foreground"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -241,7 +241,7 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                                         d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                                     />
                                 </svg>
-                                <span className="text-muted">{t.create.imageDropzone}</span>
+                                <span className="text-muted-foreground">{t.create.imageDropzone}</span>
                             </>
                         )}
                     </div>

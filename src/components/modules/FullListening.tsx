@@ -102,7 +102,7 @@ export function FullListening({ content, onComplete }: FullListeningProps) {
                     </div>
                     <div>
                         <h2 className="text-xl font-bold text-foreground">{t.listening.title}</h2>
-                        <p className="text-sm text-muted">{t.course.module} 2 · 6 {t.course.minutes}</p>
+                        <p className="text-sm text-muted-foreground">{t.course.module} 2 · 6 {t.course.minutes}</p>
                     </div>
                 </div>
 
@@ -134,7 +134,7 @@ export function FullListening({ content, onComplete }: FullListeningProps) {
 
                     {/* Speed selector */}
                     <div className="flex items-center gap-2 ml-auto">
-                        <span className="text-sm text-muted">{t.listening.speed}:</span>
+                        <span className="text-sm text-muted-foreground">{t.listening.speed}:</span>
                         <div className="flex rounded-lg overflow-hidden border border-border">
                             {(['slow', 'normal', 'fast'] as TTSSpeed[]).map((s) => (
                                 <button
@@ -145,7 +145,7 @@ export function FullListening({ content, onComplete }: FullListeningProps) {
                     px-3 py-1 text-sm transition-colors
                     ${speed === s
                                             ? 'bg-primary-500 text-white'
-                                            : 'bg-surface text-muted hover:text-foreground'
+                                            : 'bg-surface text-muted-foreground hover:text-foreground'
                                         }
                     ${isPlaying ? 'opacity-50 cursor-not-allowed' : ''}
                   `}
