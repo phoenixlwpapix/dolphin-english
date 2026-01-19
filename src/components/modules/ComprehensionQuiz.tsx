@@ -3,10 +3,23 @@
 import { useState, useCallback } from 'react'
 import { useMutation } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
-import { Card, CardContent, Button } from '@/components/ui'
+import {
+    Card,
+    CardContent,
+    Button,
+    CheckIcon,
+    WarningIcon,
+    ChevronRightIcon,
+    ClipboardListIcon,
+    CheckFilledIcon,
+    XFilledIcon,
+} from '@/components/ui'
 import { useI18n } from '@/lib/i18n'
 import type { QuizQuestion } from '@/lib/schemas'
 import type { Id } from '../../../convex/_generated/dataModel'
+
+/** Minimum passing percentage for quiz */
+const PASSING_PERCENTAGE = 0.6
 
 interface QuizResult {
     questionId: string
@@ -61,7 +74,7 @@ export function ComprehensionQuiz({ questions, courseId, onComplete }: Comprehen
     }, [isLastQuestion, results, courseId, currentQuestion, saveQuizResultsMutation])
 
     const score = results.filter((r) => r.isCorrect).length
-    const passingScore = Math.ceil(questions.length * 0.6) // 60% to pass
+    const passingScore = Math.ceil(questions.length * PASSING_PERCENTAGE)
 
     if (isComplete) {
         const passed = score >= passingScore
@@ -76,13 +89,9 @@ export function ComprehensionQuiz({ questions, courseId, onComplete }: Comprehen
             `}
                     >
                         {passed ? (
-                            <svg className="w-10 h-10 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
+                            <CheckIcon className="w-10 h-10 text-success" />
                         ) : (
-                            <svg className="w-10 h-10 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
+                            <WarningIcon className="w-10 h-10 text-warning" />
                         )}
                     </div>
 
@@ -95,19 +104,17 @@ export function ComprehensionQuiz({ questions, courseId, onComplete }: Comprehen
 
                     <Button onClick={onComplete} size="lg">
                         {t.common.next}
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
+                        <ChevronRightIcon className="w-5 h-5" />
                     </Button>
                 </CardContent>
             </Card>
         )
     }
 
-    const typeLabels = {
-        'main-idea': '主旨理解',
-        'detail': '细节定位',
-        'vocabulary': '词义理解',
+    const typeLabels: Record<string, string> = {
+        'main-idea': t.quiz.questionTypes.mainIdea,
+        'detail': t.quiz.questionTypes.detail,
+        'vocabulary': t.quiz.questionTypes.vocabulary,
     }
 
     return (
@@ -115,9 +122,7 @@ export function ComprehensionQuiz({ questions, courseId, onComplete }: Comprehen
             <CardContent>
                 <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
-                        <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                        </svg>
+                        <ClipboardListIcon className="w-5 h-5 text-primary-600" />
                     </div>
                     <div>
                         <h2 className="text-xl font-bold text-foreground">{t.quiz.title}</h2>
@@ -179,16 +184,12 @@ export function ComprehensionQuiz({ questions, courseId, onComplete }: Comprehen
                         <div className="flex items-center gap-2 font-medium">
                             {isCorrect ? (
                                 <>
-                                    <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                    </svg>
+                                    <CheckFilledIcon className="w-5 h-5 text-success" />
                                     <span className="text-success">{t.quiz.correct}</span>
                                 </>
                             ) : (
                                 <>
-                                    <svg className="w-5 h-5 text-error" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                                    </svg>
+                                    <XFilledIcon className="w-5 h-5 text-error" />
                                     <span className="text-error">{t.quiz.incorrect}</span>
                                 </>
                             )}
@@ -218,9 +219,7 @@ export function ComprehensionQuiz({ questions, courseId, onComplete }: Comprehen
                     ) : (
                         <Button onClick={handleNext}>
                             {isLastQuestion ? t.common.complete : t.common.next}
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
+                            <ChevronRightIcon className="w-4 h-4" />
                         </Button>
                     )}
                 </div>

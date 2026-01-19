@@ -1,7 +1,17 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Card, CardContent, Button } from '@/components/ui'
+import {
+    Card,
+    CardContent,
+    Button,
+    ClipboardIcon,
+    PlayIcon,
+    StopIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    CheckIcon,
+} from '@/components/ui'
 import { useI18n } from '@/lib/i18n'
 import { tts, TTS_SPEEDS } from '@/lib/tts'
 import type { ParagraphAnalysis as ParagraphType } from '@/lib/schemas'
@@ -75,9 +85,7 @@ export function ParagraphAnalysis({ paragraphs, onComplete }: ParagraphAnalysisP
             <CardContent>
                 <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
-                        <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
+                        <ClipboardIcon className="w-5 h-5 text-primary-600" />
                     </div>
                     <div>
                         <h2 className="text-xl font-bold text-foreground">{t.analysis.title}</h2>
@@ -116,17 +124,13 @@ export function ParagraphAnalysis({ paragraphs, onComplete }: ParagraphAnalysisP
                         <div className="mt-4 flex gap-2">
                             {!isPlaying ? (
                                 <Button variant="secondary" size="sm" onClick={handlePlayParagraph}>
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M8 5v14l11-7z" />
-                                    </svg>
+                                    <PlayIcon className="w-4 h-4" />
                                     {t.analysis.practice}
                                 </Button>
                             ) : (
                                 <Button variant="secondary" size="sm" onClick={handleStopPlayback}>
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M6 6h12v12H6z" />
-                                    </svg>
-                                    Stop
+                                    <StopIcon className="w-4 h-4" />
+                                    {t.analysis.stop}
                                 </Button>
                             )}
                         </div>
@@ -175,25 +179,19 @@ export function ParagraphAnalysis({ paragraphs, onComplete }: ParagraphAnalysisP
                         onClick={handlePrevious}
                         disabled={currentParagraph === 0}
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
+                        <ChevronLeftIcon className="w-4 h-4" />
                         {t.common.previous}
                     </Button>
 
                     {isLastParagraph ? (
                         <Button onClick={() => { markComplete(); onComplete(); }} disabled={!allCompleted && completedParagraphs.length < paragraphs.length - 1}>
                             {t.common.complete}
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
+                            <CheckIcon className="w-4 h-4" />
                         </Button>
                     ) : (
                         <Button onClick={handleNext}>
                             {t.common.next}
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
+                            <ChevronRightIcon className="w-4 h-4" />
                         </Button>
                     )}
                 </div>

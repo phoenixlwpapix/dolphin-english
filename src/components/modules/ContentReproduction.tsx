@@ -1,9 +1,20 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Card, CardContent, Button } from '@/components/ui'
+import {
+    Card,
+    CardContent,
+    Button,
+    CheckCircleIcon,
+    CheckIcon,
+    ChevronRightIcon,
+    EditIcon,
+} from '@/components/ui'
 import { useI18n } from '@/lib/i18n'
 import type { ParagraphAnalysis } from '@/lib/schemas'
+
+/** Maximum number of keywords to display */
+const MAX_KEYWORDS = 6
 
 interface ContentReproductionProps {
     paragraphs: ParagraphAnalysis[]
@@ -41,9 +52,7 @@ export function ContentReproduction({ paragraphs, onComplete }: ContentReproduct
             <Card>
                 <CardContent className="text-center py-12">
                     <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-success/20 flex items-center justify-center">
-                        <svg className="w-10 h-10 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                        <CheckCircleIcon className="w-10 h-10 text-success" />
                     </div>
 
                     <h2 className="text-2xl font-bold text-foreground mb-2">{t.common.complete}!</h2>
@@ -51,9 +60,7 @@ export function ContentReproduction({ paragraphs, onComplete }: ContentReproduct
 
                     <Button onClick={onComplete} size="lg">
                         {t.common.complete}
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
+                        <CheckIcon className="w-5 h-5" />
                     </Button>
                 </CardContent>
             </Card>
@@ -65,9 +72,7 @@ export function ContentReproduction({ paragraphs, onComplete }: ContentReproduct
             <CardContent>
                 <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
-                        <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
+                        <EditIcon className="w-5 h-5 text-primary-600" />
                     </div>
                     <div>
                         <h2 className="text-xl font-bold text-foreground">{t.reproduction.title}</h2>
@@ -188,9 +193,7 @@ function TimelineExercise({ items, onComplete, t }: TimelineExerciseProps) {
                 ) : (
                     <Button onClick={onComplete}>
                         {t.common.next}
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
+                        <ChevronRightIcon className="w-4 h-4" />
                     </Button>
                 )}
             </div>
@@ -216,13 +219,13 @@ function KeywordExercise({ paragraphs, onComplete, t }: KeywordExerciseProps) {
                 if (match) words.push(match[0])
             })
         })
-        return words.slice(0, 6) // Limit to 6 keywords
+        return words.slice(0, MAX_KEYWORDS)
     }, [paragraphs])
 
     return (
         <div>
             <p className="text-muted-foreground mb-4">
-                Use these keywords to retell the main ideas of the article:
+                {t.reproduction.keywordHint}
             </p>
 
             <div className="flex flex-wrap gap-2 mb-6 p-4 bg-surface rounded-lg">
@@ -237,7 +240,7 @@ function KeywordExercise({ paragraphs, onComplete, t }: KeywordExerciseProps) {
             </div>
 
             <div className="bg-surface rounded-lg p-4 mb-6">
-                <p className="text-sm text-muted-foreground mb-2">Key summaries from the article:</p>
+                <p className="text-sm text-muted-foreground mb-2">{t.reproduction.keySummaries}</p>
                 <ul className="space-y-2">
                     {paragraphs.map((p, i) => (
                         <li key={i} className="flex items-start gap-2 text-base text-foreground">
@@ -251,9 +254,7 @@ function KeywordExercise({ paragraphs, onComplete, t }: KeywordExerciseProps) {
             <div className="flex justify-end">
                 <Button onClick={onComplete}>
                     {t.common.complete}
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
+                    <CheckIcon className="w-4 h-4" />
                 </Button>
             </div>
         </div>

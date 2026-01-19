@@ -3,11 +3,22 @@
 import { useState, useCallback } from 'react'
 import { useMutation } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
-import { Card, CardContent, Button } from '@/components/ui'
+import {
+    Card,
+    CardContent,
+    Button,
+    BookOpenIcon,
+    ChevronRightIcon,
+    CheckFilledIcon,
+    VolumeHighIcon,
+} from '@/components/ui'
 import { useI18n } from '@/lib/i18n'
 import { tts } from '@/lib/tts'
 import type { VocabularyItem } from '@/lib/schemas'
 import type { Id } from '../../../convex/_generated/dataModel'
+
+/** Speech rate for vocabulary pronunciation */
+const PRONUNCIATION_RATE = 0.8
 
 interface VocabularyLearningProps {
     vocabulary: VocabularyItem[]
@@ -44,7 +55,7 @@ export function VocabularyLearning({ vocabulary, courseId, onComplete }: Vocabul
 
     const handlePlayPronunciation = useCallback((word: string, e: React.MouseEvent) => {
         e.stopPropagation()
-        tts.speak(word, { rate: 0.8 })
+        tts.speak(word, { rate: PRONUNCIATION_RATE })
     }, [])
 
     function renderVocabularyGroup(words: VocabularyItem[], category: VocabularyItem['category']) {
@@ -79,9 +90,7 @@ export function VocabularyLearning({ vocabulary, courseId, onComplete }: Vocabul
             <CardContent>
                 <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
-                        <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                        </svg>
+                        <BookOpenIcon className="w-5 h-5 text-primary-600" />
                     </div>
                     <div>
                         <h2 className="text-xl font-bold text-foreground">{t.vocabulary.title}</h2>
@@ -91,7 +100,7 @@ export function VocabularyLearning({ vocabulary, courseId, onComplete }: Vocabul
 
                 {/* Progress hint */}
                 <div className="mb-6 text-sm text-muted-foreground">
-                    {viewedWords.size} / {vocabulary.length} words reviewed
+                    {viewedWords.size} / {vocabulary.length} {t.vocabulary.wordsReviewed}
                 </div>
 
                 {renderVocabularyGroup(essentialWords, 'essential')}
@@ -101,9 +110,7 @@ export function VocabularyLearning({ vocabulary, courseId, onComplete }: Vocabul
                 <div className="flex justify-end mt-6 pt-4 border-t border-border">
                     <Button onClick={onComplete} disabled={!allEssentialViewed}>
                         {t.common.next}
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
+                        <ChevronRightIcon className="w-4 h-4" />
                     </Button>
                 </div>
             </CardContent>
@@ -135,9 +142,7 @@ function VocabularyCard({ vocab, isExpanded, isViewed, onClick, onPlayPronunciat
                     <span className="font-bold text-foreground text-lg">{vocab.word}</span>
                     <span className="text-base text-muted-foreground">{vocab.pronunciation}</span>
                     {isViewed && (
-                        <svg className="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
+                        <CheckFilledIcon className="w-4 h-4 text-success" />
                     )}
                 </div>
                 <button
@@ -145,9 +150,7 @@ function VocabularyCard({ vocab, isExpanded, isViewed, onClick, onPlayPronunciat
                     className="p-2 rounded-full hover:bg-primary-100 transition-colors"
                     aria-label={t.vocabulary.playPronunciation}
                 >
-                    <svg className="w-5 h-5 text-primary-600" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
-                    </svg>
+                    <VolumeHighIcon className="w-5 h-5 text-primary-600" />
                 </button>
             </div>
 

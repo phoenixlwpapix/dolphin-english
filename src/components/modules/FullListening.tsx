@@ -1,7 +1,16 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
-import { Card, CardContent, Button } from '@/components/ui'
+import {
+    Card,
+    CardContent,
+    Button,
+    PlayIcon,
+    PauseIcon,
+    StopIcon,
+    ChevronRightIcon,
+    SpeakerIcon,
+} from '@/components/ui'
 import { useI18n } from '@/lib/i18n'
 import { tts, TTS_SPEEDS, type TTSSpeed } from '@/lib/tts'
 import type { VocabularyItem } from '@/lib/schemas'
@@ -24,11 +33,22 @@ export function FullListening({ content, vocabulary = [], onComplete }: FullList
 
     // Pre-calculate sentences and paragraphs layout
     const { paragraphs, sentences } = useMemo(() => {
+        interface SentenceData {
+            text: string
+            start: number
+            end: number
+            index: number
+        }
+        interface ParagraphData {
+            sentences: SentenceData[]
+            index: number
+        }
+
         const sentenceRegex = /[^.!?\n]+(?:[.!?]+["']?|$)/g
         const parts = content.split(/(\n+)/)
 
-        const resultParagraphs: { sentences: any[], index: number }[] = []
-        const resultSentences: any[] = []
+        const resultParagraphs: ParagraphData[] = []
+        const resultSentences: SentenceData[] = []
         let globalOffset = 0
         let sIndex = 0
 
@@ -160,10 +180,10 @@ export function FullListening({ content, vocabulary = [], onComplete }: FullList
         // Sort vocabulary by length descending to match longest phrases first
         const sortedVocab = [...vocabulary].sort((a, b) => b.word.length - a.word.length)
 
-        let parts: (string | JSX.Element)[] = [text]
+        let parts: React.ReactNode[] = [text]
 
         sortedVocab.forEach(vocab => {
-            const newParts: (string | JSX.Element)[] = []
+            const newParts: React.ReactNode[] = []
             parts.forEach(part => {
                 if (typeof part !== 'string') {
                     newParts.push(part)
@@ -183,10 +203,10 @@ export function FullListening({ content, vocabulary = [], onComplete }: FullList
                                     {segment}
                                 </span>
                                 {/* Tooltip */}
-                                <span className="invisible group-hover:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 text-white text-sm rounded-lg shadow-xl w-48 text-center z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span className="invisible group-hover:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-5 py-3 !bg-white !text-slate-900 text-sm font-medium rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] border border-slate-100 ring-1 ring-slate-900/5 w-max max-w-[300px] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out transform translate-y-2 group-hover:translate-y-0">
                                     {vocab.definitionCN || vocab.definition}
                                     {/* Arrow */}
-                                    <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-slate-900"></span>
+                                    <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-[8px] border-transparent !border-t-white"></span>
                                 </span>
                             </span>
                         )
@@ -206,9 +226,7 @@ export function FullListening({ content, vocabulary = [], onComplete }: FullList
             <CardContent>
                 <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
-                        <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                        </svg>
+                        <SpeakerIcon className="w-5 h-5 text-primary-600" />
                     </div>
                     <div>
                         <h2 className="text-xl font-bold text-foreground">{t.listening.title}</h2>
@@ -220,25 +238,19 @@ export function FullListening({ content, vocabulary = [], onComplete }: FullList
                 <div className="flex items-center gap-3 mb-6 flex-wrap">
                     {!isPlaying ? (
                         <Button onClick={handlePlay}>
-                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M8 5v14l11-7z" />
-                            </svg>
+                            <PlayIcon className="w-5 h-5" />
                             {isPaused ? t.listening.resume : t.listening.playAll}
                         </Button>
                     ) : (
                         <Button onClick={handlePause} variant="secondary">
-                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-                            </svg>
+                            <PauseIcon className="w-5 h-5" />
                             {t.listening.pause}
                         </Button>
                     )}
 
                     {(isPlaying || isPaused) && (
                         <Button variant="ghost" onClick={handleStop}>
-                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M6 6h12v12H6z" />
-                            </svg>
+                            <StopIcon className="w-5 h-5" />
                         </Button>
                     )}
 
@@ -281,8 +293,8 @@ export function FullListening({ content, vocabulary = [], onComplete }: FullList
                                         key={s.index}
                                         ref={isActive ? activeSentenceRef : null}
                                         className={`transition-colors duration-200 decoration-clone ${isActive
-                                                ? 'bg-primary-100 text-primary-900 rounded px-1 -mx-1 py-0.5'
-                                                : ''
+                                            ? 'bg-primary-100 text-primary-900 rounded px-1 -mx-1 py-0.5'
+                                            : ''
                                             }`}
                                     >
                                         {renderTextWithVocabulary(s.text)}
@@ -291,7 +303,7 @@ export function FullListening({ content, vocabulary = [], onComplete }: FullList
                             })}
                         </p>
                     )) : (
-                        <p className="text-muted-foreground italic">No content to display</p>
+                        <p className="text-muted-foreground italic">{t.reproduction.noContent}</p>
                     )}
                 </div>
 
@@ -299,9 +311,7 @@ export function FullListening({ content, vocabulary = [], onComplete }: FullList
                 <div className="flex justify-end mt-6">
                     <Button onClick={onComplete} disabled={!hasListened} variant={hasListened ? 'primary' : 'secondary'}>
                         {t.common.next}
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
+                        <ChevronRightIcon className="w-4 h-4" />
                     </Button>
                 </div>
             </CardContent>

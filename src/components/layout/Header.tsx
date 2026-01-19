@@ -28,7 +28,7 @@ export function Header({ children }: HeaderProps) {
                         />
                     </div>
                     <div>
-                        <h1 className="text-xl font-bold text-foreground tracking-tight">{t.app.title}</h1>
+                        <h1 className="text-3xl font-bold text-primary font-handwriting">{t.app.title}</h1>
                         <p className="text-sm text-muted-foreground font-medium">{t.app.subtitle}</p>
                     </div>
                 </div>

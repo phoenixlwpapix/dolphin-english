@@ -5,11 +5,19 @@ import { useParams, useRouter } from 'next/navigation'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '../../../../convex/_generated/api'
 import { Header } from '@/components/layout'
-import { Button, Card, ModuleSteps, ConfirmModal } from '@/components/ui'
+import {
+    Button,
+    Card,
+    ModuleSteps,
+    ConfirmModal,
+    ChevronLeftIcon,
+    ClockIcon,
+    RotateCwIcon,
+    TrashIcon,
+} from '@/components/ui'
 import { useI18n } from '@/lib/i18n'
 import type { Id } from '../../../../convex/_generated/dataModel'
-
-// Module components
+import { MODULE_TIMES, TOTAL_MODULES, DIFFICULTY_CONFIG } from '@/lib/constants'
 import {
     LearningObjectives,
     FullListening,
@@ -19,8 +27,7 @@ import {
     ContentReproduction
 } from '@/components/modules'
 
-const MODULE_TIMES = [2, 6, 12, 5, 5, 2] // in minutes
-const TOTAL_MODULES = 6
+// Module components
 
 export default function CoursePage() {
     const params = useParams()
@@ -127,9 +134,7 @@ export default function CoursePage() {
                     <div className="hidden lg:block lg:col-span-3">
                         <div className="sticky top-24 space-y-6">
                             <Button variant="ghost" size="sm" className="-ml-3 mb-2" onClick={() => router.push('/')}>
-                                <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                </svg>
+                                <ChevronLeftIcon className="w-5 h-5 mr-1" />
                                 {t.common.back}
                             </Button>
 
@@ -137,14 +142,11 @@ export default function CoursePage() {
                                 <div>
                                     <h1 className="text-xl font-bold text-foreground mb-3 leading-tight">{course.title}</h1>
                                     <div className="flex flex-wrap gap-2 text-xs text-muted-foreground mb-4">
-                                        <span className={`px-2 py-0.5 rounded-full ${course.difficulty === 'A2' ? 'bg-green-100 text-green-700' :
-                                            course.difficulty === 'A2+' ? 'bg-yellow-100 text-yellow-700' :
-                                                'bg-red-100 text-red-700'
-                                            }`}>
+                                        <span className={`px-2 py-0.5 rounded-full ${DIFFICULTY_CONFIG[course.difficulty].color}`}>
                                             {course.difficulty}
                                         </span>
                                         <span className="flex items-center">
-                                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            <ClockIcon className="w-3 h-3 mr-1" />
                                             {MODULE_TIMES.reduce((a, b) => a + b, 0)} {t.course.minutes}
                                         </span>
                                     </div>
@@ -161,6 +163,7 @@ export default function CoursePage() {
                                         currentModule={currentModule}
                                         completedModules={progress?.completedModules ?? []}
                                         moduleNames={moduleNames}
+                                        moduleTimes={MODULE_TIMES}
                                         onModuleClick={handleModuleClick}
                                         orientation="vertical"
                                     />
@@ -169,9 +172,7 @@ export default function CoursePage() {
                                 <div className="border-t border-border/50 pt-6 space-y-3">
                                     {isComplete && (
                                         <Button variant="secondary" className="w-full justify-center" onClick={handleRestart}>
-                                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                            </svg>
+                                            <RotateCwIcon className="w-4 h-4 mr-2" />
                                             {t.common.restart}
                                         </Button>
                                     )}
@@ -181,9 +182,7 @@ export default function CoursePage() {
                                         className="w-full justify-center"
                                         onClick={handleDelete}
                                     >
-                                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
+                                        <TrashIcon className="w-4 h-4 mr-2" />
                                         {t.common.deleteCourse}
                                     </Button>
                                 </div>
@@ -197,23 +196,17 @@ export default function CoursePage() {
                         <div className="lg:hidden mb-6">
                             <div className="flex items-center justify-between mb-4">
                                 <Button variant="ghost" size="sm" className="-ml-2" onClick={() => router.push('/')}>
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                    </svg>
+                                    <ChevronLeftIcon className="w-5 h-5" />
                                 </Button>
                                 <h1 className="text-lg font-bold text-foreground text-center flex-1 mx-2 truncate">{course.title}</h1>
                                 <div className="flex items-center gap-1">
                                     {isComplete && (
                                         <Button variant="ghost" size="sm" onClick={handleRestart}>
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                            </svg>
+                                            <RotateCwIcon className="w-5 h-5" />
                                         </Button>
                                     )}
                                     <Button variant="danger" size="sm" onClick={handleDelete}>
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
+                                        <TrashIcon className="w-5 h-5" />
                                     </Button>
                                 </div>
                             </div>
@@ -282,8 +275,8 @@ export default function CoursePage() {
                 title={confirmState.type === 'restart' ? t.common.restart : t.common.delete}
                 description={
                     confirmState.type === 'restart'
-                        ? `${t.common.restart}? ${t.common.confirm}?`
-                        : `${t.common.delete}? ${t.common.confirm}?`
+                        ? t.common.restartConfirm
+                        : t.common.deleteConfirm
                 }
                 confirmText={t.common.confirm}
                 cancelText={t.common.cancel}

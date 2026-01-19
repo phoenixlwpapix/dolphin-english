@@ -15,6 +15,8 @@ export interface Translations {
         restart: string
         created: string
         deleteCourse: string
+        restartConfirm: string
+        deleteConfirm: string
     }
     app: {
         title: string
@@ -76,6 +78,7 @@ export interface Translations {
         languagePoints: string
         practice: string
         listenAgain: string
+        stop: string
     }
     vocabulary: {
         title: string
@@ -85,6 +88,7 @@ export interface Translations {
         definition: string
         example: string
         playPronunciation: string
+        wordsReviewed: string
     }
     quiz: {
         title: string
@@ -97,6 +101,11 @@ export interface Translations {
         score: string
         passed: string
         tryAgain: string
+        questionTypes: {
+            mainIdea: string
+            detail: string
+            vocabulary: string
+        }
     }
     reproduction: {
         title: string
@@ -105,6 +114,9 @@ export interface Translations {
         paraphrase: string
         dragToSort: string
         selectAnswer: string
+        keywordHint: string
+        keySummaries: string
+        noContent: string
     }
     settings: {
         language: string
@@ -130,12 +142,14 @@ export const zh: Translations = {
         restart: '重新开始',
         created: '创建时间',
         deleteCourse: '删除课程',
+        restartConfirm: '确定要重新开始吗？',
+        deleteConfirm: '确定要删除这个课程吗？',
     },
 
     // App
     app: {
         title: 'Dolphin English',
-        subtitle: '通过真实文章学习英语',
+        subtitle: '让每篇文章都变成一堂英语课',
     },
 
     // Homepage
@@ -207,6 +221,7 @@ export const zh: Translations = {
         languagePoints: '语言点',
         practice: '跟读练习',
         listenAgain: '再听一次',
+        stop: '停止',
     },
 
     // Module 4: Vocabulary
@@ -218,6 +233,7 @@ export const zh: Translations = {
         definition: '释义',
         example: '原文例句',
         playPronunciation: '播放发音',
+        wordsReviewed: '已复习单词',
     },
 
     // Module 5: Quiz
@@ -232,6 +248,11 @@ export const zh: Translations = {
         score: '得分',
         passed: '通过',
         tryAgain: '再试一次',
+        questionTypes: {
+            mainIdea: '主旨理解',
+            detail: '细节定位',
+            vocabulary: '词义理解',
+        },
     },
 
     // Module 6: Reproduction
@@ -242,6 +263,9 @@ export const zh: Translations = {
         paraphrase: '句型改写',
         dragToSort: '拖拽排序',
         selectAnswer: '选择正确的改写',
+        keywordHint: '使用这些关键词复述文章主旨：',
+        keySummaries: '文章关键要点：',
+        noContent: '没有可显示的内容',
     },
 
     // Settings

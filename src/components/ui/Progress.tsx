@@ -56,6 +56,7 @@ interface ModuleStepsProps {
     totalModules?: number
     onModuleClick?: (module: number) => void
     moduleNames: string[]
+    moduleTimes?: number[]
 }
 
 export function ModuleSteps({
@@ -64,6 +65,7 @@ export function ModuleSteps({
     totalModules = 6,
     onModuleClick,
     moduleNames,
+    moduleTimes,
     orientation = 'horizontal',
 }: ModuleStepsProps & { orientation?: 'horizontal' | 'vertical' }) {
     const isVertical = orientation === 'vertical'
@@ -78,7 +80,7 @@ export function ModuleSteps({
                 return (
                     <div
                         key={moduleNum}
-                        className={`module-step flex ${isVertical ? 'flex-row items-center gap-3 w-full' : 'flex-col items-center flex-1'}`}
+                        className={`${!isVertical ? 'module-step' : ''} flex ${isVertical ? 'flex-row items-center gap-3 w-full' : 'flex-col items-center flex-1'}`}
                     >
                         <button
                             onClick={() => isAccessible && onModuleClick?.(moduleNum)}
@@ -114,6 +116,11 @@ export function ModuleSteps({
                         >
                             {moduleNames[moduleNum - 1]}
                         </span>
+                        {isVertical && moduleTimes && (
+                            <span className="ml-auto text-xs text-muted-foreground font-medium whitespace-nowrap">
+                                {moduleTimes[moduleNum - 1]} min
+                            </span>
+                        )}
                     </div>
                 )
             })}

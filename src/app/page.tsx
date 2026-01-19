@@ -4,11 +4,19 @@ import { useState } from 'react'
 import { useQuery } from 'convex/react'
 import { api } from '../../convex/_generated/api'
 import { Header } from '@/components/layout'
-import { Button, Card, CardContent, ProgressBar } from '@/components/ui'
+import {
+  Button,
+  Card,
+  CardContent,
+  ProgressBar,
+  PlusIcon,
+  BookOpenIcon,
+  CalendarIcon,
+  ChartBarIcon,
+} from '@/components/ui'
 import { useI18n } from '@/lib/i18n'
 import { CreateCourseModal } from '@/components/course/CreateCourseModal'
-
-const TOTAL_MODULES = 6
+import { TOTAL_MODULES, DIFFICULTY_CONFIG } from '@/lib/constants'
 
 function getProgressPercentage(completedModules: number[] | undefined): number {
   if (!completedModules) return 0
@@ -35,9 +43,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-background">
       <Header>
         <Button onClick={() => setIsCreateModalOpen(true)}>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
+          <PlusIcon className="w-5 h-5" />
           {t.home.newCourse}
         </Button>
       </Header>
@@ -54,26 +60,12 @@ export default function HomePage() {
           <Card variant="outlined" className="py-16 text-center">
             <CardContent>
               <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-primary-100 flex items-center justify-center">
-                <svg
-                  className="w-10 h-10 text-primary-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                  />
-                </svg>
+                <BookOpenIcon className="w-10 h-10 text-primary-500" />
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">{t.home.noCourses}</h3>
               <p className="text-muted-foreground mb-6">{t.home.noCoursesDesc}</p>
               <Button size="lg" onClick={() => setIsCreateModalOpen(true)}>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
+                <PlusIcon className="w-5 h-5" />
                 {t.home.newCourse}
               </Button>
             </CardContent>
@@ -127,13 +119,7 @@ interface CourseCardProps {
 function CourseCard({ course, progress, t, formatDate }: CourseCardProps & { progress?: CourseWithProgress['progress'] }) {
   const progressPercent = getProgressPercentage(course.progress?.completedModules)
 
-  const difficultyConfig = {
-    A2: { color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 dark:text-emerald-400', label: 'Elementary' },
-    'A2+': { color: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 dark:text-amber-400', label: 'Upper Elementary' },
-    B1: { color: 'text-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-400', label: 'Intermediate' },
-  }
-
-  const config = difficultyConfig[course.difficulty]
+  const config = DIFFICULTY_CONFIG[course.difficulty]
 
   return (
     <a href={`/course/${course._id}`} className="block group">
@@ -158,16 +144,12 @@ function CourseCard({ course, progress, t, formatDate }: CourseCardProps & { pro
           {/* Creation Date & Stats */}
           <div className="flex flex-col gap-3 mb-6">
             <div className="flex items-center text-xs text-muted-foreground font-medium">
-              <svg className="w-3.5 h-3.5 mr-1.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <span>{t.common?.created || 'Created'}: {formatDate(course._creationTime)}</span>
+              <CalendarIcon className="w-3.5 h-3.5 mr-1.5 opacity-70" />
+              <span>{t.common.created}: {formatDate(course._creationTime)}</span>
             </div>
 
             <div className="flex items-center text-xs text-muted-foreground font-medium">
-              <svg className="w-3.5 h-3.5 mr-1.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
+              <ChartBarIcon className="w-3.5 h-3.5 mr-1.5 opacity-70" />
               <span>{course.wordCount} {t.create.wordCount}</span>
             </div>
           </div>

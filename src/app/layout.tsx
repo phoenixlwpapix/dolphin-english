@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Outfit } from 'next/font/google'
+import { Outfit, Mali } from 'next/font/google'
 import './globals.css'
 import { Providers } from './Providers'
 
@@ -7,6 +7,13 @@ const outfit = Outfit({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-sans',
+})
+
+const mali = Mali({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-mali',
 })
 
 export const metadata: Metadata = {
@@ -21,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" suppressHydrationWarning>
-      <body className={`${outfit.variable} font-sans antialiased bg-gray-50 text-gray-900`}>
+      <body className={`${outfit.variable} ${mali.variable} font-sans antialiased bg-gray-50 text-gray-900`}>
         <Providers>{children}</Providers>
       </body>
     </html>

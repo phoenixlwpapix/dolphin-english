@@ -15,12 +15,16 @@ export const en: Translations = {
         previous: 'Previous',
         complete: 'Complete',
         restart: 'Restart',
+        created: 'Created',
+        deleteCourse: 'Delete Course',
+        restartConfirm: 'Are you sure you want to restart?',
+        deleteConfirm: 'Are you sure you want to delete this course?',
     },
 
     // App
     app: {
         title: 'Dolphin English',
-        subtitle: 'Learn English through real articles',
+        subtitle: 'Turn every article into an English lesson',
     },
 
     // Homepage
@@ -92,6 +96,7 @@ export const en: Translations = {
         languagePoints: 'Language Points',
         practice: 'Read Along',
         listenAgain: 'Listen Again',
+        stop: 'Stop',
     },
 
     // Module 4: Vocabulary
@@ -103,6 +108,7 @@ export const en: Translations = {
         definition: 'Definition',
         example: 'Example from article',
         playPronunciation: 'Play pronunciation',
+        wordsReviewed: 'words reviewed',
     },
 
     // Module 5: Quiz
@@ -117,6 +123,11 @@ export const en: Translations = {
         score: 'Score',
         passed: 'Passed',
         tryAgain: 'Try Again',
+        questionTypes: {
+            mainIdea: 'Main Idea',
+            detail: 'Detail',
+            vocabulary: 'Vocabulary',
+        },
     },
 
     // Module 6: Reproduction
@@ -127,6 +138,9 @@ export const en: Translations = {
         paraphrase: 'Sentence Paraphrase',
         dragToSort: 'Drag to sort',
         selectAnswer: 'Select the correct paraphrase',
+        keywordHint: 'Use these keywords to retell the main ideas of the article:',
+        keySummaries: 'Key summaries from the article:',
+        noContent: 'No content to display',
     },
 
     // Settings
