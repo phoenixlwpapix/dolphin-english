@@ -53,9 +53,9 @@ export function VocabularyLearning({ vocabulary, courseId, onComplete }: Vocabul
         setExpandedWord(expandedWord === word ? null : word)
     }, [viewedWords, expandedWord, courseId, recordVocabularyClickMutation])
 
-    const handlePlayPronunciation = useCallback((word: string, e: React.MouseEvent) => {
+    const handlePlayPronunciation = useCallback(async (word: string, e: React.MouseEvent) => {
         e.stopPropagation()
-        tts.speak(word, { rate: PRONUNCIATION_RATE })
+        await tts.speak(word, { rate: PRONUNCIATION_RATE })
     }, [])
 
     function renderVocabularyGroup(words: VocabularyItem[], category: VocabularyItem['category']) {

@@ -112,7 +112,11 @@ export function FullListening({ content, vocabulary = [], onComplete }: FullList
         }
     }, [activeSentenceIndex])
 
-    const handlePlay = useCallback(() => {
+    const totalLength = useMemo(() => {
+        return sentences.reduce((acc, s) => acc + s.text.length, 0)
+    }, [sentences])
+
+    const handlePlay = useCallback(async () => {
         if (isPaused) {
             tts.resume()
             setIsPaused(false)
@@ -123,18 +127,40 @@ export function FullListening({ content, vocabulary = [], onComplete }: FullList
         setIsPlaying(true)
         setActiveSentenceIndex(0)
 
-        tts.speak(
+        let sentenceTimeMap: { start: number; end: number; index: number }[] = []
+
+        await tts.speak(
             content,
             {
                 rate: TTS_SPEEDS[speed],
-                onBoundary: (charIndex) => {
-                    const match = sentences.find(s => charIndex >= s.start && charIndex < s.end)
-                    if (match) {
+            },
+            (event, data) => {
+                if (event === 'start' && data && typeof data === 'object' && 'duration' in data) {
+                    // Calculate sentence timings based on length proportion
+                    const duration = (data as { duration: number }).duration
+                    let currentTime = 0
+
+                    sentenceTimeMap = sentences.map(s => {
+                        const proportion = s.text.length / totalLength
+                        const sentenceDuration = proportion * duration
+                        const timing = {
+                            start: currentTime,
+                            end: currentTime + sentenceDuration,
+                            index: s.index
+                        }
+                        currentTime += sentenceDuration
+                        return timing
+                    })
+                }
+
+                if (event === 'progress' && data && typeof data === 'object' && 'currentTime' in data) {
+                    const currentTime = (data as { currentTime: number }).currentTime
+                    const match = sentenceTimeMap.find(s => currentTime >= s.start && currentTime < s.end)
+                    if (match && match.index !== activeSentenceIndex) {
                         setActiveSentenceIndex(match.index)
                     }
-                },
-            },
-            (event) => {
+                }
+
                 if (event === 'end') {
                     setIsPlaying(false)
                     setIsPaused(false)
@@ -143,7 +169,7 @@ export function FullListening({ content, vocabulary = [], onComplete }: FullList
                 }
             }
         )
-    }, [content, sentences, speed, isPaused])
+    }, [content, speed, isPaused, sentences, totalLength])
 
     const handlePause = useCallback(() => {
         tts.pause()
@@ -164,9 +190,7 @@ export function FullListening({ content, vocabulary = [], onComplete }: FullList
         }
     }, [])
 
-    useEffect(() => {
-        tts.preloadVoices()
-    }, [])
+
 
     const speedLabels: Record<TTSSpeed, string> = {
         slow: t.listening.slow,
