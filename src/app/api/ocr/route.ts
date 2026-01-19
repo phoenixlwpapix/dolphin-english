@@ -30,12 +30,16 @@ export async function POST(req: Request) {
                         },
                         {
                             type: 'text',
-                            text: `Extract all English text from this image. 
-              
-Output ONLY the extracted text, nothing else. 
-Preserve paragraph structure.
-If there is no English text in the image, respond with "NO_TEXT_FOUND".
-Do not add any commentary, headers, or explanations.`,
+                            text: `Extract all English text from this image.
+
+CRITICAL RULES:
+- Output ONLY the extracted text as plain text
+- Do NOT use any Markdown formatting (no **, ##, *, _, etc.)
+- Do NOT add bold markers, headers, or any special symbols
+- Preserve the original paragraph structure with line breaks
+- Keep the text exactly as it appears in the image
+- If there is no English text in the image, respond with "NO_TEXT_FOUND"
+- Do not add any commentary, headers, or explanations`,
                         },
                     ],
                 },
