@@ -8,18 +8,23 @@ export const maxDuration = 60
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!)
 
-const ANALYSIS_PROMPT = `You are an expert English language teaching assistant specializing in CEFR A2-B1 level content analysis.
+function getAnalysisPrompt(language: 'zh' | 'en') {
+    const learningObjectivesInstruction = language === 'zh'
+        ? '3. **Learning Objectives**: Generate 3-5 clear learning objectives in **Chinese (中文)**, each starting with an action verb (理解, 识别, 运用, 解释, 掌握, 学会, etc.)'
+        : '3. **Learning Objectives**: Generate 3-5 clear learning objectives in simple English, each starting with an action verb (understand, recognize, use, explain, etc.)'
+
+    return `You are an expert English language teaching assistant specializing in content analysis across all CEFR levels.
 
 Analyze the following English article and provide:
 
 1. **Title**: Generate a descriptive title for this article
 2. **Difficulty Assessment**: 
-   - Level: A2, A2+, or B1
+   - Level: Assess the CEFR level (A1, A1+, A2, A2+, B1, B1+, B2, B2+, C1, C1+, or C2)
    - Word count
-   - Percentage of vocabulary beyond B1 level (should be under 8%)
+   - Percentage of vocabulary beyond the assessed level
    - Brief explanation of the difficulty
 
-3. **Learning Objectives**: Generate 3-5 clear learning objectives in simple English, each starting with an action verb (understand, recognize, use, explain, etc.)
+${learningObjectivesInstruction}
 
 4. **Paragraph Analysis**: For each paragraph:
    - One-sentence summary in simplified English
@@ -38,14 +43,15 @@ Analyze the following English article and provide:
    Include 4 options each, the correct answer index, and a reference quote from the article.
 
 Important guidelines:
-- Use simple, clear English suitable for A2-B1 learners
+- Adapt your language complexity based on the assessed CEFR level
 - All language points should be practical and immediately usable
 - Questions should test genuine understanding, not just word matching
-- Make sure vocabulary definitions are accessible to intermediate learners`
+- Make sure vocabulary definitions are accessible to learners at the assessed level`
+}
 
 export async function POST(req: Request) {
     try {
-        const { text } = await req.json()
+        const { text, language = 'en' } = await req.json()
 
         if (!text || typeof text !== 'string') {
             return Response.json({ error: 'No text provided' }, { status: 400 })
@@ -61,7 +67,7 @@ export async function POST(req: Request) {
         const { output } = await generateText({
             model: google('gemini-3-flash-preview'),
             output: Output.object({ schema: articleAnalysisSchema }),
-            prompt: `${ANALYSIS_PROMPT}\n\n---\n\nARTICLE:\n${text}`,
+            prompt: `${getAnalysisPrompt(language)}\n\n---\n\nARTICLE:\n${text}`,
         })
 
         if (!output) {

@@ -94,6 +94,9 @@ export function WarningIcon(props: IconProps) {
     )
 }
 
+/** Alert triangle icon - alias for WarningIcon */
+export const AlertTriangleIcon = WarningIcon
+
 /** Speaker/volume icon for audio playback */
 export function SpeakerIcon(props: IconProps) {
     return (
@@ -205,9 +208,33 @@ export function RotateCwIcon(props: IconProps) {
 /** Trash/Delete icon */
 export function TrashIcon(props: IconProps) {
     return (
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+            <path d="M3 6h18" />
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
         </svg>
     )
 }
 
+/** Search/Magnifying glass icon */
+export function SearchIcon(props: IconProps) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+        </svg>
+    )
+}
+
+/** Sort/Arrow down icon */
+export function SortIcon(props: IconProps) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+            <path d="m3 16 4 4 4-4" />
+            <path d="M7 20V4" />
+            <path d="M11 4h10" />
+            <path d="M11 8h7" />
+            <path d="M11 12h4" />
+        </svg>
+    )
+}

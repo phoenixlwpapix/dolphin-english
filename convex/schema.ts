@@ -49,7 +49,14 @@ export default defineSchema({
     courses: defineTable({
         title: v.string(),
         content: v.string(),
-        difficulty: v.union(v.literal("A2"), v.literal("A2+"), v.literal("B1")),
+        difficulty: v.union(
+            v.literal("A1"), v.literal("A1+"),
+            v.literal("A2"), v.literal("A2+"),
+            v.literal("B1"), v.literal("B1+"),
+            v.literal("B2"), v.literal("B2+"),
+            v.literal("C1"), v.literal("C1+"),
+            v.literal("C2")
+        ),
         wordCount: v.number(),
         analyzedData: v.optional(courseAnalysisValidator),
     }),

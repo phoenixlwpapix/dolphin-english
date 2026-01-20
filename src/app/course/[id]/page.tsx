@@ -123,6 +123,7 @@ export default function CoursePage() {
 
     const currentModule = progress?.currentModule ?? 1
     const isComplete = progress?.completedModules.length === TOTAL_MODULES
+    const hasProgress = (progress?.currentModule ?? 1) > 1 || (progress?.completedModules.length ?? 0) > 0
 
     return (
         <div className="min-h-screen bg-background pb-20">
@@ -170,7 +171,7 @@ export default function CoursePage() {
                                 </div>
 
                                 <div className="border-t border-border/50 pt-6 space-y-3">
-                                    {isComplete && (
+                                    {hasProgress && (
                                         <Button variant="secondary" className="w-full justify-center" onClick={handleRestart}>
                                             <RotateCwIcon className="w-4 h-4 mr-2" />
                                             {t.common.restart}
@@ -200,7 +201,7 @@ export default function CoursePage() {
                                 </Button>
                                 <h1 className="text-lg font-bold text-foreground text-center flex-1 mx-2 truncate">{course.title}</h1>
                                 <div className="flex items-center gap-1">
-                                    {isComplete && (
+                                    {hasProgress && (
                                         <Button variant="ghost" size="sm" onClick={handleRestart}>
                                             <RotateCwIcon className="w-5 h-5" />
                                         </Button>

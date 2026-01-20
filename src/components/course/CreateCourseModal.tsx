@@ -14,7 +14,7 @@ interface CreateCourseModalProps {
 type InputMode = 'text' | 'image'
 
 export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseModalProps) {
-    const { t } = useI18n()
+    const { t, language } = useI18n()
     const [mode, setMode] = useState<InputMode>('text')
     const [text, setText] = useState('')
     const [imageFile, setImageFile] = useState<File | null>(null)
@@ -27,8 +27,8 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
 
     function getWordCountStatus(): { color: string; message: string } {
         if (wordCount === 0) return { color: 'text-muted-foreground', message: t.create.recommended }
-        if (wordCount < 350) return { color: 'text-warning', message: t.create.tooShort }
-        if (wordCount > 600) return { color: 'text-warning', message: t.create.tooLong }
+        if (wordCount < 200) return { color: 'text-warning', message: t.create.tooShort }
+        if (wordCount > 800) return { color: 'text-warning', message: t.create.tooLong }
         return { color: 'text-success', message: t.create.recommended }
     }
 
@@ -99,7 +99,7 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
             const analyzeResponse = await fetch('/api/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: articleText }),
+                body: JSON.stringify({ text: articleText, language }),
             })
 
             if (!analyzeResponse.ok) {

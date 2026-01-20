@@ -30,6 +30,12 @@ export interface Translations {
         lastStudied: string
         progress: string
         difficulty: string
+        searchPlaceholder: string
+        allDifficulties: string
+        sortByLastStudied: string
+        sortByCreationDate: string
+        noResults: string
+        clearFilters: string
     }
     create: {
         title: string
@@ -161,6 +167,12 @@ export const zh: Translations = {
         lastStudied: '上次学习',
         progress: '进度',
         difficulty: '难度',
+        searchPlaceholder: '搜索课程标题...',
+        allDifficulties: '全部',
+        sortByLastStudied: '最近学习',
+        sortByCreationDate: '创建时间',
+        noResults: '没有找到匹配的课程',
+        clearFilters: '清空筛选',
     },
 
     // Create Course

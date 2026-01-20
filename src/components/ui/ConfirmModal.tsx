@@ -3,6 +3,7 @@
 import React from 'react'
 import { Modal } from './Modal'
 import { Button } from './Button'
+import { AlertTriangleIcon, TrashIcon } from './Icons'
 
 interface ConfirmModalProps {
     isOpen: boolean
@@ -27,19 +28,56 @@ export function ConfirmModal({
     variant = 'default',
     isLoading = false,
 }: ConfirmModalProps) {
+    const isDestructive = variant === 'destructive'
+
     return (
-        <Modal isOpen={isOpen} onClose={onClose} size="sm" title={title} showCloseButton={false}>
-            <div className="py-2">
-                <p className="text-muted-foreground">{description}</p>
+        <Modal isOpen={isOpen} onClose={onClose} size="sm" showCloseButton={false}>
+            <div className="flex flex-col items-center text-center py-2">
+                {/* Icon */}
+                <div
+                    className={`
+                        w-14 h-14 rounded-full flex items-center justify-center mb-5
+                        ${isDestructive
+                            ? 'bg-gradient-to-br from-red-100 to-red-50 dark:from-red-900/30 dark:to-red-800/20'
+                            : 'bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-900/30 dark:to-amber-800/20'
+                        }
+                    `}
+                >
+                    {isDestructive ? (
+                        <TrashIcon className="w-7 h-7 text-red-500 dark:text-red-400" />
+                    ) : (
+                        <AlertTriangleIcon className="w-7 h-7 text-amber-500 dark:text-amber-400" />
+                    )}
+                </div>
+
+                {/* Title */}
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                    {title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-muted-foreground text-sm leading-relaxed max-w-[280px]">
+                    {description}
+                </p>
             </div>
-            <div className="flex justify-end gap-3 mt-6">
-                <Button variant="ghost" onClick={onClose} disabled={isLoading}>
+
+            {/* Actions */}
+            <div className="flex gap-3 mt-6 pt-4 border-t border-border/50">
+                <Button
+                    variant="secondary"
+                    onClick={onClose}
+                    disabled={isLoading}
+                    className="flex-1"
+                    size="sm"
+                >
                     {cancelText}
                 </Button>
                 <Button
-                    variant={variant === 'destructive' ? 'danger' : 'primary'}
+                    variant={isDestructive ? 'danger' : 'primary'}
                     onClick={onConfirm}
                     isLoading={isLoading}
+                    className="flex-1"
+                    size="sm"
                 >
                     {confirmText}
                 </Button>

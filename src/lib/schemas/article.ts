@@ -53,9 +53,9 @@ export const courseAnalysisSchema = z.object({
 
 // Difficulty assessment schema
 export const difficultySchema = z.object({
-    level: z.enum(['A2', 'A2+', 'B1']).describe('CEFR difficulty level'),
+    level: z.enum(['A1', 'A1+', 'A2', 'A2+', 'B1', 'B1+', 'B2', 'B2+', 'C1', 'C1+', 'C2']).describe('CEFR difficulty level'),
     wordCount: z.number().describe('Total word count'),
-    beyondB1Percentage: z.number().describe('Percentage of vocabulary beyond B1 level'),
+    advancedVocabPercentage: z.number().describe('Percentage of vocabulary beyond the assessed level'),
     assessment: z.string().describe('Brief difficulty assessment explanation'),
 })
 

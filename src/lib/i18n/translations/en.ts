@@ -36,6 +36,12 @@ export const en: Translations = {
         lastStudied: 'Last studied',
         progress: 'Progress',
         difficulty: 'Difficulty',
+        searchPlaceholder: 'Search course titles...',
+        allDifficulties: 'All',
+        sortByLastStudied: 'Last Studied',
+        sortByCreationDate: 'Created',
+        noResults: 'No matching courses found',
+        clearFilters: 'Clear filters',
     },
 
     // Create Course
