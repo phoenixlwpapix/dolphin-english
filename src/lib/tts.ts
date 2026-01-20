@@ -1,181 +1,205 @@
 // TTS utility using native Web Speech API
 
-type TTSCallback = (event: 'start' | 'end' | 'word' | 'pause' | 'resume' | 'boundary', data?: unknown) => void
+type TTSCallback = (
+  event: "start" | "end" | "word" | "pause" | "resume" | "boundary",
+  data?: unknown,
+) => void;
 
 interface TTSOptions {
-    rate?: number // Speech rate: 0.1 to 10, default 1
-    onBoundary?: (charIndex: number, charLength: number) => void
+  rate?: number; // Speech rate: 0.1 to 10, default 1
+  onBoundary?: (charIndex: number, charLength: number) => void;
 }
 
 class TTSController {
-    private synth: SpeechSynthesis | null = null
-    private currentUtterance: SpeechSynthesisUtterance | null = null
-    private callback: TTSCallback | null = null
-    private femaleVoice: SpeechSynthesisVoice | null = null
-    private voicesLoaded = false
+  private synth: SpeechSynthesis | null = null;
+  private currentUtterance: SpeechSynthesisUtterance | null = null;
+  private callback: TTSCallback | null = null;
+  private femaleVoice: SpeechSynthesisVoice | null = null;
+  private voicesLoaded = false;
 
-    private getSynth(): SpeechSynthesis | null {
-        if (typeof window === 'undefined') return null
-        if (!this.synth) {
-            this.synth = window.speechSynthesis
+  private getSynth(): SpeechSynthesis | null {
+    if (typeof window === "undefined") return null;
+    if (!this.synth) {
+      this.synth = window.speechSynthesis;
+    }
+    return this.synth;
+  }
+
+  private async loadVoices(): Promise<void> {
+    const synth = this.getSynth();
+    if (!synth || this.voicesLoaded) return;
+
+    return new Promise((resolve) => {
+      const loadVoicesInternal = () => {
+        const voices = synth.getVoices();
+        if (voices.length > 0) {
+          // Prefer English female voices
+          const femaleVoices = voices.filter(
+            (voice) =>
+              voice.lang.startsWith("en") &&
+              (voice.name.toLowerCase().includes("female") ||
+                voice.name.toLowerCase().includes("samantha") ||
+                voice.name.toLowerCase().includes("karen") ||
+                voice.name.toLowerCase().includes("victoria") ||
+                voice.name.toLowerCase().includes("zira") ||
+                voice.name.toLowerCase().includes("hazel") ||
+                voice.name.toLowerCase().includes("susan") ||
+                voice.name.toLowerCase().includes("kate") ||
+                voice.name.toLowerCase().includes("google us english") ||
+                voice.name.toLowerCase().includes("microsoft zira")),
+          );
+
+          // Use the first female voice found, or fallback to any English voice
+          this.femaleVoice =
+            femaleVoices[0] ||
+            voices.find((v) => v.lang.startsWith("en-US")) ||
+            voices.find((v) => v.lang.startsWith("en")) ||
+            voices[0];
+
+          this.voicesLoaded = true;
+          resolve();
         }
-        return this.synth
+      };
+
+      // Voices might already be loaded
+      if (synth.getVoices().length > 0) {
+        loadVoicesInternal();
+      } else {
+        // Wait for voices to load
+        synth.onvoiceschanged = loadVoicesInternal;
+        // Fallback timeout
+        setTimeout(() => {
+          if (!this.voicesLoaded) {
+            loadVoicesInternal();
+          }
+        }, 1000);
+      }
+    });
+  }
+
+  async speak(
+    text: string,
+    options: TTSOptions = {},
+    callback?: TTSCallback,
+  ): Promise<boolean> {
+    const synth = this.getSynth();
+    if (!synth) return false;
+
+    // Stop any ongoing speech
+    this.stop();
+
+    this.callback = callback || null;
+
+    // Wait for voices to load before creating utterance
+    await this.loadVoices();
+
+    // Create new utterance
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    // Set language to English explicitly - this is critical for proper pronunciation
+    utterance.lang = "en-US";
+
+    // Set rate (0.1 to 10, default 1)
+    utterance.rate = options.rate ?? 1;
+
+    // Set pitch for more natural speech
+    utterance.pitch = 1;
+
+    // Set voice if available (must be set after lang)
+    if (this.femaleVoice) {
+      utterance.voice = this.femaleVoice;
     }
 
-    private async loadVoices(): Promise<void> {
-        const synth = this.getSynth()
-        if (!synth || this.voicesLoaded) return
+    // Event handlers
+    utterance.onstart = () => {
+      this.callback?.("start");
+    };
 
-        return new Promise((resolve) => {
-            const loadVoicesInternal = () => {
-                const voices = synth.getVoices()
-                if (voices.length > 0) {
-                    // Prefer English female voices
-                    const femaleVoices = voices.filter(voice =>
-                        voice.lang.startsWith('en') &&
-                        (voice.name.toLowerCase().includes('female') ||
-                            voice.name.toLowerCase().includes('samantha') ||
-                            voice.name.toLowerCase().includes('karen') ||
-                            voice.name.toLowerCase().includes('victoria') ||
-                            voice.name.toLowerCase().includes('zira') ||
-                            voice.name.toLowerCase().includes('hazel') ||
-                            voice.name.toLowerCase().includes('susan') ||
-                            voice.name.toLowerCase().includes('kate') ||
-                            voice.name.toLowerCase().includes('google us english') ||
-                            voice.name.toLowerCase().includes('microsoft zira'))
-                    )
+    utterance.onend = () => {
+      this.currentUtterance = null;
+      this.callback?.("end");
+    };
 
-                    // Use the first female voice found, or fallback to any English voice
-                    this.femaleVoice = femaleVoices[0] ||
-                        voices.find(v => v.lang.startsWith('en-US')) ||
-                        voices.find(v => v.lang.startsWith('en')) ||
-                        voices[0]
+    utterance.onpause = () => {
+      this.callback?.("pause");
+    };
 
-                    this.voicesLoaded = true
-                    resolve()
-                }
-            }
+    utterance.onresume = () => {
+      this.callback?.("resume");
+    };
 
-            // Voices might already be loaded
-            if (synth.getVoices().length > 0) {
-                loadVoicesInternal()
-            } else {
-                // Wait for voices to load
-                synth.onvoiceschanged = loadVoicesInternal
-                // Fallback timeout
-                setTimeout(() => {
-                    if (!this.voicesLoaded) {
-                        loadVoicesInternal()
-                    }
-                }, 1000)
-            }
-        })
-    }
+    utterance.onboundary = (event) => {
+      this.callback?.("boundary", {
+        charIndex: event.charIndex,
+        charLength: event.charLength ?? 1,
+      });
+      options.onBoundary?.(event.charIndex, event.charLength ?? 1);
+    };
 
-    speak(text: string, options: TTSOptions = {}, callback?: TTSCallback): boolean {
-        const synth = this.getSynth()
-        if (!synth) return false
+    utterance.onerror = (event) => {
+      console.error("TTS error:", event.error);
+      this.currentUtterance = null;
+      this.callback?.("end");
+    };
 
-        // Stop any ongoing speech
-        this.stop()
+    this.currentUtterance = utterance;
 
-        this.callback = callback || null
+    // Chrome has a bug where long texts get cut off.
+    // Cancel any pending speech and use a small delay to ensure clean state
+    synth.cancel();
 
-        // Create new utterance
-        const utterance = new SpeechSynthesisUtterance(text)
+    // Small delay to ensure the synthesis is ready
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
-        // Set rate (0.1 to 10, default 1)
-        utterance.rate = options.rate ?? 1
+    synth.speak(utterance);
 
-        // Load and set female voice
-        this.loadVoices().then(() => {
-            if (this.femaleVoice) {
-                utterance.voice = this.femaleVoice
-            }
-        })
+    return true;
+  }
 
-        // Event handlers
-        utterance.onstart = () => {
-            this.callback?.('start')
-        }
+  pause(): boolean {
+    const synth = this.getSynth();
+    if (!synth || !this.currentUtterance) return false;
 
-        utterance.onend = () => {
-            this.currentUtterance = null
-            this.callback?.('end')
-        }
+    synth.pause();
+    return true;
+  }
 
-        utterance.onpause = () => {
-            this.callback?.('pause')
-        }
+  resume(): boolean {
+    const synth = this.getSynth();
+    if (!synth) return false;
 
-        utterance.onresume = () => {
-            this.callback?.('resume')
-        }
+    synth.resume();
+    return true;
+  }
 
-        utterance.onboundary = (event) => {
-            this.callback?.('boundary', {
-                charIndex: event.charIndex,
-                charLength: event.charLength ?? 1
-            })
-            options.onBoundary?.(event.charIndex, event.charLength ?? 1)
-        }
+  stop(): boolean {
+    const synth = this.getSynth();
+    if (!synth) return false;
 
-        utterance.onerror = (event) => {
-            console.error('TTS error:', event.error)
-            this.currentUtterance = null
-            this.callback?.('end')
-        }
+    synth.cancel();
+    this.currentUtterance = null;
+    return true;
+  }
 
-        this.currentUtterance = utterance
-        synth.speak(utterance)
+  get isSpeaking(): boolean {
+    const synth = this.getSynth();
+    return synth?.speaking ?? false;
+  }
 
-        return true
-    }
-
-    pause(): boolean {
-        const synth = this.getSynth()
-        if (!synth || !this.currentUtterance) return false
-
-        synth.pause()
-        return true
-    }
-
-    resume(): boolean {
-        const synth = this.getSynth()
-        if (!synth) return false
-
-        synth.resume()
-        return true
-    }
-
-    stop(): boolean {
-        const synth = this.getSynth()
-        if (!synth) return false
-
-        synth.cancel()
-        this.currentUtterance = null
-        return true
-    }
-
-    get isSpeaking(): boolean {
-        const synth = this.getSynth()
-        return synth?.speaking ?? false
-    }
-
-    get isPausedState(): boolean {
-        const synth = this.getSynth()
-        return synth?.paused ?? false
-    }
+  get isPausedState(): boolean {
+    const synth = this.getSynth();
+    return synth?.paused ?? false;
+  }
 }
 
 // Singleton instance
-export const tts = new TTSController()
+export const tts = new TTSController();
 
 // Speed presets
 export const TTS_SPEEDS = {
-    slow: 0.75,
-    normal: 1,
-    fast: 1.25,
-} as const
+  slow: 0.75,
+  normal: 1,
+  fast: 1.25,
+} as const;
 
-export type TTSSpeed = keyof typeof TTS_SPEEDS
+export type TTSSpeed = keyof typeof TTS_SPEEDS;

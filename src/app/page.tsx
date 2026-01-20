@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import { useState, useMemo } from 'react'
-import { useQuery } from 'convex/react'
-import { api } from '../../convex/_generated/api'
-import { Header } from '@/components/layout'
+import { useState, useMemo } from "react";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { Header } from "@/components/layout";
 import {
   Button,
   Card,
@@ -16,94 +16,112 @@ import {
   ClockIcon,
   SearchIcon,
   SortIcon,
-} from '@/components/ui'
-import { useI18n } from '@/lib/i18n'
-import { CreateCourseModal } from '@/components/course/CreateCourseModal'
-import { TOTAL_MODULES, DIFFICULTY_CONFIG } from '@/lib/constants'
+} from "@/components/ui";
+import { useI18n } from "@/lib/i18n";
+import { CreateCourseModal } from "@/components/course/CreateCourseModal";
+import { TOTAL_MODULES, DIFFICULTY_CONFIG } from "@/lib/constants";
 
-type DifficultyLevel = 'A2' | 'A2+' | 'B1' | string
-type SortOrder = 'lastStudied' | 'creationDate'
+type DifficultyLevel = "A2" | "A2+" | "B1" | string;
+type SortOrder = "lastStudied" | "creationDate";
 
 function getProgressPercentage(completedModules: number[] | undefined): number {
-  if (!completedModules) return 0
-  return Math.round((completedModules.length / TOTAL_MODULES) * 100)
+  if (!completedModules) return 0;
+  return Math.round((completedModules.length / TOTAL_MODULES) * 100);
 }
 
 export default function HomePage() {
-  const { t } = useI18n()
-  const coursesData = useQuery(api.courses.list)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const { t } = useI18n();
+  const coursesData = useQuery(api.courses.list);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Search, filter, and sort state
-  const [searchQuery, setSearchQuery] = useState('')
-  const [difficultyFilter, setDifficultyFilter] = useState<DifficultyLevel | null>(null)
-  const [sortOrder, setSortOrder] = useState<SortOrder>('lastStudied')
+  const [searchQuery, setSearchQuery] = useState("");
+  const [difficultyFilter, setDifficultyFilter] =
+    useState<DifficultyLevel | null>(null);
+  const [sortOrder, setSortOrder] = useState<SortOrder>("lastStudied");
 
-  const isLoading = coursesData === undefined
+  const isLoading = coursesData === undefined;
 
   // Filtered and sorted courses
   const filteredCourses = useMemo(() => {
-    if (!coursesData) return []
+    if (!coursesData) return [];
 
-    let result = [...coursesData]
+    let result = [...coursesData];
 
     // Search by title
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase()
-      result = result.filter(course =>
-        course.title.toLowerCase().includes(query)
-      )
+      const query = searchQuery.toLowerCase();
+      result = result.filter((course) =>
+        course.title.toLowerCase().includes(query),
+      );
     }
 
     // Filter by difficulty
     if (difficultyFilter) {
-      result = result.filter(course => course.difficulty === difficultyFilter)
+      result = result.filter(
+        (course) => course.difficulty === difficultyFilter,
+      );
     }
 
     // Sort
     result.sort((a, b) => {
-      if (sortOrder === 'lastStudied') {
+      if (sortOrder === "lastStudied") {
         // Use progress update time if available, otherwise creation time
-        const aTime = a.progress?._creationTime ?? 0
-        const bTime = b.progress?._creationTime ?? 0
+        const aTime = a.progress?._creationTime ?? 0;
+        const bTime = b.progress?._creationTime ?? 0;
         // Put courses with no progress at the end
-        if (aTime === 0 && bTime === 0) return b._creationTime - a._creationTime
-        if (aTime === 0) return 1
-        if (bTime === 0) return -1
-        return bTime - aTime
+        if (aTime === 0 && bTime === 0)
+          return b._creationTime - a._creationTime;
+        if (aTime === 0) return 1;
+        if (bTime === 0) return -1;
+        return bTime - aTime;
       } else {
-        return b._creationTime - a._creationTime
+        return b._creationTime - a._creationTime;
       }
-    })
+    });
 
-    return result
-  }, [coursesData, searchQuery, difficultyFilter, sortOrder])
+    return result;
+  }, [coursesData, searchQuery, difficultyFilter, sortOrder]);
 
   function formatDate(timestamp: number): string {
-    return new Intl.DateTimeFormat('zh-CN', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(new Date(timestamp))
+    return new Intl.DateTimeFormat("zh-CN", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(timestamp));
   }
 
   // CEFR levels in order for sorting
-  const CEFR_ORDER = ['A1', 'A1+', 'A2', 'A2+', 'B1', 'B1+', 'B2', 'B2+', 'C1', 'C1+', 'C2']
+  const CEFR_ORDER = [
+    "A1",
+    "A1+",
+    "A2",
+    "A2+",
+    "B1",
+    "B1+",
+    "B2",
+    "B2+",
+    "C1",
+    "C1+",
+    "C2",
+  ];
 
   // Dynamically get unique difficulty levels from courses
   const difficulties = useMemo(() => {
-    if (!coursesData) return []
-    const uniqueLevels = [...new Set(coursesData.map(course => course.difficulty))]
+    if (!coursesData) return [];
+    const uniqueLevels = [
+      ...new Set(coursesData.map((course) => course.difficulty)),
+    ];
     return uniqueLevels.sort((a, b) => {
-      const indexA = CEFR_ORDER.indexOf(a)
-      const indexB = CEFR_ORDER.indexOf(b)
+      const indexA = CEFR_ORDER.indexOf(a);
+      const indexB = CEFR_ORDER.indexOf(b);
       // If not in CEFR_ORDER, put at the end
-      if (indexA === -1) return 1
-      if (indexB === -1) return -1
-      return indexA - indexB
-    })
-  }, [coursesData])
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    });
+  }, [coursesData]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -117,7 +135,9 @@ export default function HomePage() {
       <main className="container mx-auto px-4 py-8">
         <div className="flex items-center gap-2 mb-6">
           <BookOpenIcon className="w-6 h-6 text-primary" />
-          <h2 className="text-2xl font-bold text-foreground">{t.home.myCourses}</h2>
+          <h2 className="text-2xl font-bold text-foreground">
+            {t.home.myCourses}
+          </h2>
           {!isLoading && coursesData && coursesData.length > 0 && (
             <span className="px-2 py-0.5 text-sm font-medium text-muted-foreground bg-muted/50 rounded-full">
               {coursesData.length}
@@ -132,7 +152,7 @@ export default function HomePage() {
             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder={t.home.searchPlaceholder || 'Search...'}
+              placeholder={t.home.searchPlaceholder || "Search..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2 text-sm bg-card border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder:text-muted-foreground"
@@ -143,21 +163,25 @@ export default function HomePage() {
           <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
             <button
               onClick={() => setDifficultyFilter(null)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${difficultyFilter === null
-                ? 'bg-primary text-white shadow-sm'
-                : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground'
-                }`}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
+                difficultyFilter === null
+                  ? "bg-primary text-white shadow-sm"
+                  : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
             >
-              {t.home.allDifficulties || 'All'}
+              {t.home.allDifficulties || "All"}
             </button>
             {difficulties.map((diff) => (
               <button
                 key={diff}
-                onClick={() => setDifficultyFilter(difficultyFilter === diff ? null : diff)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${difficultyFilter === diff
-                  ? 'bg-primary text-white shadow-sm'
-                  : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground'
-                  }`}
+                onClick={() =>
+                  setDifficultyFilter(difficultyFilter === diff ? null : diff)
+                }
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
+                  difficultyFilter === diff
+                    ? "bg-primary text-white shadow-sm"
+                    : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+                }`}
               >
                 {diff}
               </button>
@@ -170,26 +194,32 @@ export default function HomePage() {
               <button className="flex items-center gap-2 px-3 py-2 text-sm text-foreground bg-card border border-border rounded-lg hover:border-primary/50 transition-colors">
                 <SortIcon className="w-4 h-4 text-muted-foreground" />
                 <span>
-                  {sortOrder === 'lastStudied'
-                    ? (t.home.sortByLastStudied || 'Last Studied')
-                    : (t.home.sortByCreationDate || 'Created Date')}
+                  {sortOrder === "lastStudied"
+                    ? t.home.sortByLastStudied || "Last Studied"
+                    : t.home.sortByCreationDate || "Created Date"}
                 </span>
               </button>
 
               <div className="absolute right-0 top-full mt-1 w-40 bg-card border border-border rounded-lg shadow-lg overflow-hidden hidden group-hover:block z-10">
                 <button
-                  onClick={() => setSortOrder('lastStudied')}
-                  className={`w-full text-left px-4 py-2 text-sm hover:bg-muted/50 transition-colors ${sortOrder === 'lastStudied' ? 'text-primary font-medium' : 'text-foreground'
-                    }`}
+                  onClick={() => setSortOrder("lastStudied")}
+                  className={`w-full text-left px-4 py-2 text-sm hover:bg-muted/50 transition-colors ${
+                    sortOrder === "lastStudied"
+                      ? "text-primary font-medium"
+                      : "text-foreground"
+                  }`}
                 >
-                  {t.home.sortByLastStudied || 'Last Studied'}
+                  {t.home.sortByLastStudied || "Last Studied"}
                 </button>
                 <button
-                  onClick={() => setSortOrder('creationDate')}
-                  className={`w-full text-left px-4 py-2 text-sm hover:bg-muted/50 transition-colors ${sortOrder === 'creationDate' ? 'text-primary font-medium' : 'text-foreground'
-                    }`}
+                  onClick={() => setSortOrder("creationDate")}
+                  className={`w-full text-left px-4 py-2 text-sm hover:bg-muted/50 transition-colors ${
+                    sortOrder === "creationDate"
+                      ? "text-primary font-medium"
+                      : "text-foreground"
+                  }`}
                 >
-                  {t.home.sortByCreationDate || 'Created Date'}
+                  {t.home.sortByCreationDate || "Created Date"}
                 </button>
               </div>
             </div>
@@ -207,12 +237,20 @@ export default function HomePage() {
               <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-muted/30 flex items-center justify-center">
                 <SearchIcon className="w-8 h-8 text-muted-foreground/50" />
               </div>
-              <h3 className="text-lg font-medium text-foreground mb-2">{t.home.noResults || 'No matching courses found'}</h3>
+              <h3 className="text-lg font-medium text-foreground mb-2">
+                {t.home.noResults || "No matching courses found"}
+              </h3>
               <p className="text-sm text-muted-foreground mb-6 text-center max-w-xs mx-auto">
                 {t.home.noCoursesDesc}
               </p>
-              <Button variant="secondary" onClick={() => { setSearchQuery(''); setDifficultyFilter(null); }}>
-                {t.home.clearFilters || 'Clear filters'}
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setSearchQuery("");
+                  setDifficultyFilter(null);
+                }}
+              >
+                {t.home.clearFilters || "Clear filters"}
               </Button>
             </div>
           ) : (
@@ -221,8 +259,12 @@ export default function HomePage() {
                 <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-primary-100 flex items-center justify-center">
                   <BookOpenIcon className="w-10 h-10 text-primary-500" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">{t.home.noCourses}</h3>
-                <p className="text-muted-foreground mb-6">{t.home.noCoursesDesc}</p>
+                <h3 className="text-xl font-semibold text-foreground mb-2">
+                  {t.home.noCourses}
+                </h3>
+                <p className="text-muted-foreground mb-6">
+                  {t.home.noCoursesDesc}
+                </p>
                 <Button size="lg" onClick={() => setIsCreateModalOpen(true)}>
                   <PlusIcon className="w-5 h-5" />
                   {t.home.newCourse}
@@ -249,66 +291,77 @@ export default function HomePage() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSuccess={() => {
-          setIsCreateModalOpen(false)
+          setIsCreateModalOpen(false);
           // Convex will automatically refetch due to real-time subscription
         }}
       />
     </div>
-  )
+  );
 }
 
 interface CourseWithProgress {
-  _id: string
-  title: string
-  difficulty: 'A2' | 'A2+' | 'B1' | string
-  wordCount: number
-  _creationTime: number
+  _id: string;
+  title: string;
+  difficulty: "A2" | "A2+" | "B1" | string;
+  wordCount: number;
+  _creationTime: number;
   progress: {
-    currentModule: number
-    completedModules: number[]
-    _creationTime: number
-  } | null
+    currentModule: number;
+    completedModules: number[];
+    _creationTime: number;
+  } | null;
 }
 
 interface CourseCardProps {
-  course: CourseWithProgress
-  t: ReturnType<typeof useI18n>['t']
-  formatDate: (timestamp: number) => string
+  course: CourseWithProgress;
+  t: ReturnType<typeof useI18n>["t"];
+  formatDate: (timestamp: number) => string;
 }
 
 function CourseCard({ course, t, formatDate }: CourseCardProps) {
-  const progressPercent = getProgressPercentage(course.progress?.completedModules)
-  const hasProgress = course.progress !== null
+  const progressPercent = getProgressPercentage(
+    course.progress?.completedModules,
+  );
+  const hasProgress = course.progress !== null;
 
-  // Border color based on difficulty
-  const borderColor = course.difficulty === 'A2'
-    ? 'border-l-emerald-500'
-    : course.difficulty === 'A2+'
-      ? 'border-l-amber-500'
-      : course.difficulty === 'B1'
-        ? 'border-l-blue-500'
-        : 'border-l-gray-400' // Default fallback
+  // Get difficulty config, with fallback for unknown levels
+  const difficultyKey = course.difficulty as keyof typeof DIFFICULTY_CONFIG;
+  const difficultyConfig = DIFFICULTY_CONFIG[difficultyKey];
 
-  // Badge style based on difficulty (lighter, more readable)
-  const badgeStyle = course.difficulty === 'A2'
-    ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
-    : course.difficulty === 'A2+'
-      ? 'text-amber-700 bg-amber-50 border-amber-200'
-      : course.difficulty === 'B1'
-        ? 'text-blue-700 bg-blue-50 border-blue-200'
-        : 'text-gray-700 bg-gray-50 border-gray-200' // Default fallback
+  // Border color mapping based on difficulty
+  const borderColorMap: Record<string, string> = {
+    A1: "border-l-lime-500",
+    "A1+": "border-l-green-500",
+    A2: "border-l-emerald-500",
+    "A2+": "border-l-teal-500",
+    B1: "border-l-cyan-500",
+    "B1+": "border-l-blue-500",
+    B2: "border-l-indigo-500",
+    "B2+": "border-l-violet-500",
+    C1: "border-l-purple-500",
+    "C1+": "border-l-fuchsia-500",
+    C2: "border-l-rose-500",
+  };
+  const borderColor = borderColorMap[course.difficulty] || "border-l-gray-400";
+
+  // Badge style from DIFFICULTY_CONFIG (with border added)
+  const badgeStyle = difficultyConfig
+    ? `${difficultyConfig.color} border border-current/20`
+    : "text-gray-700 bg-gray-50 border-gray-200";
 
   // Progress ring color
-  const progressColor = progressPercent === 100
-    ? 'stroke-success'
-    : progressPercent > 0
-      ? 'stroke-primary'
-      : 'stroke-border'
+  const progressColor =
+    progressPercent === 100
+      ? "stroke-success"
+      : progressPercent > 0
+        ? "stroke-primary"
+        : "stroke-border";
 
   // SVG circle properties for progress ring
-  const radius = 16
-  const circumference = 2 * Math.PI * radius
-  const strokeDashoffset = circumference - (progressPercent / 100) * circumference
+  const radius = 16;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset =
+    circumference - (progressPercent / 100) * circumference;
 
   return (
     <a href={`/course/${course._id}`} className="block group h-full">
@@ -340,11 +393,13 @@ function CourseCard({ course, t, formatDate }: CourseCardProps) {
               <div className="flex items-center gap-5 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <ChartBarIcon className="w-4 h-4" />
-                  <span>{course.wordCount} {t.create.wordCount}</span>
+                  <span>
+                    {course.wordCount} {t.create.wordCount}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="w-4 h-4" />
-                  <span>{formatDate(course._creationTime).split(' ')[0]}</span>
+                  <span>{formatDate(course._creationTime).split(" ")[0]}</span>
                 </div>
               </div>
 
@@ -352,7 +407,10 @@ function CourseCard({ course, t, formatDate }: CourseCardProps) {
               {hasProgress && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <ClockIcon className="w-4 h-4 text-accent" />
-                  <span>{t.home.lastStudied}: {formatDate(course.progress!._creationTime)}</span>
+                  <span>
+                    {t.home.lastStudied}:{" "}
+                    {formatDate(course.progress!._creationTime)}
+                  </span>
                 </div>
               )}
             </div>
@@ -386,12 +444,15 @@ function CourseCard({ course, t, formatDate }: CourseCardProps) {
               </svg>
               {/* Percentage text */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className={`text-[11px] font-bold ${progressPercent === 100
-                  ? 'text-success'
-                  : progressPercent > 0
-                    ? 'text-primary'
-                    : 'text-muted-foreground'
-                  }`}>
+                <span
+                  className={`text-[11px] font-bold ${
+                    progressPercent === 100
+                      ? "text-success"
+                      : progressPercent > 0
+                        ? "text-primary"
+                        : "text-muted-foreground"
+                  }`}
+                >
                   {progressPercent}%
                 </span>
               </div>
@@ -400,6 +461,5 @@ function CourseCard({ course, t, formatDate }: CourseCardProps) {
         </CardContent>
       </Card>
     </a>
-  )
+  );
 }
-

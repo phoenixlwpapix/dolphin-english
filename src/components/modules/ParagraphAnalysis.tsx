@@ -1,201 +1,235 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from "react";
 import {
-    Card,
-    CardContent,
-    Button,
-    ClipboardIcon,
-    PlayIcon,
-    StopIcon,
-    ChevronLeftIcon,
-    ChevronRightIcon,
-    CheckIcon,
-} from '@/components/ui'
-import { useI18n } from '@/lib/i18n'
-import { tts, TTS_SPEEDS } from '@/lib/tts'
-import type { ParagraphAnalysis as ParagraphType } from '@/lib/schemas'
+  Card,
+  CardContent,
+  Button,
+  ClipboardIcon,
+  PlayIcon,
+  StopIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  CheckIcon,
+} from "@/components/ui";
+import { useI18n } from "@/lib/i18n";
+import { tts, TTS_SPEEDS } from "@/lib/tts";
+import type { ParagraphAnalysis as ParagraphData } from "@/lib/schemas";
 
 interface ParagraphAnalysisProps {
-    paragraphs: ParagraphType[]
-    onComplete: () => void
+  paragraphs: ParagraphData[];
+  onComplete: () => void;
 }
 
-export function ParagraphAnalysis({ paragraphs, onComplete }: ParagraphAnalysisProps) {
-    const { t } = useI18n()
-    const [currentParagraph, setCurrentParagraph] = useState(0)
-    const [isPlaying, setIsPlaying] = useState(false)
-    const [completedParagraphs, setCompletedParagraphs] = useState<number[]>([])
+export function ParagraphAnalysis({
+  paragraphs,
+  onComplete,
+}: ParagraphAnalysisProps) {
+  const { t, language } = useI18n();
+  const [currentParagraph, setCurrentParagraph] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [completedParagraphs, setCompletedParagraphs] = useState<number[]>([]);
 
-    const paragraph = paragraphs[currentParagraph]
-    const isLastParagraph = currentParagraph === paragraphs.length - 1
-    const allCompleted = completedParagraphs.length === paragraphs.length
+  const paragraph = paragraphs[currentParagraph];
+  const isLastParagraph = currentParagraph === paragraphs.length - 1;
+  const allCompleted = completedParagraphs.length === paragraphs.length;
 
-    const handlePlayParagraph = useCallback(() => {
-        setIsPlaying(true)
-        tts.speak(
-            paragraph.text,
-            { rate: TTS_SPEEDS.normal },
-            (event) => {
-                if (event === 'end') {
-                    setIsPlaying(false)
-                }
-            }
-        )
-    }, [paragraph.text])
+  const handlePlayParagraph = useCallback(() => {
+    setIsPlaying(true);
+    tts.speak(paragraph.text, { rate: TTS_SPEEDS.normal }, (event) => {
+      if (event === "end") {
+        setIsPlaying(false);
+      }
+    });
+  }, [paragraph.text]);
 
-    const handleStopPlayback = useCallback(() => {
-        tts.stop()
-        setIsPlaying(false)
-    }, [])
+  const handleStopPlayback = useCallback(() => {
+    tts.stop();
+    setIsPlaying(false);
+  }, []);
 
-    function markComplete() {
-        if (!completedParagraphs.includes(currentParagraph)) {
-            setCompletedParagraphs([...completedParagraphs, currentParagraph])
-        }
+  function markComplete() {
+    if (!completedParagraphs.includes(currentParagraph)) {
+      setCompletedParagraphs([...completedParagraphs, currentParagraph]);
     }
+  }
 
-    function handleNext() {
-        markComplete()
-        if (!isLastParagraph) {
-            setCurrentParagraph(currentParagraph + 1)
-        }
+  function changeParagraph(index: number) {
+    // Stop playback before changing paragraph
+    tts.stop();
+    setIsPlaying(false);
+    setCurrentParagraph(index);
+  }
+
+  function handleNext() {
+    markComplete();
+    if (!isLastParagraph) {
+      changeParagraph(currentParagraph + 1);
     }
+  }
 
-    function handlePrevious() {
-        if (currentParagraph > 0) {
-            setCurrentParagraph(currentParagraph - 1)
-        }
+  function handlePrevious() {
+    if (currentParagraph > 0) {
+      changeParagraph(currentParagraph - 1);
     }
+  }
 
-    // Cleanup on unmount
-    useEffect(() => {
-        return () => {
-            tts.stop()
-        }
-    }, [])
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      tts.stop();
+    };
+  }, []);
 
-    // Stop playback when changing paragraphs
-    useEffect(() => {
-        handleStopPlayback()
-    }, [currentParagraph, handleStopPlayback])
+  return (
+    <Card>
+      <CardContent>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
+            <ClipboardIcon className="w-5 h-5 text-primary-600" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-foreground">
+              {t.analysis.title}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {t.course.module} 3 · 12 {t.course.minutes}
+            </p>
+          </div>
+        </div>
 
-    return (
-        <Card>
-            <CardContent>
-                <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
-                        <ClipboardIcon className="w-5 h-5 text-primary-600" />
-                    </div>
-                    <div>
-                        <h2 className="text-xl font-bold text-foreground">{t.analysis.title}</h2>
-                        <p className="text-sm text-muted-foreground">{t.course.module} 3 · 12 {t.course.minutes}</p>
-                    </div>
-                </div>
-
-                {/* Paragraph navigation */}
-                <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
-                    {paragraphs.map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => setCurrentParagraph(index)}
-                            className={`
+        {/* Paragraph navigation */}
+        <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
+          {paragraphs.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => changeParagraph(index)}
+              className={`
                 px-3 py-1 rounded-full text-sm font-medium transition-colors shrink-0
-                ${currentParagraph === index
-                                    ? 'bg-primary-500 text-white'
-                                    : completedParagraphs.includes(index)
-                                        ? 'bg-success/20 text-success'
-                                        : 'bg-surface text-muted-foreground hover:text-foreground'
-                                }
+                ${
+                  currentParagraph === index
+                    ? "bg-primary-500 text-white"
+                    : completedParagraphs.includes(index)
+                      ? "bg-success/20 text-success"
+                      : "bg-surface text-muted-foreground hover:text-foreground"
+                }
               `}
-                        >
-                            {t.analysis.paragraph} {index + 1}
-                        </button>
-                    ))}
-                </div>
+            >
+              {t.analysis.paragraph} {index + 1}
+            </button>
+          ))}
+        </div>
 
-                {/* Paragraph content */}
-                <div className="space-y-6">
-                    {/* Original text */}
-                    <div className="bg-surface rounded-lg p-4">
-                        <p className="text-foreground leading-relaxed text-xl">{paragraph.text}</p>
+        {/* Paragraph content */}
+        <div className="space-y-6">
+          {/* Original text */}
+          <div className="bg-surface rounded-lg p-4">
+            <p className="text-foreground leading-relaxed text-xl">
+              {paragraph.text}
+            </p>
 
-                        {/* Read along button */}
-                        <div className="mt-4 flex gap-2">
-                            {!isPlaying ? (
-                                <Button variant="secondary" size="sm" onClick={handlePlayParagraph}>
-                                    <PlayIcon className="w-4 h-4" />
-                                    {t.analysis.practice}
-                                </Button>
-                            ) : (
-                                <Button variant="secondary" size="sm" onClick={handleStopPlayback}>
-                                    <StopIcon className="w-4 h-4" />
-                                    {t.analysis.stop}
-                                </Button>
-                            )}
-                        </div>
+            {/* Read along button */}
+            <div className="mt-4 flex gap-2">
+              {!isPlaying ? (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={handlePlayParagraph}
+                >
+                  <PlayIcon className="w-4 h-4" />
+                  {t.analysis.practice}
+                </Button>
+              ) : (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleStopPlayback}
+                >
+                  <StopIcon className="w-4 h-4" />
+                  {t.analysis.stop}
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Summary - displays Chinese or English based on current language */}
+          <div>
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+              {t.analysis.summary}
+            </h3>
+            <p className="text-foreground bg-primary-50 dark:bg-primary-900/20 rounded-lg p-3 border-l-4 border-primary-500 text-lg">
+              {language === "zh" ? paragraph.summaryZH : paragraph.summary}
+            </p>
+          </div>
+
+          {/* Language points */}
+          <div>
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+              {t.analysis.languagePoints}
+            </h3>
+            <div className="space-y-3">
+              {paragraph.languagePoints.map((point, index) => (
+                <div
+                  key={index}
+                  className="bg-surface rounded-lg p-4 border border-border"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-bold shrink-0">
+                      {index + 1}
                     </div>
-
-                    {/* Summary */}
-                    <div>
-                        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                            {t.analysis.summary}
-                        </h3>
-                        <p className="text-foreground bg-primary-50 dark:bg-primary-900/20 rounded-lg p-3 border-l-4 border-primary-500 text-lg">
-                            {paragraph.summary}
-                        </p>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-foreground text-lg">
+                        {point.point}
+                      </h4>
+                      <p className="text-base text-muted-foreground mt-1">
+                        {language === "zh"
+                          ? point.explanationZH
+                          : point.explanation}
+                      </p>
+                      <p className="text-base text-primary-600 mt-2 italic">
+                        &ldquo;{point.example}&rdquo;
+                      </p>
                     </div>
-
-                    {/* Language points */}
-                    <div>
-                        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-                            {t.analysis.languagePoints}
-                        </h3>
-                        <div className="space-y-3">
-                            {paragraph.languagePoints.map((point, index) => (
-                                <div key={index} className="bg-surface rounded-lg p-4 border border-border">
-                                    <div className="flex items-start gap-3">
-                                        <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-bold shrink-0">
-                                            {index + 1}
-                                        </div>
-                                        <div className="flex-1">
-                                            <h4 className="font-semibold text-foreground text-lg">{point.point}</h4>
-                                            <p className="text-base text-muted-foreground mt-1">{point.explanation}</p>
-                                            <p className="text-base text-primary-600 mt-2 italic">
-                                                &ldquo;{point.example}&rdquo;
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                  </div>
                 </div>
+              ))}
+            </div>
+          </div>
+        </div>
 
-                {/* Navigation */}
-                <div className="flex justify-between mt-8 pt-4 border-t border-border">
-                    <Button
-                        variant="ghost"
-                        onClick={handlePrevious}
-                        disabled={currentParagraph === 0}
-                    >
-                        <ChevronLeftIcon className="w-4 h-4" />
-                        {t.common.previous}
-                    </Button>
+        {/* Navigation */}
+        <div className="flex justify-between mt-8 pt-4 border-t border-border">
+          <Button
+            variant="ghost"
+            onClick={handlePrevious}
+            disabled={currentParagraph === 0}
+          >
+            <ChevronLeftIcon className="w-4 h-4" />
+            {t.common.previous}
+          </Button>
 
-                    {isLastParagraph ? (
-                        <Button onClick={() => { markComplete(); onComplete(); }} disabled={!allCompleted && completedParagraphs.length < paragraphs.length - 1}>
-                            {t.common.complete}
-                            <CheckIcon className="w-4 h-4" />
-                        </Button>
-                    ) : (
-                        <Button onClick={handleNext}>
-                            {t.common.next}
-                            <ChevronRightIcon className="w-4 h-4" />
-                        </Button>
-                    )}
-                </div>
-            </CardContent>
-        </Card>
-    )
+          {isLastParagraph ? (
+            <Button
+              onClick={() => {
+                markComplete();
+                onComplete();
+              }}
+              disabled={
+                !allCompleted &&
+                completedParagraphs.length < paragraphs.length - 1
+              }
+            >
+              {t.common.complete}
+              <CheckIcon className="w-4 h-4" />
+            </Button>
+          ) : (
+            <Button onClick={handleNext}>
+              {t.common.next}
+              <ChevronRightIcon className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
 }
