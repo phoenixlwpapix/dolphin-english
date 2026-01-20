@@ -192,4 +192,32 @@ export const en: Translations = {
     noPublicCourses: "No public courses",
     noMyCourses: "No courses yet",
   },
+
+  // Landing Page
+  landing: {
+    heroTitle: "Dolphin English",
+    heroSubtitle:
+      "Improve your English reading and listening with real-world content. Tailored for A2-B1 learners.",
+    startLearning: "Start Learning",
+    learnMore: "Learn More",
+    readyToStart: "Ready to start your journey?",
+    features: {
+      daily: {
+        title: "30 Minutes a Day",
+        desc: "Short, effective lessons designed for busy schedules.",
+      },
+      real: {
+        title: "Real Articles",
+        desc: "Learn from actual news and stories, not boring textbooks.",
+      },
+      level: {
+        title: "A2-B1 Levels",
+        desc: "Perfect difficulty curve to help you progress steadily.",
+      },
+      ai: {
+        title: "AI Analysis",
+        desc: "Deep analysis of vocabulary and sentence structure.",
+      },
+    },
+  },
 };

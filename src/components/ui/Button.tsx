@@ -1,7 +1,7 @@
 import { type ButtonHTMLAttributes, forwardRef } from 'react'
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
-type ButtonSize = 'sm' | 'md' | 'lg'
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline'
+type ButtonSize = 'sm' | 'md' | 'lg' | 'xl'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: ButtonVariant
@@ -18,12 +18,15 @@ const variantClasses: Record<ButtonVariant, string> = {
         'bg-transparent text-foreground hover:bg-muted active:bg-gray-200',
     danger:
         'bg-error text-white hover:scale-105 active:bg-red-600',
+    outline:
+        'bg-transparent border border-border text-foreground hover:bg-muted active:bg-gray-200',
 }
 
 const sizeClasses: Record<ButtonSize, string> = {
     sm: 'px-3 py-1.5 text-sm gap-1.5 rounded-md',
     md: 'h-14 px-6 py-2 text-base gap-2 rounded-md', // Matching "h-14 to h-16" guideline roughly
     lg: 'h-16 px-8 py-3 text-lg gap-2.5 rounded-md',
+    xl: 'h-20 px-10 py-4 text-xl gap-3 rounded-xl',
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

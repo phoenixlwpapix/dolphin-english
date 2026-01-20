@@ -159,6 +159,19 @@ export interface Translations {
     noPublicCourses: string;
     noMyCourses: string;
   };
+  landing: {
+    heroTitle: string;
+    heroSubtitle: string;
+    startLearning: string;
+    learnMore: string;
+    readyToStart: string;
+    features: {
+      daily: { title: string; desc: string };
+      real: { title: string; desc: string };
+      level: { title: string; desc: string };
+      ai: { title: string; desc: string };
+    };
+  };
 }
 
 export const zh: Translations = {
@@ -345,9 +358,36 @@ export const zh: Translations = {
 
   // Sidebar
   sidebar: {
-    publicCourses: "公开课程",
+    publicCourses: "公共课程",
     myCourses: "我的课程",
-    noPublicCourses: "暂无公开课程",
-    noMyCourses: "还没有课程",
+    noPublicCourses: "暂无公共课程",
+    noMyCourses: "暂无课程",
+  },
+
+  // Landing Page
+  landing: {
+    heroTitle: "Dolphin English",
+    heroSubtitle: "通过真实文章提升你的英语听说读写能力。专为 A2-B1 学习者打造。",
+    startLearning: "开始学习",
+    learnMore: "了解更多",
+    readyToStart: "准备好开启你的旅程了吗？",
+    features: {
+      daily: {
+        title: "每天 30 分钟",
+        desc: "短小精悍的课程，专为忙碌的你设计。",
+      },
+      real: {
+        title: "真实文章",
+        desc: "告别枯燥教科书，从真实新闻和故事中学习。",
+      },
+      level: {
+        title: "A2-B1 水平",
+        desc: "完美的难度曲线，助你稳步提升。",
+      },
+      ai: {
+        title: "AI 深度分析",
+        desc: "对文章词汇和句式的深度解析。",
+      },
+    },
   },
 };

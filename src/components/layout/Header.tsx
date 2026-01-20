@@ -11,14 +11,19 @@ import { useI18n } from "@/lib/i18n";
 
 interface HeaderProps {
   children?: ReactNode;
+  isSignInOpen?: boolean;
+  onSignInOpenChange?: (isOpen: boolean) => void;
 }
 
-export function Header({ children }: HeaderProps) {
+export function Header({ children, isSignInOpen, onSignInOpenChange }: HeaderProps) {
   const { t, language } = useI18n();
   const { signOut } = useAuthActions();
   const currentUser = useQuery(api.users.getCurrentUser);
-  const [showSignInModal, setShowSignInModal] = useState(false);
+  const [internalSignInOpen, setInternalSignInOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const showSignInModal = isSignInOpen ?? internalSignInOpen;
+  const setShowSignInModal = onSignInOpenChange ?? setInternalSignInOpen;
 
   // Use different font based on language
   const titleFontClass =
