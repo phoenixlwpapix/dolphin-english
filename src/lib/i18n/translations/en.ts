@@ -17,7 +17,7 @@ export const en: Translations = {
         restart: 'Restart',
         created: 'Created',
         deleteCourse: 'Delete Course',
-        restartConfirm: 'Are you sure you want to restart?',
+        restartConfirm: 'Are you sure you want to restart? This will lose all current progress.',
         deleteConfirm: 'Are you sure you want to delete this course?',
     },
 

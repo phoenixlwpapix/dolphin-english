@@ -148,7 +148,7 @@ export const zh: Translations = {
         restart: '重新开始',
         created: '创建时间',
         deleteCourse: '删除课程',
-        restartConfirm: '确定要重新开始吗？',
+        restartConfirm: '确定要重新开始吗？这将丢失当前的课程进度。',
         deleteConfirm: '确定要删除这个课程吗？',
     },
 

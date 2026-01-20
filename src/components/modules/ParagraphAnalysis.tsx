@@ -31,9 +31,9 @@ export function ParagraphAnalysis({ paragraphs, onComplete }: ParagraphAnalysisP
     const isLastParagraph = currentParagraph === paragraphs.length - 1
     const allCompleted = completedParagraphs.length === paragraphs.length
 
-    const handlePlayParagraph = useCallback(async () => {
+    const handlePlayParagraph = useCallback(() => {
         setIsPlaying(true)
-        await tts.speak(
+        tts.speak(
             paragraph.text,
             { rate: TTS_SPEEDS.normal },
             (event) => {

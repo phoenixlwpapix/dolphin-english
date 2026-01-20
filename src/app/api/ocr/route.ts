@@ -30,13 +30,15 @@ export async function POST(req: Request) {
                         },
                         {
                             type: 'text',
-                            text: `Extract all English text from this image.
+                            text: `Extract the main English article text from this image.
 
 CRITICAL RULES:
 - Output ONLY the extracted text as plain text
 - Do NOT use any Markdown formatting (no **, ##, *, _, etc.)
 - Do NOT add bold markers, headers, or any special symbols
 - Preserve the original paragraph structure
+- Ignore any handwritten notes, scribbles, margin comments, or non-article text
+- Focus only on the printed article content
 - If there is no English text in the image, respond with "NO_TEXT_FOUND"
 - Do not add any commentary, headers, or explanations`,
                         },
