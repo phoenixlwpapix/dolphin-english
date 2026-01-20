@@ -59,6 +59,8 @@ export const en: Translations = {
     tooShort: "Article too short, at least 350 words recommended",
     tooLong: "Article is quite long, under 600 words recommended",
     startLearning: "Start Learning",
+    publicCourse: "Public Course",
+    privateCourse: "My Course Only",
   },
 
   // Course Learning
@@ -66,6 +68,8 @@ export const en: Translations = {
     module: "Module",
     totalTime: "Estimated time",
     minutes: "min",
+    joinCourse: "Join Course",
+    joined: "Joined",
   },
 
   // Module Names
@@ -165,5 +169,27 @@ export const en: Translations = {
     language: "Language",
     chinese: "中文",
     english: "English",
+  },
+
+  // Auth
+  auth: {
+    signIn: "Sign In",
+    signUp: "Sign Up",
+    signOut: "Sign Out",
+    signInTitle: "Welcome",
+    email: "Email",
+    password: "Password",
+    signInError: "Invalid email or password",
+    signUpError: "Could not create account",
+    noAccount: "Don't have an account?",
+    hasAccount: "Already have an account?",
+  },
+
+  // Sidebar
+  sidebar: {
+    publicCourses: "Public Courses",
+    myCourses: "My Courses",
+    noPublicCourses: "No public courses",
+    noMyCourses: "No courses yet",
   },
 };

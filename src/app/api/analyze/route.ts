@@ -55,7 +55,7 @@ Important guidelines:
 
 export async function POST(req: Request) {
   try {
-    const { text } = await req.json();
+    const { text, isPublic } = await req.json();
 
     if (!text || typeof text !== "string") {
       return Response.json({ error: "No text provided" }, { status: 400 });
@@ -91,6 +91,7 @@ export async function POST(req: Request) {
       // Type assertion needed because Convex validator uses union type for backward compatibility
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       analyzedData: output.analysis as any,
+      isPublic: isPublic,
     });
 
     // Create initial progress

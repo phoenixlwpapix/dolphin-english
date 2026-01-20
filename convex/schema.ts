@@ -1,5 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { authTables } from "@convex-dev/auth/server";
 
 // Bilingual learning objective validator
 const bilingualObjectiveValidator = v.object({
@@ -62,6 +63,20 @@ const quizResultValidator = v.object({
 });
 
 export default defineSchema({
+  ...authTables,
+
+  // Custom users table for app-specific user data
+  users: defineTable({
+    email: v.optional(v.string()),
+    role: v.union(v.literal("user"), v.literal("admin")),
+    name: v.optional(v.string()),
+    image: v.optional(v.string()),
+    emailVerificationTime: v.optional(v.number()),
+    phone: v.optional(v.string()),
+    phoneVerificationTime: v.optional(v.number()),
+    isAnonymous: v.optional(v.boolean()),
+  }).index("by_email", ["email"]),
+
   courses: defineTable({
     title: v.string(),
     content: v.string(),
@@ -80,7 +95,17 @@ export default defineSchema({
     ),
     wordCount: v.number(),
     analyzedData: v.optional(courseAnalysisValidator),
+    isPublic: v.optional(v.boolean()),
+    authorId: v.optional(v.string()),
   }),
+
+  userCourses: defineTable({
+    userId: v.string(),
+    courseId: v.id("courses"),
+    addedAt: v.number(),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_userId_courseId", ["userId", "courseId"]),
 
   progress: defineTable({
     courseId: v.id("courses"),

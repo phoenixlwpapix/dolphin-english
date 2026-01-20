@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useRef, type ChangeEvent, type DragEvent } from 'react'
+import { useQuery } from 'convex/react'
+import { api } from "../../../convex/_generated/api";
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { useI18n } from '@/lib/i18n'
@@ -15,12 +17,16 @@ type InputMode = 'text' | 'image'
 
 export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseModalProps) {
     const { t, language } = useI18n()
+    const currentUser = useQuery(api.users.getCurrentUser)
+    const isAdmin = currentUser?.role === 'admin'
+
     const [mode, setMode] = useState<InputMode>('text')
     const [text, setText] = useState('')
     const [imageFile, setImageFile] = useState<File | null>(null)
     const [imagePreview, setImagePreview] = useState<string | null>(null)
     const [isAnalyzing, setIsAnalyzing] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [isPublic, setIsPublic] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const wordCount = text.trim().split(/\s+/).filter(Boolean).length
@@ -99,7 +105,7 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
             const analyzeResponse = await fetch('/api/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: articleText, language }),
+                body: JSON.stringify({ text: articleText, language, isPublic }),
             })
 
             if (!analyzeResponse.ok) {
@@ -121,6 +127,7 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
         setImagePreview(null)
         setError(null)
         setIsAnalyzing(false)
+        setIsPublic(false)
     }
 
     function handleClose() {
@@ -268,6 +275,23 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
             {/* Error */}
             {error && (
                 <div className="mt-4 p-3 rounded-lg bg-error/10 text-error text-sm">{error}</div>
+            )}
+
+            {/* Admin Options */}
+            {isAdmin && (
+                <div className="mt-4 flex items-center gap-2">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={isPublic}
+                            onChange={(e) => setIsPublic(e.target.checked)}
+                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                        />
+                        <span className="text-sm font-medium text-foreground">
+                            {isPublic ? t.create.publicCourse : t.create.privateCourse}
+                        </span>
+                    </label>
+                </div>
             )}
 
             {/* Actions */}

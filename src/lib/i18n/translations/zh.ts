@@ -49,11 +49,15 @@ export interface Translations {
     tooShort: string;
     tooLong: string;
     startLearning: string;
+    publicCourse: string;
+    privateCourse: string;
   };
   course: {
     module: string;
     totalTime: string;
     minutes: string;
+    joinCourse: string;
+    joined: string;
   };
   modules: {
     objectives: string;
@@ -137,6 +141,24 @@ export interface Translations {
     chinese: string;
     english: string;
   };
+  auth: {
+    signIn: string;
+    signUp: string;
+    signOut: string;
+    signInTitle: string;
+    email: string;
+    password: string;
+    signInError: string;
+    signUpError: string;
+    noAccount: string;
+    hasAccount: string;
+  };
+  sidebar: {
+    publicCourses: string;
+    myCourses: string;
+    noPublicCourses: string;
+    noMyCourses: string;
+  };
 }
 
 export const zh: Translations = {
@@ -196,6 +218,8 @@ export const zh: Translations = {
     tooShort: "文章太短，建议至少350词",
     tooLong: "文章较长，建议不超过600词",
     startLearning: "开始学习",
+    publicCourse: "公开课程",
+    privateCourse: "仅我的课程",
   },
 
   // Course Learning
@@ -203,6 +227,8 @@ export const zh: Translations = {
     module: "模块",
     totalTime: "预计时长",
     minutes: "分钟",
+    joinCourse: "加入课程",
+    joined: "已加入",
   },
 
   // Module Names
@@ -301,5 +327,27 @@ export const zh: Translations = {
     language: "语言",
     chinese: "中文",
     english: "English",
+  },
+
+  // Auth
+  auth: {
+    signIn: "登录",
+    signUp: "注册",
+    signOut: "退出",
+    signInTitle: "欢迎",
+    email: "邮箱",
+    password: "密码",
+    signInError: "邮箱或密码错误",
+    signUpError: "无法创建账户",
+    noAccount: "还没有账户？",
+    hasAccount: "已有账户？",
+  },
+
+  // Sidebar
+  sidebar: {
+    publicCourses: "公开课程",
+    myCourses: "我的课程",
+    noPublicCourses: "暂无公开课程",
+    noMyCourses: "还没有课程",
   },
 };
