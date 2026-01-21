@@ -158,6 +158,7 @@ export interface Translations {
     myCourses: string;
     noPublicCourses: string;
     noMyCourses: string;
+    settings: string;
   };
   landing: {
     heroTitle: string;
@@ -362,6 +363,7 @@ export const zh: Translations = {
     myCourses: "我的课程",
     noPublicCourses: "暂无公共课程",
     noMyCourses: "暂无课程",
+    settings: "设置",
   },
 
   // Landing Page

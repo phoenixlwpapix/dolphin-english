@@ -85,9 +85,16 @@ export const listMyCourses = query({
             userCourses.map(async (uc) => {
                 const course = await ctx.db.get(uc.courseId);
                 if (!course) return null;
+
+                const progress = await ctx.db
+                    .query("progress")
+                    .withIndex("by_courseId", (q) => q.eq("courseId", uc.courseId))
+                    .first();
+
                 return {
                     ...course,
                     addedAt: uc.addedAt,
+                    progress,
                 };
             })
         );

@@ -1,12 +1,10 @@
 import { google } from "@ai-sdk/google";
 import { generateText, Output } from "ai";
 import { articleAnalysisSchema } from "@/lib/schemas";
-import { ConvexHttpClient } from "convex/browser";
-import { api } from "../../../../convex/_generated/api";
 
 export const maxDuration = 60;
 
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+
 
 function getAnalysisPrompt() {
   return `You are an expert English language teaching assistant specializing in content analysis across all CEFR levels.
@@ -81,28 +79,14 @@ export async function POST(req: Request) {
       );
     }
 
-    // Save course to Convex database
-    // The analyzedData type uses a union in Convex schema to support both old and new formats
-    const courseId = await convex.mutation(api.courses.create, {
+    // Return the analysis result for the client to handle
+    return Response.json({
       content: text,
       title: output.title,
       difficulty: output.difficulty.level,
       wordCount: output.difficulty.wordCount,
-      // Type assertion needed because Convex validator uses union type for backward compatibility
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      analyzedData: output.analysis as any,
+      analyzedData: output.analysis,
       isPublic: isPublic,
-    });
-
-    // Create initial progress
-    await convex.mutation(api.progress.create, {
-      courseId,
-    });
-
-    return Response.json({
-      courseId,
-      title: output.title,
-      difficulty: output.difficulty,
     });
   } catch (error) {
     console.error("Analysis error:", error);
@@ -112,3 +96,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

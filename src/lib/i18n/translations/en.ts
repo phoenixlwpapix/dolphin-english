@@ -191,6 +191,7 @@ export const en: Translations = {
     myCourses: "My Courses",
     noPublicCourses: "No public courses",
     noMyCourses: "No courses yet",
+    settings: "Settings",
   },
 
   // Landing Page

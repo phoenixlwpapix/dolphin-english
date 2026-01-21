@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, type ChangeEvent, type DragEvent } from 'react'
-import { useQuery } from 'convex/react'
+import { useQuery, useMutation } from 'convex/react'
 import { api } from "../../../convex/_generated/api";
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
@@ -19,6 +19,8 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
     const { t, language } = useI18n()
     const currentUser = useQuery(api.users.getCurrentUser)
     const isAdmin = currentUser?.role === 'admin'
+    const createCourse = useMutation(api.courses.create)
+    const createProgress = useMutation(api.progress.create)
 
     const [mode, setMode] = useState<InputMode>('text')
     const [text, setText] = useState('')
@@ -113,7 +115,22 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
             }
 
             const result = await analyzeResponse.json()
-            onSuccess(result.courseId)
+
+            // Create course in Convex
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const courseId = await createCourse({
+                content: result.content,
+                title: result.title,
+                difficulty: result.difficulty,
+                wordCount: result.wordCount,
+                analyzedData: result.analyzedData,
+                isPublic: result.isPublic,
+            })
+
+            // Initialize progress
+            await createProgress({ courseId })
+
+            onSuccess(courseId)
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Something went wrong')
         } finally {
@@ -279,18 +296,31 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
 
             {/* Admin Options */}
             {isAdmin && (
-                <div className="mt-4 flex items-center gap-2">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                            type="checkbox"
-                            checked={isPublic}
-                            onChange={(e) => setIsPublic(e.target.checked)}
-                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                <div className="mt-4 flex items-center gap-3">
+                    <span className="text-sm font-medium text-foreground">
+                        {t.create.publicCourse}
+                    </span>
+                    <button
+                        type="button"
+                        role="switch"
+                        aria-checked={isPublic}
+                        onClick={() => setIsPublic(!isPublic)}
+                        className={`
+                            relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent 
+                            transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+                            ${isPublic ? 'bg-green-500' : 'bg-gray-200'}
+                        `}
+                    >
+                        <span className="sr-only">{t.create.publicCourse}</span>
+                        <span
+                            aria-hidden="true"
+                            className={`
+                                pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 
+                                transition duration-200 ease-in-out
+                                ${isPublic ? 'translate-x-5' : 'translate-x-0'}
+                            `}
                         />
-                        <span className="text-sm font-medium text-foreground">
-                            {isPublic ? t.create.publicCourse : t.create.privateCourse}
-                        </span>
-                    </label>
+                    </button>
                 </div>
             )}
 

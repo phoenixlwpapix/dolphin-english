@@ -1,7 +1,6 @@
-"use client";
-
 import { useState, useMemo } from "react";
 import { useQuery } from "convex/react";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../../convex/_generated/api";
 import { Sidebar, type SidebarTab } from "@/components/layout";
 import {
@@ -15,6 +14,9 @@ import {
     SortIcon,
     Button,
     PlusIcon,
+    UserIcon,
+    LogOutIcon,
+    SettingsIcon,
 } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
 import { TOTAL_MODULES, DIFFICULTY_CONFIG } from "@/lib/constants";
@@ -33,10 +35,13 @@ interface DashboardProps {
 
 export function Dashboard({ onCreateCourse }: DashboardProps) {
     const { t } = useI18n();
+    const { signOut } = useAuthActions();
+    const currentUser = useQuery(api.users.getCurrentUser);
     const coursesData = useQuery(api.courses.list);
     const publicCourses = useQuery(api.courses.listPublic);
     const myCourses = useQuery(api.userCourses.listMyCourses);
     const [activeTab, setActiveTab] = useState<SidebarTab>("my");
+    const [isSigningOut, setIsSigningOut] = useState(false);
 
     // Search, filter, and sort state
     const [searchQuery, setSearchQuery] = useState("");
@@ -49,16 +54,14 @@ export function Dashboard({ onCreateCourse }: DashboardProps) {
     // Get the correct data source based on active tab
     const currentCourses = useMemo(() => {
         if (activeTab === "my") {
-            return myCourses?.map(course => ({
-                ...course,
-                progress: null, // myCourses doesn't include progress, will need to fetch separately
-            })) ?? [];
-        } else {
+            return myCourses ?? [];
+        } else if (activeTab === "public") {
             return publicCourses?.map(course => ({
                 ...course,
                 progress: null,
             })) ?? [];
         }
+        return [];
     }, [activeTab, myCourses, publicCourses]);
 
     // Filtered and sorted courses
@@ -111,6 +114,15 @@ export function Dashboard({ onCreateCourse }: DashboardProps) {
         }).format(new Date(timestamp));
     }
 
+    const handleSignOut = async () => {
+        setIsSigningOut(true);
+        try {
+            await signOut();
+        } finally {
+            setIsSigningOut(false);
+        }
+    };
+
     // CEFR levels in order for sorting
     const CEFR_ORDER = [
         "A1",
@@ -147,153 +159,200 @@ export function Dashboard({ onCreateCourse }: DashboardProps) {
             <Sidebar className="hidden md:block sticky top-20 h-[calc(100vh-80px)]" activeTab={activeTab} onTabChange={setActiveTab} />
 
             <main className="flex-1 container mx-auto px-4 py-8">
-                <div className="flex items-center gap-2 mb-6">
-                    <BookOpenIcon className="w-6 h-6 text-primary" />
-                    <h2 className="text-2xl font-bold text-foreground">
-                        {activeTab === "my" ? t.sidebar.myCourses : t.sidebar.publicCourses}
-                    </h2>
-                    {!isLoading && (
-                        <span className="px-2 py-0.5 text-sm font-medium text-muted-foreground bg-muted/50 rounded-full">
-                            {activeTab === "my" ? (myCourses?.length ?? 0) : (publicCourses?.length ?? 0)}
-                        </span>
-                    )}
-                </div>
-
-                {/* Search, Filter, Sort Controls */}
-                <div className="mb-8 space-y-4 md:space-y-0 md:flex md:items-center md:gap-4">
-                    {/* Search */}
-                    <div className="relative flex-1 md:max-w-xs">
-                        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                        <input
-                            type="text"
-                            placeholder={t.home.searchPlaceholder || "Search..."}
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2 text-sm bg-card border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder:text-muted-foreground"
-                        />
-                    </div>
-
-                    {/* Difficulty Filter */}
-                    <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
-                        <button
-                            onClick={() => setDifficultyFilter(null)}
-                            className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${difficultyFilter === null
-                                ? "bg-primary text-white shadow-sm"
-                                : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
-                                }`}
-                        >
-                            {t.home.allDifficulties || "All"}
-                        </button>
-                        {difficulties.map((diff) => (
-                            <button
-                                key={diff}
-                                onClick={() =>
-                                    setDifficultyFilter(difficultyFilter === diff ? null : diff)
-                                }
-                                className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${difficultyFilter === diff
-                                    ? "bg-primary text-white shadow-sm"
-                                    : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
-                                    }`}
-                            >
-                                {diff}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Sort - aligned to right on desktop */}
-                    <div className="md:ml-auto flex items-center gap-2">
-                        <div className="relative group">
-                            <button className="flex items-center gap-2 px-3 py-2 text-sm text-foreground bg-card border border-border rounded-lg hover:border-primary/50 transition-colors">
-                                <SortIcon className="w-4 h-4 text-muted-foreground" />
-                                <span>
-                                    {sortOrder === "lastStudied"
-                                        ? t.home.sortByLastStudied || "Last Studied"
-                                        : t.home.sortByCreationDate || "Created Date"}
-                                </span>
-                            </button>
-
-                            <div className="absolute right-0 top-full mt-1 w-40 bg-card border border-border rounded-lg shadow-lg overflow-hidden hidden group-hover:block z-10">
-                                <button
-                                    onClick={() => setSortOrder("lastStudied")}
-                                    className={`w-full text-left px-4 py-2 text-sm hover:bg-muted/50 transition-colors ${sortOrder === "lastStudied"
-                                        ? "text-primary font-medium"
-                                        : "text-foreground"
-                                        }`}
-                                >
-                                    {t.home.sortByLastStudied || "Last Studied"}
-                                </button>
-                                <button
-                                    onClick={() => setSortOrder("creationDate")}
-                                    className={`w-full text-left px-4 py-2 text-sm hover:bg-muted/50 transition-colors ${sortOrder === "creationDate"
-                                        ? "text-primary font-medium"
-                                        : "text-foreground"
-                                        }`}
-                                >
-                                    {t.home.sortByCreationDate || "Created Date"}
-                                </button>
-                            </div>
+                {activeTab === "settings" ? (
+                    // Settings View
+                    <div className="max-w-2xl mx-auto space-y-8">
+                        <div className="flex items-center gap-2 mb-6">
+                            <SettingsIcon className="w-6 h-6 text-primary" />
+                            <h2 className="text-2xl font-bold text-foreground">
+                                {t.sidebar.settings}
+                            </h2>
                         </div>
-                    </div>
-                </div>
 
-                {isLoading ? (
-                    <div className="flex items-center justify-center py-20">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500" />
-                    </div>
-                ) : filteredCourses.length === 0 ? (
-                    // Empty state
-                    searchQuery || difficultyFilter ? (
-                        <div className="flex flex-col items-center justify-center py-20 animate-in fade-in-50">
-                            <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-muted/30 flex items-center justify-center">
-                                <SearchIcon className="w-8 h-8 text-muted-foreground/50" />
-                            </div>
-                            <h3 className="text-lg font-medium text-foreground mb-2">
-                                {t.home.noResults || "No matching courses found"}
-                            </h3>
-                            <p className="text-sm text-muted-foreground mb-6 text-center max-w-xs mx-auto">
-                                {t.home.noCoursesDesc}
-                            </p>
-                            <Button
-                                variant="secondary"
-                                onClick={() => {
-                                    setSearchQuery("");
-                                    setDifficultyFilter(null);
-                                }}
-                            >
-                                {t.home.clearFilters || "Clear filters"}
-                            </Button>
-                        </div>
-                    ) : (
-                        <Card variant="outlined" className="py-16 text-center">
-                            <CardContent>
-                                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-primary-100 flex items-center justify-center">
-                                    <BookOpenIcon className="w-10 h-10 text-primary-500" />
-                                </div>
-                                <h3 className="text-xl font-semibold text-foreground mb-2">
-                                    {t.home.noCourses}
+                        <Card variant="outlined">
+                            <CardContent className="p-6 space-y-6">
+                                <h3 className="text-lg font-semibold text-foreground">
+                                    {t.auth?.signInTitle || "Account"}
                                 </h3>
-                                <p className="text-muted-foreground mb-6">
-                                    {t.home.noCoursesDesc}
-                                </p>
-                                <Button size="lg" onClick={onCreateCourse}>
-                                    <PlusIcon className="w-5 h-5" />
-                                    {t.home.newCourse}
-                                </Button>
+
+                                <div className="flex flex-col gap-4">
+                                    <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
+                                            {currentUser?.email?.charAt(0).toUpperCase() || <UserIcon className="w-5 h-5" />}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium text-muted-foreground">{t.auth?.email}</p>
+                                            <p className="text-foreground font-medium">{currentUser?.email}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-4 border-t border-border">
+                                        <Button
+                                            variant="secondary"
+                                            className="w-full sm:w-auto text-destructive hover:text-destructive hover:bg-destructive/10"
+                                            onClick={handleSignOut}
+                                            isLoading={isSigningOut}
+                                        >
+                                            <LogOutIcon className="w-4 h-4 mr-2" />
+                                            {t.auth?.signOut || "Sign Out"}
+                                        </Button>
+                                    </div>
+                                </div>
                             </CardContent>
                         </Card>
-                    )
-                ) : (
-                    // Course grid
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        {filteredCourses.map((course) => (
-                            <CourseCard
-                                key={course._id}
-                                course={course}
-                                t={t}
-                                formatDate={formatDate}
-                            />
-                        ))}
                     </div>
+                ) : (
+                    // Course List View
+                    <>
+                        <div className="flex items-center gap-2 mb-6">
+                            <BookOpenIcon className="w-6 h-6 text-primary" />
+                            <h2 className="text-2xl font-bold text-foreground">
+                                {activeTab === "my" ? t.sidebar.myCourses : t.sidebar.publicCourses}
+                            </h2>
+                            {!isLoading && (
+                                <span className="px-2 py-0.5 text-sm font-medium text-muted-foreground bg-muted/50 rounded-full">
+                                    {activeTab === "my" ? (myCourses?.length ?? 0) : (publicCourses?.length ?? 0)}
+                                </span>
+                            )}
+                        </div>
+
+                        {/* Search, Filter, Sort Controls */}
+                        <div className="mb-8 space-y-4 md:space-y-0 md:flex md:items-center md:gap-4">
+                            {/* Search */}
+                            <div className="relative flex-1 md:max-w-xs">
+                                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                <input
+                                    type="text"
+                                    placeholder={t.home.searchPlaceholder || "Search..."}
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full pl-9 pr-4 py-2 text-sm bg-card border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder:text-muted-foreground"
+                                />
+                            </div>
+
+                            {/* Difficulty Filter */}
+                            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+                                <button
+                                    onClick={() => setDifficultyFilter(null)}
+                                    className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${difficultyFilter === null
+                                        ? "bg-primary text-white shadow-sm"
+                                        : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+                                        }`}
+                                >
+                                    {t.home.allDifficulties || "All"}
+                                </button>
+                                {difficulties.map((diff) => (
+                                    <button
+                                        key={diff}
+                                        onClick={() =>
+                                            setDifficultyFilter(difficultyFilter === diff ? null : diff)
+                                        }
+                                        className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${difficultyFilter === diff
+                                            ? "bg-primary text-white shadow-sm"
+                                            : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+                                            }`}
+                                    >
+                                        {diff}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Sort - aligned to right on desktop */}
+                            <div className="md:ml-auto flex items-center gap-2">
+                                <div className="relative group">
+                                    <button className="flex items-center gap-2 px-3 py-2 text-sm text-foreground bg-card border border-border rounded-lg hover:border-primary/50 transition-colors">
+                                        <SortIcon className="w-4 h-4 text-muted-foreground" />
+                                        <span>
+                                            {sortOrder === "lastStudied"
+                                                ? t.home.sortByLastStudied || "Last Studied"
+                                                : t.home.sortByCreationDate || "Created Date"}
+                                        </span>
+                                    </button>
+
+                                    <div className="absolute right-0 top-full mt-1 w-40 bg-card border border-border rounded-lg shadow-lg overflow-hidden hidden group-hover:block z-10">
+                                        <button
+                                            onClick={() => setSortOrder("lastStudied")}
+                                            className={`w-full text-left px-4 py-2 text-sm hover:bg-muted/50 transition-colors ${sortOrder === "lastStudied"
+                                                ? "text-primary font-medium"
+                                                : "text-foreground"
+                                                }`}
+                                        >
+                                            {t.home.sortByLastStudied || "Last Studied"}
+                                        </button>
+                                        <button
+                                            onClick={() => setSortOrder("creationDate")}
+                                            className={`w-full text-left px-4 py-2 text-sm hover:bg-muted/50 transition-colors ${sortOrder === "creationDate"
+                                                ? "text-primary font-medium"
+                                                : "text-foreground"
+                                                }`}
+                                        >
+                                            {t.home.sortByCreationDate || "Created Date"}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {isLoading ? (
+                            <div className="flex items-center justify-center py-20">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500" />
+                            </div>
+                        ) : filteredCourses.length === 0 ? (
+                            // Empty state
+                            searchQuery || difficultyFilter ? (
+                                <div className="flex flex-col items-center justify-center py-20 animate-in fade-in-50">
+                                    <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-muted/30 flex items-center justify-center">
+                                        <SearchIcon className="w-8 h-8 text-muted-foreground/50" />
+                                    </div>
+                                    <h3 className="text-lg font-medium text-foreground mb-2">
+                                        {t.home.noResults || "No matching courses found"}
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground mb-6 text-center max-w-xs mx-auto">
+                                        {t.home.noCoursesDesc}
+                                    </p>
+                                    <Button
+                                        variant="secondary"
+                                        onClick={() => {
+                                            setSearchQuery("");
+                                            setDifficultyFilter(null);
+                                        }}
+                                    >
+                                        {t.home.clearFilters || "Clear filters"}
+                                    </Button>
+                                </div>
+                            ) : (
+                                <Card variant="outlined" className="py-16 text-center">
+                                    <CardContent>
+                                        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-primary-100 flex items-center justify-center">
+                                            <BookOpenIcon className="w-10 h-10 text-primary-500" />
+                                        </div>
+                                        <h3 className="text-xl font-semibold text-foreground mb-2">
+                                            {t.home.noCourses}
+                                        </h3>
+                                        <p className="text-muted-foreground mb-6">
+                                            {t.home.noCoursesDesc}
+                                        </p>
+                                        <Button size="lg" onClick={onCreateCourse}>
+                                            <PlusIcon className="w-5 h-5" />
+                                            {t.home.newCourse}
+                                        </Button>
+                                    </CardContent>
+                                </Card>
+                            )
+                        ) : (
+                            // Course grid
+                            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                                {filteredCourses.map((course) => (
+                                    <CourseCard
+                                        key={course._id}
+                                        course={course}
+                                        t={t}
+                                        formatDate={formatDate}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </>
                 )}
             </main>
         </div>

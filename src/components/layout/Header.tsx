@@ -17,10 +17,8 @@ interface HeaderProps {
 
 export function Header({ children, isSignInOpen, onSignInOpenChange }: HeaderProps) {
   const { t, language } = useI18n();
-  const { signOut } = useAuthActions();
   const currentUser = useQuery(api.users.getCurrentUser);
   const [internalSignInOpen, setInternalSignInOpen] = useState(false);
-  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const showSignInModal = isSignInOpen ?? internalSignInOpen;
   const setShowSignInModal = onSignInOpenChange ?? setInternalSignInOpen;
@@ -30,15 +28,6 @@ export function Header({ children, isSignInOpen, onSignInOpenChange }: HeaderPro
     language === "zh"
       ? "font-[family-name:var(--font-zcool)]"
       : "font-handwriting";
-
-  const handleSignOut = async () => {
-    setIsSigningOut(true);
-    try {
-      await signOut();
-    } finally {
-      setIsSigningOut(false);
-    }
-  };
 
   return (
     <>
@@ -75,25 +64,8 @@ export function Header({ children, isSignInOpen, onSignInOpenChange }: HeaderPro
               // Loading state
               <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
             ) : currentUser ? (
-              // Logged in state
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-sm">
-                    {currentUser.email?.charAt(0).toUpperCase() || "U"}
-                  </div>
-                  <span className="text-sm text-muted-foreground hidden md:block max-w-32 truncate">
-                    {currentUser.email}
-                  </span>
-                </div>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={handleSignOut}
-                  isLoading={isSigningOut}
-                >
-                  {t.auth?.signOut || "Sign Out"}
-                </Button>
-              </div>
+              // Logged in state - Moved to Sidebar Settings
+              null
             ) : (
               // Logged out state
               <Button onClick={() => setShowSignInModal(true)}>
