@@ -15,8 +15,11 @@ export interface Translations {
     restart: string;
     created: string;
     deleteCourse: string;
+    leaveCourse: string;
     restartConfirm: string;
     deleteConfirm: string;
+    leaveConfirm: string;
+    public: string;
   };
   app: {
     title: string;
@@ -58,6 +61,9 @@ export interface Translations {
     minutes: string;
     joinCourse: string;
     joined: string;
+    articlePreview: string;
+    startLearning: string;
+    pleaseSignIn: string;
   };
   modules: {
     objectives: string;
@@ -192,8 +198,11 @@ export const zh: Translations = {
     restart: "重新开始",
     created: "创建时间",
     deleteCourse: "删除课程",
+    leaveCourse: "退出课程",
     restartConfirm: "确定要重新开始吗？这将丢失当前的课程进度。",
     deleteConfirm: "确定要删除这个课程吗？",
+    leaveConfirm: "确定要退出这个课程吗？你的学习进度将被清除。",
+    public: "公开",
   },
 
   // App
@@ -243,6 +252,9 @@ export const zh: Translations = {
     minutes: "分钟",
     joinCourse: "加入课程",
     joined: "已加入",
+    articlePreview: "文章预览",
+    startLearning: "开始学习",
+    pleaseSignIn: "请先登录以加入课程",
   },
 
   // Module Names

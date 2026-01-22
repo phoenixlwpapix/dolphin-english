@@ -238,7 +238,8 @@ export const getPreview = query({
       difficulty: course.difficulty,
       wordCount: course.wordCount,
       isPublic: course.isPublic,
-      contentPreview: course.content.slice(0, 200) + (course.content.length > 200 ? "..." : ""),
+      authorId: course.authorId,
+      contentPreview: course.content.slice(0, 300) + (course.content.length > 300 ? "..." : ""),
       learningObjectives: course.analyzedData?.learningObjectives ?? [],
     };
   },

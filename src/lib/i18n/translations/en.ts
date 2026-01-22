@@ -17,9 +17,12 @@ export const en: Translations = {
     restart: "Restart",
     created: "Created",
     deleteCourse: "Delete Course",
+    leaveCourse: "Leave Course",
     restartConfirm:
       "Are you sure you want to restart? This will lose all current progress.",
     deleteConfirm: "Are you sure you want to delete this course?",
+    leaveConfirm: "Are you sure you want to leave this course? Your progress will be cleared.",
+    public: "Public",
   },
 
   // App
@@ -70,6 +73,9 @@ export const en: Translations = {
     minutes: "min",
     joinCourse: "Join Course",
     joined: "Joined",
+    articlePreview: "Article Preview",
+    startLearning: "Start Learning",
+    pleaseSignIn: "Please sign in to join this course",
   },
 
   // Module Names

@@ -17,6 +17,8 @@ import {
     UserIcon,
     LogOutIcon,
     SettingsIcon,
+    GlobeIcon,
+    LockIcon,
 } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
 import { TOTAL_MODULES, DIFFICULTY_CONFIG } from "@/lib/constants";
@@ -348,6 +350,7 @@ export function Dashboard({ onCreateCourse }: DashboardProps) {
                                         course={course}
                                         t={t}
                                         formatDate={formatDate}
+                                        isPublicTab={activeTab === "public"}
                                     />
                                 ))}
                             </div>
@@ -365,6 +368,7 @@ interface CourseWithProgress {
     difficulty: "A2" | "A2+" | "B1" | string;
     wordCount: number;
     _creationTime: number;
+    isPublic?: boolean;
     progress: {
         currentModule: number;
         completedModules: number[];
@@ -376,9 +380,10 @@ interface CourseCardProps {
     course: CourseWithProgress;
     t: ReturnType<typeof useI18n>["t"];
     formatDate: (timestamp: number) => string;
+    isPublicTab?: boolean;
 }
 
-function CourseCard({ course, t, formatDate }: CourseCardProps) {
+function CourseCard({ course, t, formatDate, isPublicTab = false }: CourseCardProps) {
     const progressPercent = getProgressPercentage(
         course.progress?.completedModules,
     );
@@ -423,8 +428,13 @@ function CourseCard({ course, t, formatDate }: CourseCardProps) {
     const strokeDashoffset =
         circumference - (progressPercent / 100) * circumference;
 
+    // Determine the link URL based on tab type
+    const courseUrl = isPublicTab
+        ? `/course/${course._id}/preview`
+        : `/course/${course._id}`;
+
     return (
-        <a href={`/course/${course._id}`} className="block group h-full">
+        <a href={courseUrl} className="block group h-full">
             <Card
                 interactive
                 className={`h-full flex flex-col border-l-4 ${borderColor} ring-1 ring-border/50 transition-all duration-300 ease-out group-hover:ring-2 group-hover:ring-primary/30 group-hover:-translate-y-1 overflow-hidden`}
@@ -432,14 +442,25 @@ function CourseCard({ course, t, formatDate }: CourseCardProps) {
                 <CardContent className="flex-1 flex flex-col p-6">
                     {/* Title section */}
                     <div className="flex items-start justify-between gap-4 mb-6">
-                        <h3 className="text-lg md:text-xl font-bold text-foreground line-clamp-2 leading-snug group-hover:text-primary transition-colors">
+                        <h3 className="text-lg md:text-xl font-bold text-foreground line-clamp-2 leading-snug group-hover:text-primary transition-colors flex-1">
                             {course.title}
                         </h3>
-                        <span
-                            className={`px-2.5 py-1 rounded-md text-xs font-bold tracking-wide shrink-0 border ${badgeStyle}`}
-                        >
-                            {course.difficulty}
-                        </span>
+                        <div className="flex flex-col items-end gap-2 shrink-0">
+                            <span
+                                className={`px-2.5 py-1 rounded-md text-xs font-bold tracking-wide border ${badgeStyle}`}
+                            >
+                                {course.difficulty}
+                            </span>
+                            {!isPublicTab && course.isPublic && (
+                                <div
+                                    className="flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-medium border bg-blue-50/50 text-blue-600 border-blue-100 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900/30"
+                                    title={t.common.public}
+                                >
+                                    <GlobeIcon className="w-3 h-3" />
+                                    <span>{t.common.public}</span>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Spacer to push content down if needed, or just let it flow */}
@@ -463,8 +484,8 @@ function CourseCard({ course, t, formatDate }: CourseCardProps) {
                                 </div>
                             </div>
 
-                            {/* Last studied time */}
-                            {hasProgress && (
+                            {/* Last studied time - only show for my courses */}
+                            {!isPublicTab && hasProgress && (
                                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                     <ClockIcon className="w-4 h-4 text-accent" />
                                     <span>
@@ -475,47 +496,49 @@ function CourseCard({ course, t, formatDate }: CourseCardProps) {
                             )}
                         </div>
 
-                        {/* Right: Circular progress indicator */}
-                        <div className="relative w-12 h-12 shrink-0">
-                            <svg className="w-12 h-12 -rotate-90" viewBox="0 0 40 40">
-                                {/* Background circle */}
-                                <circle
-                                    cx="20"
-                                    cy="20"
-                                    r={radius}
-                                    fill="none"
-                                    strokeWidth="3"
-                                    className="stroke-muted/30"
-                                />
-                                {/* Progress circle */}
-                                <circle
-                                    cx="20"
-                                    cy="20"
-                                    r={radius}
-                                    fill="none"
-                                    strokeWidth="3"
-                                    strokeLinecap="round"
-                                    className={`${progressColor} transition-all duration-500`}
-                                    style={{
-                                        strokeDasharray: circumference,
-                                        strokeDashoffset: strokeDashoffset,
-                                    }}
-                                />
-                            </svg>
-                            {/* Percentage text */}
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <span
-                                    className={`text-[11px] font-bold ${progressPercent === 100
-                                        ? "text-success"
-                                        : progressPercent > 0
-                                            ? "text-primary"
-                                            : "text-muted-foreground"
-                                        }`}
-                                >
-                                    {progressPercent}%
-                                </span>
+                        {/* Right: Circular progress indicator - only show for my courses */}
+                        {!isPublicTab && (
+                            <div className="relative w-12 h-12 shrink-0">
+                                <svg className="w-12 h-12 -rotate-90" viewBox="0 0 40 40">
+                                    {/* Background circle */}
+                                    <circle
+                                        cx="20"
+                                        cy="20"
+                                        r={radius}
+                                        fill="none"
+                                        strokeWidth="3"
+                                        className="stroke-muted/30"
+                                    />
+                                    {/* Progress circle */}
+                                    <circle
+                                        cx="20"
+                                        cy="20"
+                                        r={radius}
+                                        fill="none"
+                                        strokeWidth="3"
+                                        strokeLinecap="round"
+                                        className={`${progressColor} transition-all duration-500`}
+                                        style={{
+                                            strokeDasharray: circumference,
+                                            strokeDashoffset: strokeDashoffset,
+                                        }}
+                                    />
+                                </svg>
+                                {/* Percentage text */}
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <span
+                                        className={`text-[11px] font-bold ${progressPercent === 100
+                                            ? "text-success"
+                                            : progressPercent > 0
+                                                ? "text-primary"
+                                                : "text-muted-foreground"
+                                            }`}
+                                    >
+                                        {progressPercent}%
+                                    </span>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </CardContent>
             </Card>

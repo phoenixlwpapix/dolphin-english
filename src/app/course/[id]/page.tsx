@@ -14,6 +14,7 @@ import {
   ClockIcon,
   RotateCwIcon,
   TrashIcon,
+  LogOutIcon,
 } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
 import type { Id } from "../../../../convex/_generated/dataModel";
@@ -41,13 +42,14 @@ export default function CoursePage() {
 
   const [confirmState, setConfirmState] = useState<{
     isOpen: boolean;
-    type: "restart" | "delete" | null;
+    type: "restart" | "delete" | "leave" | null;
   }>({ isOpen: false, type: null });
 
   const [isActionLoading, setIsActionLoading] = useState(false);
 
   const course = useQuery(api.courses.get, { id: courseId });
   const progress = useQuery(api.progress.get, { courseId });
+  const currentUser = useQuery(api.users.getCurrentUser);
 
   const completeModuleMutation = useMutation(api.progress.completeModule);
   const resetProgressMutation = useMutation(api.progress.reset);
@@ -55,6 +57,7 @@ export default function CoursePage() {
     api.progress.updateCurrentModule,
   );
   const deleteCourseMutation = useMutation(api.courses.remove);
+  const removeCourseMutation = useMutation(api.userCourses.removeCourse);
 
   const moduleNames = [
     t.modules.objectives,
@@ -79,6 +82,10 @@ export default function CoursePage() {
     setConfirmState({ isOpen: true, type: "delete" });
   }
 
+  function handleLeave() {
+    setConfirmState({ isOpen: true, type: "leave" });
+  }
+
   async function handleConfirm() {
     if (!confirmState.type) return;
 
@@ -89,6 +96,9 @@ export default function CoursePage() {
         setConfirmState({ isOpen: false, type: null });
       } else if (confirmState.type === "delete") {
         await deleteCourseMutation({ id: courseId });
+        router.push("/");
+      } else if (confirmState.type === "leave") {
+        await removeCourseMutation({ courseId });
         router.push("/");
       }
     } catch (error) {
@@ -204,14 +214,25 @@ export default function CoursePage() {
                     </Button>
                   )}
 
-                  <Button
-                    variant="danger"
-                    className="w-full justify-center"
-                    onClick={handleDelete}
-                  >
-                    <TrashIcon className="w-4 h-4 mr-2" />
-                    {t.common.deleteCourse}
-                  </Button>
+                  {course.isPublic ? (
+                    <Button
+                      variant="secondary"
+                      className="w-full justify-center text-destructive hover:text-destructive hover:bg-destructive/10"
+                      onClick={handleLeave}
+                    >
+                      <LogOutIcon className="w-4 h-4 mr-2" />
+                      {t.common.leaveCourse}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="danger"
+                      className="w-full justify-center"
+                      onClick={handleDelete}
+                    >
+                      <TrashIcon className="w-4 h-4 mr-2" />
+                      {t.common.deleteCourse}
+                    </Button>
+                  )}
                 </div>
               </Card>
             </div>
@@ -239,9 +260,15 @@ export default function CoursePage() {
                       <RotateCwIcon className="w-5 h-5" />
                     </Button>
                   )}
-                  <Button variant="danger" size="sm" onClick={handleDelete}>
-                    <TrashIcon className="w-5 h-5" />
-                  </Button>
+                  {course.isPublic ? (
+                    <Button variant="ghost" size="sm" className="text-destructive" onClick={handleLeave}>
+                      <LogOutIcon className="w-5 h-5" />
+                    </Button>
+                  ) : (
+                    <Button variant="danger" size="sm" onClick={handleDelete}>
+                      <TrashIcon className="w-5 h-5" />
+                    </Button>
+                  )}
                 </div>
               </div>
 
@@ -308,16 +335,22 @@ export default function CoursePage() {
         onClose={() => setConfirmState({ ...confirmState, isOpen: false })}
         onConfirm={handleConfirm}
         title={
-          confirmState.type === "restart" ? t.common.restart : t.common.delete
+          confirmState.type === "restart"
+            ? t.common.restart
+            : confirmState.type === "leave"
+              ? t.common.leaveCourse
+              : t.common.delete
         }
         description={
           confirmState.type === "restart"
             ? t.common.restartConfirm
-            : t.common.deleteConfirm
+            : confirmState.type === "leave"
+              ? t.common.leaveConfirm
+              : t.common.deleteConfirm
         }
         confirmText={t.common.confirm}
         cancelText={t.common.cancel}
-        variant={confirmState.type === "delete" ? "destructive" : "default"}
+        variant={confirmState.type === "delete" || confirmState.type === "leave" ? "destructive" : "default"}
         isLoading={isActionLoading}
       />
     </div>
