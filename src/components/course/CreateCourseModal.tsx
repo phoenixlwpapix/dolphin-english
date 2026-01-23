@@ -159,16 +159,16 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
     return (
         <Modal isOpen={isOpen} onClose={handleClose} title={t.create.title} size="lg">
             {/* Mode Tabs */}
-            <div className="flex gap-2 mb-6">
+            <div className="flex bg-muted/50 p-1 rounded-xl mb-6 border border-border/50">
                 <button
                     onClick={() => setMode('text')}
                     className={`
-            flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors
-            ${mode === 'text'
-                            ? 'bg-primary-500 text-white'
-                            : 'bg-surface text-muted-foreground hover:text-foreground'
+                        flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200
+                        ${mode === 'text'
+                            ? 'bg-background text-primary shadow-sm ring-1 ring-border/50'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
                         }
-          `}
+                    `}
                 >
                     <span className="flex items-center justify-center gap-2">
                         <FileText className="w-4 h-4" />
@@ -178,12 +178,12 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                 <button
                     onClick={() => setMode('image')}
                     className={`
-            flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors
-            ${mode === 'image'
-                            ? 'bg-primary-500 text-white'
-                            : 'bg-surface text-muted-foreground hover:text-foreground'
+                        flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200
+                        ${mode === 'image'
+                            ? 'bg-background text-primary shadow-sm ring-1 ring-border/50'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
                         }
-          `}
+                    `}
                 >
                     <span className="flex items-center justify-center gap-2">
                         <Image className="w-4 h-4" />
@@ -194,53 +194,67 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
 
             {/* Content Area */}
             {mode === 'text' ? (
-                <div className="space-y-3">
+                <div className="space-y-4 animate-in fade-in slide-in-from-left-4 duration-300">
                     <textarea
                         value={text}
                         onChange={(e) => setText(e.target.value)}
                         placeholder={t.create.textPlaceholder}
                         className="
-              w-full h-64 p-4 rounded-lg bg-muted border-none
-              text-foreground placeholder:text-muted-foreground resize-none
-              focus:bg-background focus:outline-none focus:ring-0 focus:border-2 focus:border-primary
-            "
+                            w-full h-64 p-4 rounded-xl bg-background/50 border border-border
+                            text-foreground placeholder:text-muted-foreground resize-none
+                            focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50
+                            transition-all duration-200
+                        "
                         disabled={isAnalyzing}
                     />
 
                     {/* Word count */}
-                    <div className="flex justify-between items-center text-sm">
+                    <div className="flex justify-between items-center text-sm px-1">
                         <span className="text-muted-foreground">
                             {t.create.wordCount}: <span className="font-medium text-foreground">{wordCount}</span>
                         </span>
-                        <span className={getWordCountStatus().color}>{getWordCountStatus().message}</span>
+                        <span className={`flex items-center gap-1.5 font-medium ${getWordCountStatus().color}`}>
+                            <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                            {getWordCountStatus().message}
+                        </span>
                     </div>
                 </div>
             ) : (
-                <div className="space-y-3">
+                <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
                     {/* Drop zone */}
                     <div
                         onDrop={handleDrop}
                         onDragOver={handleDragOver}
                         onClick={() => fileInputRef.current?.click()}
                         className={`
-              h-64 rounded-lg border-2 border-dashed transition-colors cursor-pointer
-              flex flex-col items-center justify-center gap-3
-              ${imagePreview
-                                ? 'border-primary-300 bg-primary-50'
-                                : 'border-border bg-surface hover:border-primary-300 hover:bg-primary-50/50'
+                            h-64 rounded-xl border-2 border-dashed transition-all cursor-pointer
+                            flex flex-col items-center justify-center gap-4
+                            ${imagePreview
+                                ? 'border-primary/50 bg-primary/5'
+                                : 'border-border bg-background/50 hover:border-primary/50 hover:bg-primary/5'
                             }
-            `}
+                        `}
                     >
                         {imagePreview ? (
-                            <img
-                                src={imagePreview}
-                                alt="Preview"
-                                className="max-h-full max-w-full object-contain rounded"
-                            />
+                            <div className="relative w-full h-full p-2 group">
+                                <img
+                                    src={imagePreview}
+                                    alt="Preview"
+                                    className="w-full h-full object-contain rounded-lg"
+                                />
+                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                                    <p className="text-white font-medium">{t.create.clickToChange}</p>
+                                </div>
+                            </div>
                         ) : (
                             <>
-                                <Upload className="w-12 h-12 text-muted-foreground" />
-                                <span className="text-muted-foreground">{t.create.imageDropzone}</span>
+                                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
+                                    <Upload className="w-8 h-8 text-muted-foreground" />
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-foreground font-medium mb-1">{t.create.clickOrDrop}</p>
+                                    <p className="text-sm text-muted-foreground">{t.create.imageDropzone}</p>
+                                </div>
                             </>
                         )}
                     </div>
@@ -254,57 +268,69 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                     />
 
                     {imagePreview && (
-                        <Button variant="ghost" size="sm" onClick={() => {
-                            setImageFile(null)
-                            setImagePreview(null)
-                        }}>
-                            {t.common.delete}
-                        </Button>
+                        <div className="flex justify-end">
+                            <Button variant="ghost" size="sm" onClick={(e) => {
+                                e.stopPropagation();
+                                setImageFile(null)
+                                setImagePreview(null)
+                            }}>
+                                {t.common.delete}
+                            </Button>
+                        </div>
                     )}
                 </div>
             )}
 
             {/* Error */}
             {error && (
-                <div className="mt-4 p-3 rounded-lg bg-error/10 text-error text-sm">{error}</div>
+                <div className="mt-4 p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium animate-in fade-in slide-in-from-top-2">
+                    {error}
+                </div>
             )}
 
             {/* Admin Options */}
             {isAdmin && (
-                <div className="mt-4 flex items-center gap-3">
+                <div className="mt-6 flex items-center gap-3 p-3 rounded-xl bg-muted/30 border border-border/50">
+                    <div className="relative flex items-center">
+                        <button
+                            type="button"
+                            role="switch"
+                            aria-checked={isPublic}
+                            onClick={() => setIsPublic(!isPublic)}
+                            className={`
+                                relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent 
+                                transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+                                ${isPublic ? 'bg-primary' : 'bg-input'}
+                            `}
+                        >
+                            <span className="sr-only">{t.create.publicCourse}</span>
+                            <span
+                                aria-hidden="true"
+                                className={`
+                                    pointer-events-none inline-block h-5 w-5 transform rounded-full bg-background shadow ring-0 
+                                    transition duration-200 ease-in-out
+                                    ${isPublic ? 'translate-x-5' : 'translate-x-0'}
+                                `}
+                            />
+                        </button>
+                    </div>
                     <span className="text-sm font-medium text-foreground">
                         {t.create.publicCourse}
                     </span>
-                    <button
-                        type="button"
-                        role="switch"
-                        aria-checked={isPublic}
-                        onClick={() => setIsPublic(!isPublic)}
-                        className={`
-                            relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent 
-                            transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
-                            ${isPublic ? 'bg-green-500' : 'bg-gray-200'}
-                        `}
-                    >
-                        <span className="sr-only">{t.create.publicCourse}</span>
-                        <span
-                            aria-hidden="true"
-                            className={`
-                                pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 
-                                transition duration-200 ease-in-out
-                                ${isPublic ? 'translate-x-5' : 'translate-x-0'}
-                            `}
-                        />
-                    </button>
                 </div>
             )}
 
             {/* Actions */}
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-8 flex justify-end gap-3 pt-4 border-t border-border/50">
                 <Button variant="ghost" onClick={handleClose} disabled={isAnalyzing}>
                     {t.common.cancel}
                 </Button>
-                <Button onClick={handleSubmit} disabled={!canSubmit} isLoading={isAnalyzing}>
+                <Button
+                    onClick={handleSubmit}
+                    disabled={!canSubmit}
+                    isLoading={isAnalyzing}
+                    className="shadow-lg shadow-primary/20"
+                >
                     {isAnalyzing ? t.create.analyzing : t.create.startLearning}
                 </Button>
             </div>

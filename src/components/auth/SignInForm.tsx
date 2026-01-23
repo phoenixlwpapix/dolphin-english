@@ -41,11 +41,11 @@ export function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-1.5">
                 <label
                     htmlFor="email"
-                    className="block text-sm font-medium text-foreground mb-1"
+                    className="block text-sm font-medium text-foreground ml-1"
                 >
                     {t.auth?.email || "Email"}
                 </label>
@@ -55,15 +55,15 @@ export function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    className="w-full px-4 py-2.5 border border-border rounded-xl bg-background/50 focus:bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200"
                     placeholder="you@example.com"
                 />
             </div>
 
-            <div>
+            <div className="space-y-1.5">
                 <label
                     htmlFor="password"
-                    className="block text-sm font-medium text-foreground mb-1"
+                    className="block text-sm font-medium text-foreground ml-1"
                 >
                     {t.auth?.password || "Password"}
                 </label>
@@ -74,31 +74,38 @@ export function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    className="w-full px-4 py-2.5 border border-border rounded-xl bg-background/50 focus:bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200"
                     placeholder="••••••••"
                 />
             </div>
 
             {error && (
-                <div className="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 p-2 rounded">
+                <div className="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 p-3 rounded-xl border border-red-200 dark:border-red-900/50 animate-in fade-in slide-in-from-top-1">
                     {error}
                 </div>
             )}
 
-            <Button type="submit" className="w-full" isLoading={isLoading}>
+            <Button
+                type="submit"
+                className="w-full rounded-xl py-6 text-lg font-medium shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
+                isLoading={isLoading}
+            >
                 {mode === "signIn"
                     ? t.auth?.signIn || "Sign In"
                     : t.auth?.signUp || "Sign Up"}
             </Button>
 
-            <div className="text-center text-sm text-muted-foreground">
+            <div className="text-center text-sm text-muted-foreground pt-2">
                 {mode === "signIn" ? (
                     <>
                         {t.auth?.noAccount || "Don't have an account?"}{" "}
                         <button
                             type="button"
-                            onClick={() => setMode("signUp")}
-                            className="text-primary hover:underline font-medium"
+                            onClick={() => {
+                                setMode("signUp");
+                                setError("");
+                            }}
+                            className="text-primary hover:text-primary-600 font-semibold transition-colors hover:underline underline-offset-4"
                         >
                             {t.auth?.signUp || "Sign Up"}
                         </button>
@@ -108,8 +115,11 @@ export function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
                         {t.auth?.hasAccount || "Already have an account?"}{" "}
                         <button
                             type="button"
-                            onClick={() => setMode("signIn")}
-                            className="text-primary hover:underline font-medium"
+                            onClick={() => {
+                                setMode("signIn");
+                                setError("");
+                            }}
+                            className="text-primary hover:text-primary-600 font-semibold transition-colors hover:underline underline-offset-4"
                         >
                             {t.auth?.signIn || "Sign In"}
                         </button>

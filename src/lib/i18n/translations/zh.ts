@@ -36,9 +36,12 @@ export interface Translations {
     searchPlaceholder: string;
     allDifficulties: string;
     sortByLastStudied: string;
-    sortByCreationDate: string;
+    sortByAddedDate: string;
     noResults: string;
     clearFilters: string;
+    accountSettings: string;
+    loadingCourses: string;
+    tryAdjusting: string;
   };
   create: {
     title: string;
@@ -54,6 +57,8 @@ export interface Translations {
     startLearning: string;
     publicCourse: string;
     privateCourse: string;
+    clickToChange: string;
+    clickOrDrop: string;
   };
   course: {
     module: string;
@@ -165,6 +170,7 @@ export interface Translations {
     noPublicCourses: string;
     noMyCourses: string;
     settings: string;
+    navigation: string;
   };
   landing: {
     heroTitle: string;
@@ -172,12 +178,44 @@ export interface Translations {
     startLearning: string;
     learnMore: string;
     readyToStart: string;
+    featuresTitle: string;
+    whyChoose: string;
+    whyChooseDesc: string;
+    version: string;
+    stats: {
+      levels: string;
+      ai: string;
+      free: string;
+    };
+    quote: {
+      text1: string;
+      text2: string;
+    };
+    startToday: string;
+    joinThousands: string;
     features: {
       daily: { title: string; desc: string };
       real: { title: string; desc: string };
       level: { title: string; desc: string };
       ai: { title: string; desc: string };
     };
+  };
+  footer: {
+    product: string;
+    features: string;
+    pricing: string;
+    resources: string;
+    blog: string;
+    community: string;
+    help: string;
+    company: string;
+    about: string;
+    careers: string;
+    legal: string;
+    privacy: string;
+    terms: string;
+    copyright: string;
+    slogan: string;
   };
 }
 
@@ -223,9 +261,12 @@ export const zh: Translations = {
     searchPlaceholder: "搜索课程标题...",
     allDifficulties: "全部",
     sortByLastStudied: "最近学习",
-    sortByCreationDate: "创建时间",
+    sortByAddedDate: "加入时间",
     noResults: "没有找到匹配的课程",
     clearFilters: "清空筛选",
+    accountSettings: "管理您的账户偏好",
+    loadingCourses: "正在加载课程...",
+    tryAdjusting: "尝试调整搜索或筛选条件。",
   },
 
   // Create Course
@@ -243,6 +284,8 @@ export const zh: Translations = {
     startLearning: "开始学习",
     publicCourse: "公开课程",
     privateCourse: "仅我的课程",
+    clickToChange: "点击更换",
+    clickOrDrop: "点击上传或拖拽文件至此",
   },
 
   // Course Learning
@@ -376,6 +419,7 @@ export const zh: Translations = {
     noPublicCourses: "暂无公共课程",
     noMyCourses: "暂无课程",
     settings: "设置",
+    navigation: "导航",
   },
 
   // Landing Page
@@ -385,6 +429,21 @@ export const zh: Translations = {
     startLearning: "开始学习",
     learnMore: "了解更多",
     readyToStart: "准备好开启你的旅程了吗？",
+    featuresTitle: "功能特点",
+    whyChoose: "为什么选择海豚英语？",
+    whyChooseDesc: "AI 赋能的现代英语学习方式，基于真实世界内容。",
+    version: "v1.0 公测版",
+    stats: {
+      levels: "CEFR 等级",
+      ai: "AI 生成",
+      free: "免费",
+    },
+    quote: {
+      text1: "拥有另一种语言",
+      text2: "就是拥有第二个灵魂。",
+    },
+    startToday: "即刻开始",
+    joinThousands: "加入成千上万的学习者，通过我们的 AI 平台提升英语技能。",
     features: {
       daily: {
         title: "每天 30 分钟",
@@ -403,5 +462,24 @@ export const zh: Translations = {
         desc: "对文章词汇和句式的深度解析。",
       },
     },
+  },
+
+  // Footer
+  footer: {
+    product: "产品",
+    features: "功能",
+    pricing: "定价",
+    resources: "资源",
+    blog: "博客",
+    community: "社区",
+    help: "帮助中心",
+    company: "公司",
+    about: "关于我们",
+    careers: "加入我们",
+    legal: "法律",
+    privacy: "隐私政策",
+    terms: "服务条款",
+    copyright: "© 2024 海豚英语。保留所有权利。",
+    slogan: "为英语学习者打造的下一代学习工具。",
   },
 };

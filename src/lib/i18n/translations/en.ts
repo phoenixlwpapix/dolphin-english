@@ -43,9 +43,12 @@ export const en: Translations = {
     searchPlaceholder: "Search course titles...",
     allDifficulties: "All",
     sortByLastStudied: "Last Studied",
-    sortByCreationDate: "Created",
+    sortByAddedDate: "Added",
     noResults: "No matching courses found",
     clearFilters: "Clear filters",
+    accountSettings: "Manage your account preferences",
+    loadingCourses: "Loading courses...",
+    tryAdjusting: "Try adjusting your search or filters to find what you're looking for.",
   },
 
   // Create Course
@@ -64,6 +67,8 @@ export const en: Translations = {
     startLearning: "Start Learning",
     publicCourse: "Public Course",
     privateCourse: "My Course Only",
+    clickToChange: "Click to change",
+    clickOrDrop: "Click to upload or drag and drop",
   },
 
   // Course Learning
@@ -198,6 +203,7 @@ export const en: Translations = {
     noPublicCourses: "No public courses",
     noMyCourses: "No courses yet",
     settings: "Settings",
+    navigation: "Navigation",
   },
 
   // Landing Page
@@ -208,6 +214,21 @@ export const en: Translations = {
     startLearning: "Start Learning",
     learnMore: "Learn More",
     readyToStart: "Ready to start your journey?",
+    featuresTitle: "Features",
+    whyChoose: "Why Choose Dolphin English?",
+    whyChooseDesc: "A modern approach to English learning with AI-powered tools and real-world content.",
+    version: "v1.0 Public Beta",
+    stats: {
+      levels: "CEFR Levels",
+      ai: "AI-Generated",
+      free: "Free",
+    },
+    quote: {
+      text1: "To have another language",
+      text2: "is to possess a second soul.",
+    },
+    startToday: "Start Today",
+    joinThousands: "Join thousands of learners improving their English skills with our AI-powered platform.",
     features: {
       daily: {
         title: "30 Minutes a Day",
@@ -226,5 +247,24 @@ export const en: Translations = {
         desc: "Deep analysis of vocabulary and sentence structure.",
       },
     },
+  },
+
+  // Footer
+  footer: {
+    product: "Product",
+    features: "Features",
+    pricing: "Pricing",
+    resources: "Resources",
+    blog: "Blog",
+    community: "Community",
+    help: "Help Center",
+    company: "Company",
+    about: "About Us",
+    careers: "Careers",
+    legal: "Legal",
+    privacy: "Privacy",
+    terms: "Terms",
+    copyright: "© 2024 Dolphin English. All rights reserved.",
+    slogan: "The next generation learning tool for English learners.",
   },
 };
