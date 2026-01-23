@@ -381,7 +381,7 @@ export const zh: Translations = {
   // Landing Page
   landing: {
     heroTitle: "Dolphin English",
-    heroSubtitle: "通过真实文章提升你的英语听说读写能力。专为 A2-B1 学习者打造。",
+    heroSubtitle: "通过真实文章提升你的英语听说读写能力。覆盖 A1-C2 全 CEFR 等级。",
     startLearning: "开始学习",
     learnMore: "了解更多",
     readyToStart: "准备好开启你的旅程了吗？",
@@ -395,8 +395,8 @@ export const zh: Translations = {
         desc: "告别枯燥教科书，从真实新闻和故事中学习。",
       },
       level: {
-        title: "A2-B1 水平",
-        desc: "完美的难度曲线，助你稳步提升。",
+        title: "A1-C2 全等级",
+        desc: "覆盖全 CEFR 等级，从入门到精通，满足不同阶段学习需求。",
       },
       ai: {
         title: "AI 深度分析",

@@ -204,7 +204,7 @@ export const en: Translations = {
   landing: {
     heroTitle: "Dolphin English",
     heroSubtitle:
-      "Improve your English reading and listening with real-world content. Tailored for A2-B1 learners.",
+      "Improve your English reading and listening with real-world content. All CEFR levels from A1 to C2.",
     startLearning: "Start Learning",
     learnMore: "Learn More",
     readyToStart: "Ready to start your journey?",
@@ -218,8 +218,8 @@ export const en: Translations = {
         desc: "Learn from actual news and stories, not boring textbooks.",
       },
       level: {
-        title: "A2-B1 Levels",
-        desc: "Perfect difficulty curve to help you progress steadily.",
+        title: "A1-C2 Levels",
+        desc: "Full CEFR coverage from beginner to advanced, meeting diverse learning needs.",
       },
       ai: {
         title: "AI Analysis",

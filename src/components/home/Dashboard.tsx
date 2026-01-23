@@ -19,6 +19,7 @@ import {
     SettingsIcon,
     GlobeIcon,
     LockIcon,
+    LibraryIcon,
 } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
 import { TOTAL_MODULES, DIFFICULTY_CONFIG } from "@/lib/constants";
@@ -207,7 +208,11 @@ export function Dashboard({ onCreateCourse }: DashboardProps) {
                     // Course List View
                     <>
                         <div className="flex items-center gap-2 mb-6">
-                            <BookOpenIcon className="w-6 h-6 text-primary" />
+                            {activeTab === "my" ? (
+                                <BookOpenIcon className="w-6 h-6 text-primary" />
+                            ) : (
+                                <LibraryIcon className="w-6 h-6 text-primary" />
+                            )}
                             <h2 className="text-2xl font-bold text-foreground">
                                 {activeTab === "my" ? t.sidebar.myCourses : t.sidebar.publicCourses}
                             </h2>

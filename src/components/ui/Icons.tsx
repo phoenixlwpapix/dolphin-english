@@ -30,6 +30,7 @@ import {
   LogOut,
   Globe,
   Lock,
+  Library,
   LucideProps,
 } from "lucide-react";
 
@@ -192,3 +193,9 @@ export function GlobeIcon(props: IconProps) {
 export function LockIcon(props: IconProps) {
   return <Lock {...props} />;
 }
+
+/** Library icon for public courses */
+export function LibraryIcon(props: IconProps) {
+  return <Library {...props} />;
+}
+

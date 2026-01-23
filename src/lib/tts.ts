@@ -137,7 +137,15 @@ class TTSController {
     };
 
     utterance.onerror = (event) => {
-      console.error("TTS error:", event.error);
+      // "interrupted" and "canceled" are expected when user navigates away or stops playback
+      // These are not errors, so we don't log them
+      const isExpectedInterruption =
+        event.error === "interrupted" || event.error === "canceled";
+
+      if (!isExpectedInterruption) {
+        console.error("TTS error:", event.error);
+      }
+
       this.currentUtterance = null;
       this.callback?.("end");
     };
