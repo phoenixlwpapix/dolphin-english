@@ -264,7 +264,7 @@ export const en: Translations = {
     legal: "Legal",
     privacy: "Privacy",
     terms: "Terms",
-    copyright: "© 2024 Dolphin English. All rights reserved.",
+    copyright: "© 2026 Dolphin English. All rights reserved.",
     slogan: "The next generation learning tool for English learners.",
   },
 };

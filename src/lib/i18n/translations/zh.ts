@@ -479,7 +479,7 @@ export const zh: Translations = {
     legal: "法律",
     privacy: "隐私政策",
     terms: "服务条款",
-    copyright: "© 2024 海豚英语。保留所有权利。",
+    copyright: "© 2026 海豚英语。保留所有权利。",
     slogan: "为英语学习者打造的下一代学习工具。",
   },
 };

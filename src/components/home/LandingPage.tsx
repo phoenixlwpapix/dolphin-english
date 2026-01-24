@@ -63,7 +63,7 @@ export function LandingPage({ onStart }: LandingPageProps) {
     return (
         <div className="flex flex-col min-h-[calc(100vh-80px)] bg-background overflow-hidden">
             {/* Hero Section */}
-            <section className="relative px-4 py-24 md:py-36 overflow-hidden">
+            <section className="relative px-4 pt-48 pb-24 md:pt-56 md:pb-36 overflow-hidden">
                 {/* Animated background elements */}
                 <div className="absolute inset-0 hero-gradient opacity-60" />
                 <div className="absolute top-10 left-[10%] w-72 h-72 bg-gradient-to-br from-primary/30 to-accent/20 rounded-full blur-3xl animate-pulse-soft" />

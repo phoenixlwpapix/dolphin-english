@@ -29,6 +29,7 @@ export default function HomePage() {
       <Header
         isSignInOpen={isSignInOpen}
         onSignInOpenChange={setIsSignInOpen}
+        variant={currentUser ? "default" : "landing"}
       >
         {currentUser && (
           <Button onClick={() => setIsCreateModalOpen(true)}>
