@@ -84,7 +84,7 @@ export async function POST(req: Request) {
       content: text,
       title: output.title,
       difficulty: output.difficulty.level,
-      wordCount: output.difficulty.wordCount,
+      wordCount: wordCount,
       analyzedData: output.analysis,
       isPublic: isPublic,
     });
