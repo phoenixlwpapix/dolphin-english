@@ -4,14 +4,44 @@ import { articleAnalysisSchema } from "@/lib/schemas";
 
 export const maxDuration = 60;
 
+/**
+ * 尝试从文章文本中提取标题
+ * 规则：如果第一行是短文本（≤15个单词）且不以句号结尾，则认为是标题
+ */
+function extractTitleFromText(text: string): {
+  title: string | null;
+  contentWithoutTitle: string;
+} {
+  const lines = text.trim().split(/\n/);
+  const firstLine = lines[0]?.trim();
 
+  if (!firstLine) {
+    return { title: null, contentWithoutTitle: text };
+  }
 
-function getAnalysisPrompt() {
+  const wordCount = firstLine.split(/\s+/).filter(Boolean).length;
+  const endsWithPeriod = /[.!?]$/.test(firstLine);
+  const isLikelyTitle = wordCount <= 15 && !endsWithPeriod;
+
+  if (isLikelyTitle) {
+    // 移除第一行作为标题，剩余内容作为文章正文
+    const contentWithoutTitle = lines.slice(1).join("\n").trim();
+    return { title: firstLine, contentWithoutTitle };
+  }
+
+  return { title: null, contentWithoutTitle: text };
+}
+
+function getAnalysisPrompt(extractedTitle: string | null) {
+  const titleInstruction = extractedTitle
+    ? `1. **Title**: Use the provided title: "${extractedTitle}"`
+    : `1. **Title**: Generate a descriptive title for this article`;
+
   return `You are an expert English language teaching assistant specializing in content analysis across all CEFR levels.
 
 Analyze the following English article and provide:
 
-1. **Title**: Generate a descriptive title for this article
+${titleInstruction}
 2. **Difficulty Assessment**:
    - Level: Assess the CEFR level (A1, A1+, A2, A2+, B1, B1+, B2, B2+, C1, C1+, or C2)
    - Word count
@@ -59,7 +89,15 @@ export async function POST(req: Request) {
       return Response.json({ error: "No text provided" }, { status: 400 });
     }
 
-    const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
+    // 尝试从文本中提取标题
+    const { title: extractedTitle, contentWithoutTitle } =
+      extractTitleFromText(text);
+
+    // 计算文章正文的字数（不含标题）
+    const wordCount = contentWithoutTitle
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean).length;
 
     if (wordCount < 100) {
       return Response.json({ error: "Article too short" }, { status: 400 });
@@ -69,7 +107,7 @@ export async function POST(req: Request) {
     const { output } = await generateText({
       model: google("gemini-3-flash-preview"),
       output: Output.object({ schema: articleAnalysisSchema }),
-      prompt: `${getAnalysisPrompt()}\n\n---\n\nARTICLE:\n${text}`,
+      prompt: `${getAnalysisPrompt(extractedTitle)}\n\n---\n\nARTICLE:\n${contentWithoutTitle}`,
     });
 
     if (!output) {
@@ -79,10 +117,13 @@ export async function POST(req: Request) {
       );
     }
 
+    // 优先使用提取的标题，如果没有则使用AI生成的标题
+    const finalTitle = extractedTitle || output.title;
+
     // Return the analysis result for the client to handle
     return Response.json({
-      content: text,
-      title: output.title,
+      content: text, // 保留原始完整文本（包含标题）
+      title: finalTitle,
       difficulty: output.difficulty.level,
       wordCount: wordCount,
       analyzedData: output.analysis,

@@ -455,6 +455,10 @@ function CourseCard({ course, t, formatDate, isPublicTab = false }: CourseCardPr
         ? `${difficultyConfig.color} border border-current/20`
         : "text-gray-700 bg-gray-50 border-gray-200";
 
+    // Border and accent colors for card decoration
+    const borderStyle = difficultyConfig?.border ?? "border-gray-300";
+    const accentGradient = difficultyConfig?.accent ?? "from-gray-400 to-gray-500";
+
     // Progress ring color
     const progressColor =
         progressPercent === 100
@@ -477,11 +481,11 @@ function CourseCard({ course, t, formatDate, isPublicTab = false }: CourseCardPr
     return (
         <a href={courseUrl} className="block group h-full">
             <Card
-                className="h-full flex flex-col bg-card border-border/50 hover:border-primary/50 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-primary/5 overflow-hidden rounded-2xl"
+                className={`h-full flex flex-col bg-card border-l-4 ${borderStyle} border-t-0 border-r-0 border-b-0 hover:border-l-4 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-primary/5 overflow-hidden rounded-2xl`}
             >
                 <CardContent className="flex-1 flex flex-col p-6 relative">
                     {/* Decorative gradient blob */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/5 to-transparent rounded-bl-full -z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${accentGradient} opacity-[0.03] rounded-bl-full -z-0 group-hover:opacity-[0.08] transition-opacity duration-500`} />
 
                     {/* Top Section: Title and Difficulty Badge */}
                     <div className="relative z-10 flex items-start justify-between gap-3 mb-2">

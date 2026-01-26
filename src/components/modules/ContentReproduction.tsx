@@ -17,6 +17,9 @@ import type { ParagraphAnalysis as ParagraphData } from "@/lib/schemas";
 /** Maximum number of keywords to display */
 const MAX_KEYWORDS = 6;
 
+/** Fixed number of timeline items for sorting exercise */
+const TIMELINE_ITEMS_COUNT = 6;
+
 interface ContentReproductionProps {
   paragraphs: ParagraphData[];
   onComplete: () => void;
@@ -32,11 +35,44 @@ export function ContentReproduction({
   const [currentExercise, setCurrentExercise] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
 
-  // Generate timeline items from paragraphs - always use English for sorting exercise
+  // Generate timeline items from paragraphs - fixed to 6 items for consistent difficulty
   const timelineItems = useMemo(() => {
-    return paragraphs.map((p, i) => ({
-      id: i,
-      summary: p.summary, // Always English for timeline sorting
+    const totalParagraphs = paragraphs.length;
+
+    if (totalParagraphs <= TIMELINE_ITEMS_COUNT) {
+      // Use all paragraphs if 6 or fewer
+      return paragraphs.map((p, i) => ({
+        id: i,
+        summary: p.summary,
+      }));
+    }
+
+    // Evenly select 6 paragraphs from the article
+    const selectedIndices: number[] = [];
+    const step = totalParagraphs / TIMELINE_ITEMS_COUNT;
+
+    for (let i = 0; i < TIMELINE_ITEMS_COUNT; i++) {
+      const index = Math.min(Math.floor(i * step), totalParagraphs - 1);
+      if (!selectedIndices.includes(index)) {
+        selectedIndices.push(index);
+      }
+    }
+
+    // Fill in missing slots if needed (due to rounding)
+    let nextIndex = 0;
+    while (selectedIndices.length < TIMELINE_ITEMS_COUNT && nextIndex < totalParagraphs) {
+      if (!selectedIndices.includes(nextIndex)) {
+        selectedIndices.push(nextIndex);
+      }
+      nextIndex++;
+    }
+
+    // Sort indices to maintain order and create items with sequential IDs
+    selectedIndices.sort((a, b) => a - b);
+
+    return selectedIndices.map((originalIndex, newId) => ({
+      id: newId,
+      summary: paragraphs[originalIndex].summary,
     }));
   }, [paragraphs]);
 
