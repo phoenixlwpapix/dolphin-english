@@ -13,6 +13,7 @@ import {
 } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
 import type { ParagraphAnalysis as ParagraphData } from "@/lib/schemas";
+import { ArticleReference } from "@/components/course";
 
 /** Maximum number of keywords to display */
 const MAX_KEYWORDS = 6;
@@ -22,12 +23,14 @@ const TIMELINE_ITEMS_COUNT = 6;
 
 interface ContentReproductionProps {
   paragraphs: ParagraphData[];
+  articleContent: string;
   onComplete: () => void;
   onFinish?: () => void;
 }
 
 export function ContentReproduction({
   paragraphs,
+  articleContent,
   onComplete,
   onFinish,
 }: ContentReproductionProps) {
@@ -122,18 +125,21 @@ export function ContentReproduction({
   return (
     <Card>
       <CardContent>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
-            <EditIcon className="w-5 h-5 text-primary-600" />
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
+              <EditIcon className="w-5 h-5 text-primary-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-foreground">
+                {t.reproduction.title}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {t.course.module} 6 · 2 {t.course.minutes}
+              </p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-xl font-bold text-foreground">
-              {t.reproduction.title}
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              {t.course.module} 6 · 2 {t.course.minutes}
-            </p>
-          </div>
+          <ArticleReference content={articleContent} />
         </div>
 
         {/* Exercise tabs */}

@@ -18,6 +18,7 @@ import {
 import { useI18n } from "@/lib/i18n";
 import type { QuizQuestion } from "@/lib/schemas";
 import type { Id } from "../../../convex/_generated/dataModel";
+import { ArticleReference } from "@/components/course";
 
 interface QuizResult {
   questionId: string;
@@ -28,12 +29,14 @@ interface QuizResult {
 interface ComprehensionQuizProps {
   questions: QuizQuestion[];
   courseId: Id<"courses">;
+  articleContent: string;
   onComplete: () => void;
 }
 
 export function ComprehensionQuiz({
   questions,
   courseId,
+  articleContent,
   onComplete,
 }: ComprehensionQuizProps) {
   const { t } = useI18n();
@@ -210,18 +213,21 @@ export function ComprehensionQuiz({
   return (
     <Card>
       <CardContent>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
-            <ClipboardListIcon className="w-5 h-5 text-primary-600" />
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
+              <ClipboardListIcon className="w-5 h-5 text-primary-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-foreground">
+                {t.quiz.title}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {t.course.module} 5 · 5 {t.course.minutes}
+              </p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-xl font-bold text-foreground">
-              {t.quiz.title}
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              {t.course.module} 5 · 5 {t.course.minutes}
-            </p>
-          </div>
+          <ArticleReference content={articleContent} />
         </div>
 
         {/* Progress */}

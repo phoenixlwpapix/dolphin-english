@@ -69,6 +69,11 @@ export interface Translations {
     articlePreview: string;
     startLearning: string;
     pleaseSignIn: string;
+    viewArticle: string;
+    articleReference: string;
+    highlightedText: string;
+    courseProgress: string;
+    words: string;
   };
   modules: {
     objectives: string;
@@ -298,6 +303,11 @@ export const zh: Translations = {
     articlePreview: "文章预览",
     startLearning: "开始学习",
     pleaseSignIn: "请先登录以加入课程",
+    viewArticle: "查看原文",
+    articleReference: "文章原文",
+    highlightedText: "高亮文本显示该词在文章中的位置",
+    courseProgress: "课程进度",
+    words: "词",
   },
 
   // Module Names

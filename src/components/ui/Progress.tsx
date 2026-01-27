@@ -72,12 +72,16 @@ export function ModuleSteps({
 }: ModuleStepsProps & { orientation?: 'horizontal' | 'vertical' }) {
     const isVertical = orientation === 'vertical'
 
+    // Calculate the highest module the user has ever reached
+    const maxCompleted = completedModules.length > 0 ? Math.max(...completedModules) : 0
+    const maxReachedModule = Math.max(currentModule, maxCompleted)
+
     return (
         <div className={`flex w-full ${isVertical ? 'flex-col gap-4' : 'items-center justify-between'}`}>
             {Array.from({ length: totalModules }, (_, i) => i + 1).map((moduleNum) => {
                 const isCompleted = completedModules.includes(moduleNum)
                 const isCurrent = moduleNum === currentModule
-                const isAccessible = moduleNum <= currentModule || isCompleted
+                const isAccessible = moduleNum <= maxReachedModule
 
                 return (
                     <div

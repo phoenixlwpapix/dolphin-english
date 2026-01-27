@@ -16,6 +16,7 @@ import { useI18n } from '@/lib/i18n'
 import { tts } from '@/lib/tts'
 import type { VocabularyItem } from '@/lib/schemas'
 import type { Id } from '../../../convex/_generated/dataModel'
+import { ArticleReference } from '@/components/course'
 
 /** Speech rate for vocabulary pronunciation */
 const PRONUNCIATION_RATE = 0.8
@@ -23,10 +24,11 @@ const PRONUNCIATION_RATE = 0.8
 interface VocabularyLearningProps {
     vocabulary: VocabularyItem[]
     courseId: Id<"courses">
+    articleContent: string
     onComplete: () => void
 }
 
-export function VocabularyLearning({ vocabulary, courseId, onComplete }: VocabularyLearningProps) {
+export function VocabularyLearning({ vocabulary, courseId, articleContent, onComplete }: VocabularyLearningProps) {
     const { t } = useI18n()
     const [viewedWords, setViewedWords] = useState<Set<string>>(new Set())
     const [expandedWord, setExpandedWord] = useState<string | null>(null)
@@ -88,14 +90,17 @@ export function VocabularyLearning({ vocabulary, courseId, onComplete }: Vocabul
     return (
         <Card>
             <CardContent>
-                <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
-                        <BookOpenIcon className="w-5 h-5 text-primary-600" />
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
+                            <BookOpenIcon className="w-5 h-5 text-primary-600" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold text-foreground">{t.vocabulary.title}</h2>
+                            <p className="text-sm text-muted-foreground">{t.course.module} 4 · 5 {t.course.minutes}</p>
+                        </div>
                     </div>
-                    <div>
-                        <h2 className="text-xl font-bold text-foreground">{t.vocabulary.title}</h2>
-                        <p className="text-sm text-muted-foreground">{t.course.module} 4 · 5 {t.course.minutes}</p>
-                    </div>
+                    <ArticleReference content={articleContent} />
                 </div>
 
                 {/* Progress hint */}

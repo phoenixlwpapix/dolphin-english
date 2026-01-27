@@ -109,8 +109,16 @@ export default function CoursePage() {
   }
 
   function handleModuleClick(moduleNumber: number) {
-    if (progress && moduleNumber <= progress.currentModule) {
-      updateCurrentModuleMutation({ courseId, moduleNumber });
+    if (progress) {
+      // Calculate the highest module the user has ever reached
+      const maxCompleted = progress.completedModules.length > 0
+        ? Math.max(...progress.completedModules)
+        : 0;
+      const maxReachedModule = Math.max(progress.currentModule, maxCompleted);
+
+      if (moduleNumber <= maxReachedModule) {
+        updateCurrentModuleMutation({ courseId, moduleNumber });
+      }
     }
   }
 
@@ -184,13 +192,13 @@ export default function CoursePage() {
                     </span>
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {course.wordCount} words
+                    {course.wordCount} {t.course.words}
                   </div>
                 </div>
 
                 <div className="border-t border-border/50 pt-6">
                   <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4 pl-1">
-                    Course Progress
+                    {t.course.courseProgress}
                   </h3>
                   <ModuleSteps
                     currentModule={currentModule}
@@ -301,6 +309,7 @@ export default function CoursePage() {
               {currentModule === 3 && (
                 <ParagraphAnalysis
                   paragraphs={course.analyzedData.paragraphs}
+                  articleContent={course.content}
                   onComplete={() => handleModuleComplete(3)}
                 />
               )}
@@ -308,6 +317,7 @@ export default function CoursePage() {
                 <VocabularyLearning
                   vocabulary={course.analyzedData.vocabulary}
                   courseId={courseId}
+                  articleContent={course.content}
                   onComplete={() => handleModuleComplete(4)}
                 />
               )}
@@ -315,12 +325,14 @@ export default function CoursePage() {
                 <ComprehensionQuiz
                   questions={course.analyzedData.quizQuestions}
                   courseId={courseId}
+                  articleContent={course.content}
                   onComplete={() => handleModuleComplete(5)}
                 />
               )}
               {currentModule === 6 && (
                 <ContentReproduction
                   paragraphs={course.analyzedData.paragraphs}
+                  articleContent={course.content}
                   onComplete={() => handleModuleComplete(6)}
                   onFinish={() => router.push("/")}
                 />

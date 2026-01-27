@@ -15,14 +15,17 @@ import {
 import { useI18n } from "@/lib/i18n";
 import { tts, TTS_SPEEDS } from "@/lib/tts";
 import type { ParagraphAnalysis as ParagraphData } from "@/lib/schemas";
+import { ArticleReference } from "@/components/course";
 
 interface ParagraphAnalysisProps {
   paragraphs: ParagraphData[];
+  articleContent: string;
   onComplete: () => void;
 }
 
 export function ParagraphAnalysis({
   paragraphs,
+  articleContent,
   onComplete,
 }: ParagraphAnalysisProps) {
   const { t, language } = useI18n();
@@ -84,18 +87,21 @@ export function ParagraphAnalysis({
   return (
     <Card>
       <CardContent>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
-            <ClipboardIcon className="w-5 h-5 text-primary-600" />
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
+              <ClipboardIcon className="w-5 h-5 text-primary-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-foreground">
+                {t.analysis.title}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {t.course.module} 3 · 12 {t.course.minutes}
+              </p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-xl font-bold text-foreground">
-              {t.analysis.title}
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              {t.course.module} 3 · 12 {t.course.minutes}
-            </p>
-          </div>
+          <ArticleReference content={articleContent} />
         </div>
 
         {/* Paragraph navigation */}

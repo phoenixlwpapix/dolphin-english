@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm dev)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(del \"\\\\?\\\\D:\\\\my-apps\\\\01-deployed\\\\dolphin-english\\\\nul\")"
+    ]
+  }
+}

@@ -81,6 +81,11 @@ export const en: Translations = {
     articlePreview: "Article Preview",
     startLearning: "Start Learning",
     pleaseSignIn: "Please sign in to join this course",
+    viewArticle: "View Article",
+    articleReference: "Article Reference",
+    highlightedText: "Highlighted text shows where this word appears in the article",
+    courseProgress: "Course Progress",
+    words: "words",
   },
 
   // Module Names
