@@ -75,9 +75,6 @@ export function ArticleReference({ content, highlightText }: ArticleReferencePro
             >
                 <BookOpenIcon className="w-4 h-4 mr-1.5" />
                 {t.course.viewArticle}
-                <kbd className="hidden sm:inline-flex ml-1.5 px-1 py-0.5 text-xs bg-surface rounded border border-border">
-                    A
-                </kbd>
             </Button>
 
             {/* Article Modal */}
@@ -87,8 +84,8 @@ export function ArticleReference({ content, highlightText }: ArticleReferencePro
                 title={t.course.articleReference}
                 size="xl"
             >
-                <div className="prose prose-base max-w-none dark:prose-invert">
-                    <div className="text-foreground text-base leading-relaxed">
+                <div className="prose prose-lg max-w-none dark:prose-invert">
+                    <div className="text-foreground text-xl leading-relaxed">
                         {paragraphs.map((para, index) => renderParagraph(para, index))}
                     </div>
                 </div>

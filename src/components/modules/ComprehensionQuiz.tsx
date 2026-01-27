@@ -310,14 +310,17 @@ export function ComprehensionQuiz({
 
             <button
               onClick={() => setShowReference(!showReference)}
-              className="mt-2 text-sm text-primary-600 hover:underline"
+              className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-primary-600 bg-primary-50 dark:bg-primary-900/20 rounded-full hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-colors"
             >
+              <svg className={`w-4 h-4 transition-transform ${showReference ? 'rotate-90' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
               {t.quiz.seeReference}
             </button>
 
             {showReference && (
-              <div className="mt-3 p-3 bg-background rounded border border-border">
-                <p className="text-base text-muted-foreground italic">
+              <div className="mt-3 p-4 bg-primary-50/50 dark:bg-primary-900/10 rounded-lg border-l-4 border-primary-400">
+                <p className="text-base text-foreground italic leading-relaxed">
                   &ldquo;{question.sourceReference}&rdquo;
                 </p>
               </div>

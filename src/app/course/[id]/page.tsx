@@ -14,7 +14,7 @@ import {
   ClockIcon,
   RotateCwIcon,
   TrashIcon,
-  LogOutIcon,
+  CircleMinusIcon,
 } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
 import type { Id } from "../../../../convex/_generated/dataModel";
@@ -42,7 +42,7 @@ export default function CoursePage() {
 
   const [confirmState, setConfirmState] = useState<{
     isOpen: boolean;
-    type: "restart" | "delete" | "leave" | null;
+    type: "restart" | "delete" | "remove" | null;
   }>({ isOpen: false, type: null });
 
   const [isActionLoading, setIsActionLoading] = useState(false);
@@ -82,8 +82,8 @@ export default function CoursePage() {
     setConfirmState({ isOpen: true, type: "delete" });
   }
 
-  function handleLeave() {
-    setConfirmState({ isOpen: true, type: "leave" });
+  function handleRemove() {
+    setConfirmState({ isOpen: true, type: "remove" });
   }
 
   async function handleConfirm() {
@@ -97,7 +97,7 @@ export default function CoursePage() {
       } else if (confirmState.type === "delete") {
         await deleteCourseMutation({ id: courseId });
         router.push("/");
-      } else if (confirmState.type === "leave") {
+      } else if (confirmState.type === "remove") {
         await removeCourseMutation({ courseId });
         router.push("/");
       }
@@ -110,11 +110,12 @@ export default function CoursePage() {
 
   function handleModuleClick(moduleNumber: number) {
     if (progress) {
-      // Calculate the highest module the user has ever reached
+      // Calculate the highest module the user can access
+      // Users can access all completed modules plus the next one (maxCompleted + 1)
       const maxCompleted = progress.completedModules.length > 0
         ? Math.max(...progress.completedModules)
         : 0;
-      const maxReachedModule = Math.max(progress.currentModule, maxCompleted);
+      const maxReachedModule = maxCompleted + 1;
 
       if (moduleNumber <= maxReachedModule) {
         updateCurrentModuleMutation({ courseId, moduleNumber });
@@ -224,12 +225,12 @@ export default function CoursePage() {
 
                   {course.isPublic ? (
                     <Button
-                      variant="secondary"
-                      className="w-full justify-center text-destructive hover:text-destructive hover:bg-destructive/10"
-                      onClick={handleLeave}
+                      variant="danger"
+                      className="w-full justify-center"
+                      onClick={handleRemove}
                     >
-                      <LogOutIcon className="w-4 h-4 mr-2" />
-                      {t.common.leaveCourse}
+                      <CircleMinusIcon className="w-4 h-4 mr-2" />
+                      {t.common.removeCourse}
                     </Button>
                   ) : (
                     <Button
@@ -269,8 +270,8 @@ export default function CoursePage() {
                     </Button>
                   )}
                   {course.isPublic ? (
-                    <Button variant="ghost" size="sm" className="text-destructive" onClick={handleLeave}>
-                      <LogOutIcon className="w-5 h-5" />
+                    <Button variant="danger" size="sm" onClick={handleRemove}>
+                      <CircleMinusIcon className="w-5 h-5" />
                     </Button>
                   ) : (
                     <Button variant="danger" size="sm" onClick={handleDelete}>
@@ -349,20 +350,20 @@ export default function CoursePage() {
         title={
           confirmState.type === "restart"
             ? t.common.restart
-            : confirmState.type === "leave"
-              ? t.common.leaveCourse
+            : confirmState.type === "remove"
+              ? t.common.removeCourse
               : t.common.delete
         }
         description={
           confirmState.type === "restart"
             ? t.common.restartConfirm
-            : confirmState.type === "leave"
-              ? t.common.leaveConfirm
+            : confirmState.type === "remove"
+              ? t.common.removeConfirm
               : t.common.deleteConfirm
         }
         confirmText={t.common.confirm}
         cancelText={t.common.cancel}
-        variant={confirmState.type === "delete" || confirmState.type === "leave" ? "destructive" : "default"}
+        variant={confirmState.type === "delete" || confirmState.type === "remove" ? "destructive" : "default"}
         isLoading={isActionLoading}
       />
     </div>

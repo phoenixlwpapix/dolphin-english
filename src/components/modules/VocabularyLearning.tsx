@@ -48,6 +48,9 @@ export function VocabularyLearning({ vocabulary, courseId, articleContent, onCom
     const allEssentialViewed = essentialWords.every((w) => viewedWords.has(w.word))
 
     const handleWordClick = useCallback(async (word: string) => {
+        // Auto-play pronunciation when clicking a word
+        tts.speak(word, { rate: PRONUNCIATION_RATE })
+
         if (!viewedWords.has(word)) {
             setViewedWords((prev) => new Set([...prev, word]))
             await recordVocabularyClickMutation({ courseId, word })
@@ -165,7 +168,7 @@ function VocabularyCard({ vocab, isExpanded, isViewed, onClick, onPlayPronunciat
                         <span className="text-sm text-muted-foreground uppercase">{t.vocabulary.definition}</span>
                         <p className="text-foreground text-base">{vocab.definition}</p>
                         {vocab.definitionCN && (
-                            <p className="text-muted-foreground text-sm mt-1">{vocab.definitionCN}</p>
+                            <p className="text-foreground text-sm mt-1">{vocab.definitionCN}</p>
                         )}
                     </div>
                     <div>

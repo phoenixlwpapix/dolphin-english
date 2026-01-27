@@ -15,10 +15,10 @@ export interface Translations {
     restart: string;
     created: string;
     deleteCourse: string;
-    leaveCourse: string;
+    removeCourse: string;
     restartConfirm: string;
     deleteConfirm: string;
-    leaveConfirm: string;
+    removeConfirm: string;
     public: string;
   };
   app: {
@@ -241,10 +241,10 @@ export const zh: Translations = {
     restart: "重新开始",
     created: "创建时间",
     deleteCourse: "删除课程",
-    leaveCourse: "退出课程",
+    removeCourse: "移除课程",
     restartConfirm: "确定要重新开始吗？这将丢失当前的课程进度。",
     deleteConfirm: "确定要删除这个课程吗？",
-    leaveConfirm: "确定要退出这个课程吗？你的学习进度将被清除。",
+    removeConfirm: "确定要移除这个课程吗？你的学习进度将被清除。",
     public: "公开",
   },
 
@@ -369,7 +369,7 @@ export const zh: Translations = {
     checkAnswer: "检查答案",
     correct: "正确！",
     incorrect: "再想想",
-    seeReference: "查看原文",
+    seeReference: "答案出处",
     score: "得分",
     passed: "通过",
     tryAgain: "再试一次",
@@ -424,9 +424,9 @@ export const zh: Translations = {
 
   // Sidebar
   sidebar: {
-    publicCourses: "公共课程",
+    publicCourses: "公开课程",
     myCourses: "我的课程",
-    noPublicCourses: "暂无公共课程",
+    noPublicCourses: "暂无公开课程",
     noMyCourses: "暂无课程",
     settings: "设置",
     navigation: "导航",

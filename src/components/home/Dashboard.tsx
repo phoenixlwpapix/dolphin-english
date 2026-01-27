@@ -180,6 +180,45 @@ export function Dashboard({ onCreateCourse }: DashboardProps) {
             <Sidebar className="hidden md:block sticky top-20 h-[calc(100vh-80px)]" activeTab={activeTab} onTabChange={setActiveTab} />
 
             <main className="flex-1 container mx-auto px-4 py-8 max-w-7xl animate-slide-up">
+                {/* Mobile Tab Switcher */}
+                <div className="md:hidden flex items-center gap-2 mb-6">
+                    <div className="flex-1 flex items-center gap-1 p-1 bg-muted/50 rounded-xl">
+                        <button
+                            onClick={() => setActiveTab("my")}
+                            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                                activeTab === "my"
+                                    ? "bg-background text-foreground shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground"
+                            }`}
+                        >
+                            <BookOpenIcon className="w-4 h-4" />
+                            {t.sidebar.myCourses}
+                        </button>
+                        <button
+                            onClick={() => setActiveTab("public")}
+                            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                                activeTab === "public"
+                                    ? "bg-background text-foreground shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground"
+                            }`}
+                        >
+                            <LibraryIcon className="w-4 h-4" />
+                            {t.sidebar.publicCourses}
+                        </button>
+                    </div>
+                    <button
+                        onClick={() => setActiveTab("settings")}
+                        className={`p-2.5 rounded-xl transition-all ${
+                            activeTab === "settings"
+                                ? "bg-primary/10 text-primary"
+                                : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"
+                        }`}
+                        aria-label={t.sidebar.settings}
+                    >
+                        <SettingsIcon className="w-5 h-5" />
+                    </button>
+                </div>
+
                 {activeTab === "settings" ? (
                     // Settings View
                     <div className="max-w-2xl mx-auto space-y-8 animate-slide-up">

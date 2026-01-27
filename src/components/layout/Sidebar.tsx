@@ -25,18 +25,18 @@ export function Sidebar({ className = "", activeTab, onTabChange }: SidebarProps
 
     const navItems = [
         {
-            id: "public" as const,
-            icon: Library,
-            label: t.sidebar.publicCourses,
-            count: publicCount,
-            show: true,
-        },
-        {
             id: "my" as const,
             icon: BookOpen,
             label: t.sidebar.myCourses,
             count: myCount,
             show: !!currentUser,
+        },
+        {
+            id: "public" as const,
+            icon: Library,
+            label: t.sidebar.publicCourses,
+            count: publicCount,
+            show: true,
         },
     ];
 

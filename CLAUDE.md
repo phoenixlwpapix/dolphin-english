@@ -143,3 +143,8 @@ Word counts are calculated at creation time using `.split(/\s+/)` and stored, no
 - TTS is browser-native (Web Speech API), not a cloud service
 - All dates are stored as Unix timestamps (milliseconds)
 - The app assumes authenticated users for most operations (uses `auth.getUserId(ctx)`)
+
+## Deployment Reminders
+
+- **Convex 后端部署**: 如果修改了 `convex/` 目录下的任何文件（schema、mutations、queries 等），需要提醒用户运行 `npx convex deploy` 将更改部署到生产环境。开发环境 (`pnpm dev:convex`) 会自动同步，但生产环境需要手动部署。
+- **前端部署**: 前端代码修改后需要重新构建和部署（取决于用户的部署平台，如 Vercel 等）。

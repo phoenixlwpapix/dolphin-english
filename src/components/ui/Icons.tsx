@@ -9,6 +9,7 @@ import {
   Check,
   CircleCheck,
   CircleX,
+  CircleMinus,
   TriangleAlert,
   Volume2,
   ClipboardCheck,
@@ -197,5 +198,10 @@ export function LockIcon(props: IconProps) {
 /** Library icon for public courses */
 export function LibraryIcon(props: IconProps) {
   return <Library {...props} />;
+}
+
+/** Circle minus icon for removing items */
+export function CircleMinusIcon(props: IconProps) {
+  return <CircleMinus {...props} />;
 }
 

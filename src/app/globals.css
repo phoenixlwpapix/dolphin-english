@@ -282,19 +282,27 @@ body {
   position: relative;
 }
 
+/* Hide connector lines on small screens, show only step circles */
 .module-step::after {
   content: "";
   position: absolute;
-  top: 50%;
-  left: 100%;
-  width: 2rem;
+  top: 24px;
+  left: calc(50% + 28px);
+  right: calc(-50% + 28px);
   height: 2px;
   background: var(--color-border);
-  transform: translateY(-50%);
+  display: none;
+}
+
+/* Show connector lines only on larger screens */
+@media (min-width: 640px) {
+  .module-step::after {
+    display: block;
+  }
 }
 
 .module-step:last-child::after {
-  display: none;
+  display: none !important;
 }
 
 .module-step.completed::after {
