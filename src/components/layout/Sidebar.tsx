@@ -3,10 +3,10 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useI18n } from "@/lib/i18n";
-import { SettingsIcon } from "@/components/ui/Icons";
-import { Library, BookOpen } from "lucide-react";
+import { SettingsIcon, BarChart3Icon } from "@/components/ui/Icons";
+import { Library, BookOpen, BarChart3, Route } from "lucide-react";
 
-export type SidebarTab = "public" | "my" | "settings";
+export type SidebarTab = "public" | "my" | "settings" | "analytics" | "paths";
 
 interface SidebarProps {
     className?: string;
@@ -19,9 +19,11 @@ export function Sidebar({ className = "", activeTab, onTabChange }: SidebarProps
     const currentUser = useQuery(api.users.getCurrentUser);
     const publicCourses = useQuery(api.courses.listPublic);
     const myCourses = useQuery(api.userCourses.listMyCourses);
+    const publicPaths = useQuery(api.learningPaths.listPublic);
 
     const publicCount = publicCourses?.length ?? 0;
     const myCount = myCourses?.length ?? 0;
+    const pathCount = publicPaths?.length ?? 0;
 
     const navItems = [
         {
@@ -30,6 +32,20 @@ export function Sidebar({ className = "", activeTab, onTabChange }: SidebarProps
             label: t.sidebar.myCourses,
             count: myCount,
             show: !!currentUser,
+        },
+        {
+            id: "analytics" as const,
+            icon: BarChart3,
+            label: t.sidebar.analytics,
+            count: undefined as number | undefined,
+            show: !!currentUser,
+        },
+        {
+            id: "paths" as const,
+            icon: Route,
+            label: t.sidebar.learningPaths,
+            count: pathCount,
+            show: true,
         },
         {
             id: "public" as const,
@@ -71,7 +87,7 @@ export function Sidebar({ className = "", activeTab, onTabChange }: SidebarProps
                                 </div>
                                 <span className="font-medium">{item.label}</span>
                             </div>
-                            {item.count > 0 && (
+                            {typeof item.count === "number" && item.count > 0 && (
                                 <span className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${isActive
                                     ? "bg-white/20 text-white"
                                     : "bg-primary/10 text-primary"

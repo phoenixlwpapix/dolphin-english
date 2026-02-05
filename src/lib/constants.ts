@@ -15,3 +15,14 @@ export const DIFFICULTY_CONFIG = {
     'C1+': { color: 'text-fuchsia-600 bg-fuchsia-50 dark:bg-fuchsia-900/20 dark:text-fuchsia-400', border: 'border-fuchsia-400 dark:border-fuchsia-500', accent: 'from-fuchsia-400 to-fuchsia-500', label: 'Upper Advanced' },
     C2: { color: 'text-rose-600 bg-rose-50 dark:bg-rose-900/20 dark:text-rose-400', border: 'border-rose-400 dark:border-rose-500', accent: 'from-rose-400 to-rose-500', label: 'Proficient' },
 } as const
+
+export const PATH_GRADIENTS = [
+    "from-cyan-500 to-blue-600",
+    "from-emerald-500 to-teal-600",
+    "from-violet-500 to-purple-600",
+    "from-rose-500 to-pink-600",
+    "from-amber-500 to-orange-600",
+    "from-indigo-500 to-blue-700",
+    "from-lime-500 to-green-600",
+    "from-fuchsia-500 to-pink-700",
+] as const

@@ -21,9 +21,14 @@ import {
     SettingsIcon,
     GlobeIcon,
     LibraryIcon,
+    BarChart3Icon,
+    CheckCircleIcon,
+    RouteIcon,
 } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
 import { TOTAL_MODULES, DIFFICULTY_CONFIG } from "@/lib/constants";
+import { AnalyticsDashboard } from "@/components/analytics/AnalyticsDashboard";
+import { PathsView } from "@/components/paths";
 
 type DifficultyLevel = "A2" | "A2+" | "B1" | string;
 type SortOrder = "lastStudied" | "addedDate";
@@ -35,9 +40,10 @@ function getProgressPercentage(completedModules: number[] | undefined): number {
 
 interface DashboardProps {
     onCreateCourse: () => void;
+    onCreatePath?: () => void;
 }
 
-export function Dashboard({ onCreateCourse }: DashboardProps) {
+export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
     const { t } = useI18n();
     const { signOut } = useAuthActions();
     const currentUser = useQuery(api.users.getCurrentUser);
@@ -126,6 +132,21 @@ export function Dashboard({ onCreateCourse }: DashboardProps) {
         return result;
     }, [currentCourses, searchQuery, difficultyFilter, sortOrder]);
 
+    // Split into in-progress and completed for "my" tab
+    const { inProgressCourses, completedCourses } = useMemo(() => {
+        if (activeTab !== "my") return { inProgressCourses: filteredCourses, completedCourses: [] };
+        const inProgress: typeof filteredCourses = [];
+        const completed: typeof filteredCourses = [];
+        for (const course of filteredCourses) {
+            if (course.progress?.completedModules?.length === TOTAL_MODULES) {
+                completed.push(course);
+            } else {
+                inProgress.push(course);
+            }
+        }
+        return { inProgressCourses: inProgress, completedCourses: completed };
+    }, [filteredCourses, activeTab]);
+
     function formatDate(timestamp: number): string {
         return new Intl.DateTimeFormat("zh-CN", {
             month: "short",
@@ -207,6 +228,28 @@ export function Dashboard({ onCreateCourse }: DashboardProps) {
                         </button>
                     </div>
                     <button
+                        onClick={() => setActiveTab("paths")}
+                        className={`p-2.5 rounded-xl transition-all ${
+                            activeTab === "paths"
+                                ? "bg-primary/10 text-primary"
+                                : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"
+                        }`}
+                        aria-label={t.sidebar.learningPaths}
+                    >
+                        <RouteIcon className="w-5 h-5" />
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("analytics")}
+                        className={`p-2.5 rounded-xl transition-all ${
+                            activeTab === "analytics"
+                                ? "bg-primary/10 text-primary"
+                                : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"
+                        }`}
+                        aria-label={t.sidebar.analytics}
+                    >
+                        <BarChart3Icon className="w-5 h-5" />
+                    </button>
+                    <button
                         onClick={() => setActiveTab("settings")}
                         className={`p-2.5 rounded-xl transition-all ${
                             activeTab === "settings"
@@ -219,7 +262,16 @@ export function Dashboard({ onCreateCourse }: DashboardProps) {
                     </button>
                 </div>
 
-                {activeTab === "settings" ? (
+                {activeTab === "analytics" ? (
+                    // Analytics View
+                    <AnalyticsDashboard />
+                ) : activeTab === "paths" ? (
+                    // Paths View
+                    <PathsView
+                        onCreatePath={onCreatePath}
+                        isAdmin={currentUser?.role === "admin"}
+                    />
+                ) : activeTab === "settings" ? (
                     // Settings View
                     <div className="max-w-2xl mx-auto space-y-8 animate-slide-up">
                         <div className="flex items-center gap-3 mb-6">
@@ -437,17 +489,44 @@ export function Dashboard({ onCreateCourse }: DashboardProps) {
                             )
                         ) : (
                             // Course grid with stagger animation
-                            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-                                {filteredCourses.map((course, index) => (
-                                    <div key={course._id} className="animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
-                                        <CourseCard
-                                            course={course}
-                                            t={t}
-                                            formatDate={formatDate}
-                                            isPublicTab={activeTab === "public"}
-                                        />
+                            <div className="space-y-8">
+                                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+                                    {inProgressCourses.map((course, index) => (
+                                        <div key={course._id} className="animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
+                                            <CourseCard
+                                                course={course}
+                                                t={t}
+                                                formatDate={formatDate}
+                                                isPublicTab={activeTab === "public"}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {completedCourses.length > 0 && (
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-px flex-1 bg-border/50" />
+                                            <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
+                                                <CheckCircleIcon className="w-4 h-4 text-success" />
+                                                {t.home.completedCourses} ({completedCourses.length})
+                                            </span>
+                                            <div className="h-px flex-1 bg-border/50" />
+                                        </div>
+                                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+                                            {completedCourses.map((course, index) => (
+                                                <div key={course._id} className="animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
+                                                    <CourseCard
+                                                        course={course}
+                                                        t={t}
+                                                        formatDate={formatDate}
+                                                        isPublicTab={activeTab === "public"}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                ))}
+                                )}
                             </div>
                         )}
                     </>

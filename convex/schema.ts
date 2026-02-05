@@ -62,6 +62,27 @@ const quizResultValidator = v.object({
   isCorrect: v.boolean(),
 });
 
+const moduleCompletionValidator = v.object({
+  moduleNumber: v.number(),
+  completedAt: v.number(),
+});
+
+const difficultyValidator = v.union(
+  v.literal("A1"),
+  v.literal("A1+"),
+  v.literal("A2"),
+  v.literal("A2+"),
+  v.literal("B1"),
+  v.literal("B1+"),
+  v.literal("B2"),
+  v.literal("B2+"),
+  v.literal("C1"),
+  v.literal("C1+"),
+  v.literal("C2"),
+);
+
+export { difficultyValidator };
+
 export default defineSchema({
   ...authTables,
 
@@ -80,19 +101,7 @@ export default defineSchema({
   courses: defineTable({
     title: v.string(),
     content: v.string(),
-    difficulty: v.union(
-      v.literal("A1"),
-      v.literal("A1+"),
-      v.literal("A2"),
-      v.literal("A2+"),
-      v.literal("B1"),
-      v.literal("B1+"),
-      v.literal("B2"),
-      v.literal("B2+"),
-      v.literal("C1"),
-      v.literal("C1+"),
-      v.literal("C2"),
-    ),
+    difficulty: difficultyValidator,
     wordCount: v.number(),
     analyzedData: v.optional(courseAnalysisValidator),
     isPublic: v.optional(v.boolean()),
@@ -111,7 +120,29 @@ export default defineSchema({
     courseId: v.id("courses"),
     currentModule: v.number(),
     completedModules: v.array(v.number()),
+    moduleCompletions: v.optional(v.array(moduleCompletionValidator)),
+    lastStudiedAt: v.optional(v.number()),
     quizResults: v.array(quizResultValidator),
     vocabularyClicks: v.array(v.string()),
   }).index("by_courseId", ["courseId"]),
+
+  learningPaths: defineTable({
+    titleEn: v.string(),
+    titleZh: v.string(),
+    descriptionEn: v.string(),
+    descriptionZh: v.string(),
+    difficulty: difficultyValidator,
+    courseIds: v.array(v.id("courses")),
+    coverGradient: v.optional(v.string()),
+    authorId: v.string(),
+    isPublic: v.boolean(),
+  }),
+
+  userPaths: defineTable({
+    userId: v.string(),
+    pathId: v.id("learningPaths"),
+    addedAt: v.number(),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_userId_pathId", ["userId", "pathId"]),
 });

@@ -8,7 +8,9 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push)",
-      "Bash(del \"\\\\?\\\\D:\\\\my-apps\\\\01-deployed\\\\dolphin-english\\\\nul\")"
+      "Bash(del \"\\\\?\\\\D:\\\\my-apps\\\\01-deployed\\\\dolphin-english\\\\nul\")",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm build:*)"
     ]
   }
 }

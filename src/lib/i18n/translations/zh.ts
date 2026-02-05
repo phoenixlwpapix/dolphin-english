@@ -42,6 +42,7 @@ export interface Translations {
     accountSettings: string;
     loadingCourses: string;
     tryAdjusting: string;
+    completedCourses: string;
   };
   create: {
     title: string;
@@ -176,6 +177,52 @@ export interface Translations {
     noMyCourses: string;
     settings: string;
     navigation: string;
+    analytics: string;
+    learningPaths: string;
+  };
+  paths: {
+    title: string;
+    createPath: string;
+    joinPath: string;
+    leavePath: string;
+    joined: string;
+    courses: string;
+    courseCount: string;
+    progress: string;
+    noPaths: string;
+    noPathsDesc: string;
+    pathDetail: string;
+    currentCourse: string;
+    completedCourses: string;
+    description: string;
+    titleEn: string;
+    titleZh: string;
+    descriptionEn: string;
+    descriptionZh: string;
+    selectCourses: string;
+    reorderCourses: string;
+    coverGradient: string;
+    deletePath: string;
+    deletePathConfirm: string;
+    overallProgress: string;
+    startPath: string;
+    continuePath: string;
+  };
+  analytics: {
+    title: string;
+    totalWords: string;
+    coursesCompleted: string;
+    coursesInProgress: string;
+    vocabularyClicked: string;
+    quizAccuracy: string;
+    accuracy: string;
+    vocabularyMastery: string;
+    activityHeatmap: string;
+    studyTrends: string;
+    noData: string;
+    activities: string;
+    less: string;
+    more: string;
   };
   landing: {
     heroTitle: string;
@@ -272,6 +319,7 @@ export const zh: Translations = {
     accountSettings: "管理您的账户偏好",
     loadingCourses: "正在加载课程...",
     tryAdjusting: "尝试调整搜索或筛选条件。",
+    completedCourses: "已完成",
   },
 
   // Create Course
@@ -430,6 +478,56 @@ export const zh: Translations = {
     noMyCourses: "暂无课程",
     settings: "设置",
     navigation: "导航",
+    analytics: "学习分析",
+    learningPaths: "学习路径",
+  },
+
+  // Paths
+  paths: {
+    title: "学习路径",
+    createPath: "创建路径",
+    joinPath: "加入路径",
+    leavePath: "离开路径",
+    joined: "已加入",
+    courses: "课程",
+    courseCount: "{count} 门课程",
+    progress: "进度",
+    noPaths: "暂无学习路径",
+    noPathsDesc: "管理员可以创建学习路径来组织课程序列",
+    pathDetail: "路径详情",
+    currentCourse: "当前课程",
+    completedCourses: "已完成课程",
+    description: "描述",
+    titleEn: "英文标题",
+    titleZh: "中文标题",
+    descriptionEn: "英文描述",
+    descriptionZh: "中文描述",
+    selectCourses: "选择课程",
+    reorderCourses: "调整课程顺序",
+    coverGradient: "封面配色",
+    deletePath: "删除路径",
+    deletePathConfirm: "确定要删除这个学习路径吗？已加入的用户仍将保留其课程进度。",
+    overallProgress: "整体进度",
+    startPath: "开始学习",
+    continuePath: "继续学习",
+  },
+
+  // Analytics
+  analytics: {
+    title: "学习分析",
+    totalWords: "已学单词总数",
+    coursesCompleted: "已完成课程",
+    coursesInProgress: "学习中",
+    vocabularyClicked: "已查阅词汇",
+    quizAccuracy: "测验正确率（按题型）",
+    accuracy: "正确率",
+    vocabularyMastery: "词汇掌握度（按等级）",
+    activityHeatmap: "学习活跃度",
+    studyTrends: "每周学习趋势",
+    noData: "暂无数据",
+    activities: "次活动",
+    less: "少",
+    more: "多",
   },
 
   // Landing Page

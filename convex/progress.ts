@@ -45,6 +45,7 @@ export const updateCurrentModule = mutation({
         if (progress) {
             await ctx.db.patch(progress._id, {
                 currentModule: args.moduleNumber,
+                lastStudiedAt: Date.now(),
             })
         }
     },
@@ -72,9 +73,20 @@ export const completeModule = mutation({
                 ? args.moduleNumber + 1
                 : args.moduleNumber
 
+            // Build moduleCompletions with timestamp
+            const existingCompletions = progress.moduleCompletions ?? []
+            const alreadyLogged = existingCompletions.some(
+                (mc) => mc.moduleNumber === args.moduleNumber
+            )
+            const moduleCompletions = alreadyLogged
+                ? existingCompletions
+                : [...existingCompletions, { moduleNumber: args.moduleNumber, completedAt: Date.now() }]
+
             await ctx.db.patch(progress._id, {
                 completedModules,
                 currentModule: nextModule,
+                moduleCompletions,
+                lastStudiedAt: Date.now(),
             })
         }
     },
@@ -94,6 +106,7 @@ export const saveQuizResults = mutation({
         if (progress) {
             await ctx.db.patch(progress._id, {
                 quizResults: args.results,
+                lastStudiedAt: Date.now(),
             })
         }
     },
@@ -117,6 +130,7 @@ export const recordVocabularyClick = mutation({
             }
             await ctx.db.patch(progress._id, {
                 vocabularyClicks: clicks,
+                lastStudiedAt: Date.now(),
             })
         }
     },
@@ -134,6 +148,8 @@ export const reset = mutation({
             await ctx.db.patch(progress._id, {
                 currentModule: 1,
                 completedModules: [],
+                moduleCompletions: [],
+                lastStudiedAt: undefined,
                 quizResults: [],
                 vocabularyClicks: [],
             })

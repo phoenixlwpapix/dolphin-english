@@ -32,6 +32,10 @@ import {
   Globe,
   Lock,
   Library,
+  BarChart3,
+  TrendingUp,
+  Target,
+  Route,
   LucideProps,
 } from "lucide-react";
 
@@ -203,5 +207,25 @@ export function LibraryIcon(props: IconProps) {
 /** Circle minus icon for removing items */
 export function CircleMinusIcon(props: IconProps) {
   return <CircleMinus {...props} />;
+}
+
+/** Bar chart icon for analytics */
+export function BarChart3Icon(props: IconProps) {
+  return <BarChart3 {...props} />;
+}
+
+/** Trending up icon for study trends */
+export function TrendingUpIcon(props: IconProps) {
+  return <TrendingUp {...props} />;
+}
+
+/** Target icon for quiz accuracy */
+export function TargetIcon(props: IconProps) {
+  return <Target {...props} />;
+}
+
+/** Route icon for learning paths */
+export function RouteIcon(props: IconProps) {
+  return <Route {...props} />;
 }
 

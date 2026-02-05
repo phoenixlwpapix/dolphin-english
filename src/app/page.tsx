@@ -7,12 +7,14 @@ import { Header } from "@/components/layout";
 import { Button, PlusIcon } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
 import { CreateCourseModal } from "@/components/course/CreateCourseModal";
+import { CreatePathModal } from "@/components/paths";
 import { Dashboard, LandingPage } from "@/components/home";
 
 export default function HomePage() {
   const { t } = useI18n();
   const currentUser = useQuery(api.users.getCurrentUser);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isCreatePathModalOpen, setIsCreatePathModalOpen] = useState(false);
   const [isSignInOpen, setIsSignInOpen] = useState(false);
 
   // Show loading state while checking authentication
@@ -40,20 +42,31 @@ export default function HomePage() {
       </Header>
 
       {currentUser ? (
-        <Dashboard onCreateCourse={() => setIsCreateModalOpen(true)} />
+        <Dashboard
+          onCreateCourse={() => setIsCreateModalOpen(true)}
+          onCreatePath={() => setIsCreatePathModalOpen(true)}
+        />
       ) : (
         <LandingPage onStart={() => setIsSignInOpen(true)} />
       )}
 
       {currentUser && (
-        <CreateCourseModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-          onSuccess={() => {
-            setIsCreateModalOpen(false);
-            // Convex will automatically refetch due to real-time subscription
-          }}
-        />
+        <>
+          <CreateCourseModal
+            isOpen={isCreateModalOpen}
+            onClose={() => setIsCreateModalOpen(false)}
+            onSuccess={() => {
+              setIsCreateModalOpen(false);
+            }}
+          />
+          <CreatePathModal
+            isOpen={isCreatePathModalOpen}
+            onClose={() => setIsCreatePathModalOpen(false)}
+            onSuccess={() => {
+              setIsCreatePathModalOpen(false);
+            }}
+          />
+        </>
       )}
     </div>
   );
