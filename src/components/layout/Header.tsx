@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../../convex/_generated/api";
-import { Button, LanguageSwitcher, Modal } from "@/components/ui";
+import { Button, LanguageSwitcher, ThemeToggle, Modal } from "@/components/ui";
 import { SignInForm } from "@/components/auth";
 import { useI18n } from "@/lib/i18n";
 
@@ -108,6 +108,7 @@ export function Header({
               </Button>
             )}
 
+            {/* <ThemeToggle /> */}
             <LanguageSwitcher />
           </div>
         </div>

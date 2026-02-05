@@ -66,6 +66,24 @@
   --shadow-glow: 0 0 40px -10px;
 }
 
+/* Dark mode overrides */
+.dark {
+  --color-background: #0f172a;
+  --color-foreground: #e2e8f0;
+  --color-muted: #1e293b;
+  --color-muted-foreground: #94a3b8;
+  --color-surface: #1e293b;
+  --color-border: #334155;
+  --color-card: #1e293b;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.15);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.15);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.25), 0 4px 6px -4px rgb(0 0 0 / 0.15);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.15);
+
+  color-scheme: dark;
+}
+
 /* Global Styles */
 body {
   background: var(--color-background);
@@ -256,6 +274,11 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
+.dark .glass-card {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+}
+
 /* Gradient text utility */
 .gradient-text {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
@@ -270,6 +293,28 @@ body {
       var(--color-primary-50) 0%,
       rgba(255, 255, 255, 0.8) 50%,
       var(--color-accent-50) 100%);
+}
+
+.dark .hero-gradient {
+  background: linear-gradient(135deg,
+      rgba(30, 58, 138, 0.3) 0%,
+      rgba(15, 23, 42, 0.8) 50%,
+      rgba(91, 33, 182, 0.2) 100%);
+}
+
+/* Dark mode text selection */
+.dark ::selection {
+  background: var(--color-primary-800);
+  color: var(--color-primary-100);
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }
 
 /* Utility to ensure standard border width */

@@ -45,11 +45,11 @@ export function PathCard({ path, isJoined = false }: PathCardProps) {
 
     return (
         <a href={pathUrl} className="block group h-full">
-            <Card className="h-full flex flex-col overflow-hidden rounded-2xl transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-primary/5">
+            <Card padding="none" className="h-full flex flex-col overflow-hidden rounded-2xl transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-primary/5">
                 {/* Gradient cover */}
-                <div className={`h-24 bg-gradient-to-br ${gradient} relative overflow-hidden`}>
+                <div className={`h-28 bg-gradient-to-br ${gradient} relative overflow-hidden`}>
                     <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors" />
-                    <div className="absolute bottom-3 left-4 flex items-center gap-2">
+                    <div className="absolute bottom-3 left-3 flex items-center gap-2">
                         <div className="bg-white/20 backdrop-blur-sm rounded-lg p-1.5">
                             <RouteIcon className="w-4 h-4 text-white" />
                         </div>
@@ -57,16 +57,16 @@ export function PathCard({ path, isJoined = false }: PathCardProps) {
                             {courseCount} {language === "zh" ? "门课程" : courseCount === 1 ? "course" : "courses"}
                         </span>
                     </div>
-                    <span className={`absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase ${badgeStyle} bg-white/90 dark:bg-gray-900/90`}>
+                    <span className={`absolute top-2.5 right-2.5 px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase ${badgeStyle} bg-white/90`}>
                         {path.difficulty}
                     </span>
                 </div>
 
-                <CardContent className="flex-1 flex flex-col p-5">
-                    <h3 className="text-lg font-bold text-foreground leading-snug group-hover:text-primary transition-colors line-clamp-2 mb-2">
+                <CardContent className="flex-1 flex flex-col px-3.5 py-3">
+                    <h3 className="text-[15px] font-bold text-foreground leading-snug group-hover:text-primary transition-colors line-clamp-2 mb-1">
                         {title}
                     </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                    <p className="text-xs text-muted-foreground line-clamp-2">
                         {description}
                     </p>
 
@@ -75,8 +75,8 @@ export function PathCard({ path, isJoined = false }: PathCardProps) {
 
                     {/* Progress bar — only show if joined */}
                     {isJoined && (
-                        <div className="pt-4 border-t border-border/50">
-                            <div className="flex items-center justify-between text-xs mb-2">
+                        <div className="pt-3 mt-2 border-t border-border/50">
+                            <div className="flex items-center justify-between text-xs mb-1.5">
                                 <span className="text-muted-foreground font-medium">
                                     {completedCourses}/{courseCount}
                                 </span>

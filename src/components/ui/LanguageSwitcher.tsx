@@ -10,14 +10,14 @@ export function LanguageSwitcher() {
         <button
             onClick={toggleLanguage}
             className="
-        flex items-center gap-2 px-3 py-1.5 rounded-lg
-        bg-surface border border-border text-sm font-medium
+        flex items-center justify-center w-8 h-8 rounded-lg
+        bg-surface border border-border
         hover:bg-primary-50 hover:border-primary-300 transition-colors
       "
             aria-label={t.settings.language}
+            title={language === 'zh' ? t.settings.english : t.settings.chinese}
         >
             <Languages className="w-4 h-4" />
-            <span>{language === 'zh' ? t.settings.english : t.settings.chinese}</span>
         </button>
     )
 }

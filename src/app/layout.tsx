@@ -36,8 +36,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(localStorage.getItem('theme')==='dark'){document.documentElement.classList.add('dark')}}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body
-        className={`${outfit.variable} ${mali.variable} ${zcoolKuaiLe.variable} font-sans antialiased bg-gray-50 text-gray-900`}
+        className={`${outfit.variable} ${mali.variable} ${zcoolKuaiLe.variable} font-sans antialiased bg-background text-foreground`}
+        suppressHydrationWarning
       >
         <Providers>{children}</Providers>
       </body>

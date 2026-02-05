@@ -1,118 +1,136 @@
-# 🐬 海豚英语 / Dolphin English
+# Dolphin English
 
-让每篇文章都变成一堂英语课 | Turn every article into an English lesson
+Turn every article into an English lesson.
 
-一款面向 A1-C2 学习者的英语学习应用，通过真实文章完成 30 分钟系统学习课程。
+An English learning app for A1-C2 learners that transforms real-world articles into structured 30-minute courses with AI-powered analysis and bilingual (English/Chinese) support.
 
-## ✨ 功能特点
+## Features
 
-### 📚 六大学习模块
+### Six Learning Modules
 
-1. **学习目标** - 明确本课学习重点
-2. **整体听读** - 全文朗读，培养语感
-3. **分段精讲** - 逐段分析，深入理解
-4. **词汇学习** - 分层词汇，高效记忆
-5. **理解检测** - 多轮测试，巩固理解
-6. **内容复现** - 时间线排序 + 关键词复述
+1. **Learning Objectives** - Clear goals for each lesson
+2. **Full Listening** - Complete article playback with TTS
+3. **Paragraph Analysis** - Sentence-by-sentence breakdown with language points
+4. **Vocabulary Learning** - Three-tier vocabulary (essential, transferable, extended)
+5. **Comprehension Quiz** - Multiple-choice questions testing understanding
+6. **Content Reproduction** - Timeline sorting + keyword retelling
 
-### 🎯 核心特性
+### Core Capabilities
 
-- **AI 智能分析** - 自动分析文章难度、提取词汇、生成练习题
-- **CEFR 难度分级** - 支持 A1 到 C2 全级别
-- **双语界面** - 中英文自由切换
-- **进度追踪** - 实时保存学习进度
-- **TTS 朗读** - 原生语音合成，支持多种语速
+- **AI Analysis** - Automatic difficulty detection, vocabulary extraction, and quiz generation via Google Gemini
+- **CEFR Levels** - Full support for A1 through C2 (11 levels including plus tiers)
+- **Bilingual UI** - Switch between English and Chinese interface
+- **Learning Paths** - Admins can group courses into ordered sequences; users join paths to auto-enroll in all courses
+- **Analytics Dashboard** - Track study activity, quiz accuracy, vocabulary mastery, and weekly trends
+- **Progress Tracking** - Real-time progress saving with resume support
+- **TTS Playback** - Browser-native speech synthesis with sentence highlighting
+- **Course Separation** - In-progress and completed courses displayed separately
 
-## 🛠️ 技术栈
+## Tech Stack
 
-- **框架**: [Next.js 15](https://nextjs.org/) (App Router)
-- **数据库**: [Convex](https://convex.dev/) (实时数据库)
-- **样式**: [Tailwind CSS 4](https://tailwindcss.com/)
-- **AI**: OpenAI GPT-4 (文章分析)
-- **字体**: Outfit (正文) + Mali (英文手写) + ZCOOL KuaiLe (中文手写)
-- **语言**: TypeScript
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router), React 19, TypeScript
+- **Database**: [Convex](https://convex.dev/) (real-time database + serverless functions)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Charts**: [Recharts](https://recharts.org/) (analytics dashboard)
+- **AI**: Google Gemini 3 Flash (via @ai-sdk/google)
+- **Auth**: @convex-dev/auth
+- **Fonts**: Outfit (body) + Mali (English handwriting) + ZCOOL KuaiLe (Chinese handwriting)
 
-## 🚀 快速开始
+## Getting Started
 
-### 环境要求
+### Prerequisites
 
 - Node.js 18+
 - pnpm
 
-### 安装依赖
+### Install Dependencies
 
 ```bash
 pnpm install
 ```
 
-### 配置环境变量
+### Configure Environment Variables
 
-创建 `.env.local` 文件：
+Create a `.env.local` file:
 
 ```env
 # Convex
 CONVEX_DEPLOYMENT=your_convex_deployment
 NEXT_PUBLIC_CONVEX_URL=your_convex_url
 
-# OpenAI (用于文章分析)
-OPENAI_API_KEY=your_openai_api_key
+# Google AI (for article analysis)
+GOOGLE_GENERATIVE_AI_API_KEY=your_google_ai_api_key
 ```
 
-### 启动开发服务器
+### Start Development Server
 
 ```bash
-# 启动 Convex 后端
-pnpm convex dev
-
-# 启动 Next.js 前端 (新终端)
+# Start both Next.js and Convex concurrently
 pnpm dev
+
+# Or start separately:
+pnpm dev:next    # Next.js frontend only
+pnpm dev:convex  # Convex backend only
 ```
 
-打开 [http://localhost:3000](http://localhost:3000) 查看应用。
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-## 📁 项目结构
+## Project Structure
 
 ```
 dolphin-english/
-├── convex/              # Convex 后端
-│   ├── courses.ts       # 课程相关函数
-│   ├── progress.ts      # 进度相关函数
-│   └── schema.ts        # 数据库 Schema
+├── convex/                  # Convex backend
+│   ├── schema.ts            # Database schema (courses, progress, learningPaths, etc.)
+│   ├── courses.ts           # Course CRUD
+│   ├── userCourses.ts       # User enrollment
+│   ├── progress.ts          # Progress tracking with timestamps
+│   ├── analytics.ts         # Study analytics aggregation
+│   ├── learningPaths.ts     # Learning path CRUD + join/leave
+│   └── users.ts             # User management
 ├── src/
-│   ├── app/             # Next.js App Router
-│   │   ├── api/         # API 路由
-│   │   ├── course/      # 课程页面
-│   │   └── page.tsx     # 首页
-│   ├── components/      # React 组件
-│   │   ├── course/      # 课程相关组件
-│   │   ├── layout/      # 布局组件
-│   │   ├── modules/     # 学习模块组件
-│   │   └── ui/          # 通用 UI 组件
-│   └── lib/             # 工具库
-│       ├── i18n/        # 国际化
-│       ├── schemas/     # Zod Schema
-│       └── constants.ts # 常量配置
-└── public/              # 静态资源
+│   ├── app/                 # Next.js App Router
+│   │   ├── api/             # API routes (analyze, ocr)
+│   │   ├── course/[id]/     # Course pages (learn + preview)
+│   │   ├── path/[id]/       # Path pages (detail + preview)
+│   │   └── page.tsx         # Homepage
+│   ├── components/
+│   │   ├── analytics/       # Analytics dashboard (6 chart components)
+│   │   ├── course/          # Course creation modal
+│   │   ├── home/            # Dashboard + landing page
+│   │   ├── layout/          # Header + sidebar navigation
+│   │   ├── modules/         # 6 learning module components
+│   │   ├── paths/           # Learning paths (card, view, create modal)
+│   │   └── ui/              # Shared UI (Button, Card, Modal, Icons, etc.)
+│   └── lib/
+│       ├── i18n/            # Internationalization (en + zh)
+│       ├── schemas/         # Zod validation schemas
+│       └── constants.ts     # Module timing, CEFR config, path gradients
+└── public/                  # Static assets + fonts
 ```
 
-## 📝 使用说明
+## Usage
 
-1. **创建课程** - 粘贴英文文章或上传图片
-2. **AI 分析** - 系统自动分析文章并生成学习内容
-3. **开始学习** - 按顺序完成六个学习模块
-4. **追踪进度** - 随时查看学习进度，支持断点续学
+1. **Create a Course** - Paste an English article (100+ words) or upload an image
+2. **AI Analysis** - The system analyzes the article and generates structured learning content
+3. **Study** - Complete six learning modules in sequence
+4. **Track Progress** - View your analytics dashboard for study insights
 
-## 🌐 国际化
+### Learning Paths (Admin)
 
-应用支持中英文双语：
+1. Navigate to the Paths tab in the sidebar
+2. Click "Create Path" to group public courses into an ordered sequence
+3. Set bilingual titles, difficulty level, and cover gradient
+4. Users can browse and join paths, auto-enrolling in all contained courses
 
-- 🇨🇳 中文 - 界面语言 + 中文手写字体 (ZCOOL KuaiLe)
-- 🇺🇸 English - Interface language + English handwriting font (Mali)
+## Internationalization
 
-## 📄 License
+The app supports bilingual interface switching:
+
+- Chinese - UI language + ZCOOL KuaiLe handwriting font
+- English - UI language + Mali handwriting font
+
+All AI-generated content (summaries, language points, vocabulary) is bilingual by design.
+
+## License
 
 MIT License
-
----
-
-Made with ❤️ for English learners
