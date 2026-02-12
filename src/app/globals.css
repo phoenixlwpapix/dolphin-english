@@ -1,46 +1,46 @@
 @import "tailwindcss";
 @variant dark (&:where(.dark, .dark *));
 
-/* Design Tokens */
+/* Design Tokens — Happy Hues palette */
 @theme inline {
-  /* Colors - Enhanced palette */
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
+  /* Primary palette — deep purple */
+  --color-primary-50: #f4effc;
+  --color-primary-100: #e2daeb;
+  --color-primary-200: #c5b5d7;
+  --color-primary-300: #a890c3;
+  --color-primary-400: #8b6baf;
+  --color-primary-500: #6e469b;
+  --color-primary-600: #553278;
+  --color-primary-700: #3d2356;
+  --color-primary-800: #2a1744;
+  --color-primary-900: #1f1235;
 
-  /* Accent palette - Purple/Violet for visual interest */
-  --color-accent-50: #f5f3ff;
-  --color-accent-100: #ede9fe;
-  --color-accent-200: #ddd6fe;
-  --color-accent-300: #c4b5fd;
-  --color-accent-400: #a78bfa;
-  --color-accent-500: #8b5cf6;
-  --color-accent-600: #7c3aed;
+  /* Accent palette — coral */
+  --color-accent-50: #fff1f0;
+  --color-accent-100: #ffe0df;
+  --color-accent-200: #ffbfbe;
+  --color-accent-300: #ff9e9c;
+  --color-accent-400: #ff8583;
+  --color-accent-500: #ff6e6c;
+  --color-accent-600: #e55553;
 
   /* Semantic Colors */
-  --color-primary: #3b82f6;
-  --color-secondary: #10b981;
-  --color-accent: #8b5cf6;
+  --color-primary: #1f1235;
+  --color-secondary: #fbdd74;
+  --color-accent: #ff6e6c;
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
   --color-destructive: #ef4444;
-  --color-info: #3b82f6;
+  --color-info: #6e469b;
 
   /* Base Colors */
-  --color-background: #fafbfc;
-  --color-foreground: #0f172a;
-  --color-muted: #f1f5f9;
-  --color-muted-foreground: #64748b;
+  --color-background: #faf8fc;
+  --color-foreground: #1f1235;
+  --color-muted: #f4effc;
+  --color-muted-foreground: #67568c;
   --color-surface: #ffffff;
-  --color-border: #e2e8f0;
+  --color-border: #e2daeb;
   --color-card: #ffffff;
 
   /* Typography */
@@ -68,13 +68,15 @@
 
 /* Dark mode overrides */
 .dark {
-  --color-background: #0f172a;
-  --color-foreground: #e2e8f0;
-  --color-muted: #1e293b;
-  --color-muted-foreground: #94a3b8;
-  --color-surface: #1e293b;
-  --color-border: #334155;
-  --color-card: #1e293b;
+  --color-primary: #e2daeb;
+  --color-accent: #ff8583;
+  --color-background: #1b1425;
+  --color-foreground: #f4effc;
+  --color-muted: #2d1f47;
+  --color-muted-foreground: #a094b8;
+  --color-surface: #271a3a;
+  --color-border: #3d2d5c;
+  --color-card: #271a3a;
 
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.15);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.15);
@@ -109,19 +111,18 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #d1d5db;
-  /* Gray 300 */
+  background: #c5b5d7;
 }
 
-/* Text selection */
+/* Text selection — coral highlight */
 ::selection {
-  background: var(--color-primary-100);
+  background: var(--color-accent-200);
   color: var(--color-primary-900);
 }
 
-/* Focus states - High contrast outline, no glow */
+/* Focus states — coral outline */
 *:focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
   box-shadow: none;
 }
@@ -174,17 +175,7 @@ body {
   }
 }
 
-@keyframes gradient-shift {
-
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-}
+/* gradient-shift keyframe removed */
 
 @keyframes shimmer {
   0% {
@@ -231,10 +222,7 @@ body {
   animation: float-slow 8s ease-in-out infinite;
 }
 
-.animate-gradient {
-  animation: gradient-shift 8s ease infinite;
-  background-size: 200% 200%;
-}
+/* .animate-gradient removed */
 
 .animate-shimmer {
   animation: shimmer 3s linear infinite;
@@ -266,55 +254,44 @@ body {
   animation-delay: 400ms;
 }
 
-/* Glass card effect */
+/* Solid card with subtle border (replaces glassmorphism) */
 .glass-card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 
 .dark .glass-card {
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(51, 65, 85, 0.5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 
-/* Gradient text utility */
+/* Accent text utility (replaces gradient-text) */
 .gradient-text {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-accent);
 }
 
-/* Hero gradient background */
+/* Hero background — solid tint */
 .hero-gradient {
-  background: linear-gradient(135deg,
-      var(--color-primary-50) 0%,
-      rgba(255, 255, 255, 0.8) 50%,
-      var(--color-accent-50) 100%);
+  background: var(--color-primary-50);
 }
 
 .dark .hero-gradient {
-  background: linear-gradient(135deg,
-      rgba(30, 58, 138, 0.3) 0%,
-      rgba(15, 23, 42, 0.8) 50%,
-      rgba(91, 33, 182, 0.2) 100%);
+  background: var(--color-muted);
 }
 
 /* Dark mode text selection */
 .dark ::selection {
-  background: var(--color-primary-800);
-  color: var(--color-primary-100);
+  background: var(--color-accent-500);
+  color: #ffffff;
 }
 
 /* Dark mode scrollbar */
 .dark ::-webkit-scrollbar-thumb {
-  background: #475569;
+  background: #3d2d5c;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: #553278;
 }
 
 /* Utility to ensure standard border width */
@@ -351,5 +328,5 @@ body {
 }
 
 .module-step.completed::after {
-  background: var(--color-secondary);
+  background: var(--color-success);
 }

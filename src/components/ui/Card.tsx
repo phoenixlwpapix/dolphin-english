@@ -7,9 +7,9 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const variantClasses = {
-    default: 'bg-surface', // White/Surface, no border
-    elevated: 'bg-white', // Same as default effectively
-    outlined: 'bg-transparent border-4 border-muted', // Thick border if used
+    default: 'bg-surface border border-border',
+    elevated: 'bg-surface border border-border shadow-md',
+    outlined: 'bg-transparent border-2 border-border',
 }
 
 const paddingClasses = {
@@ -28,7 +28,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
           rounded-lg
           ${variantClasses[variant]}
           ${paddingClasses[padding]}
-          ${interactive ? 'group cursor-pointer hover:scale-[1.02] hover:bg-gray-50 transition-all duration-200' : ''}
+          ${interactive ? 'group cursor-pointer hover:border-accent transition-all duration-200' : ''}
           ${className}
         `}
                 {...props}

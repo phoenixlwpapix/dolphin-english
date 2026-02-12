@@ -16,7 +16,7 @@ import {
 import { RouteIcon, BookOpenIcon } from "@/components/ui/Icons";
 import { useI18n } from "@/lib/i18n";
 import type { Id } from "../../../../convex/_generated/dataModel";
-import { DIFFICULTY_CONFIG, TOTAL_MODULES, PATH_GRADIENTS } from "@/lib/constants";
+import { DIFFICULTY_CONFIG, TOTAL_MODULES } from "@/lib/constants";
 
 export default function PathDetailPage() {
     const params = useParams();
@@ -82,7 +82,7 @@ export default function PathDetailPage() {
         ? `${difficultyConfig.color} border border-current/20`
         : "text-gray-700 bg-gray-50 border-gray-200";
 
-    const gradient = pathData.coverGradient || PATH_GRADIENTS[0];
+    const borderColor = difficultyConfig?.border ?? "border-gray-300";
     const overallProgress = pathData.totalCourses > 0
         ? Math.round((pathData.completedCourses / pathData.totalCourses) * 100)
         : 0;
@@ -110,48 +110,50 @@ export default function PathDetailPage() {
                     </Button>
 
                     {/* Path header card */}
-                    <Card className="overflow-hidden mb-8">
-                        <div className={`bg-gradient-to-br ${gradient} p-6 md:p-8 relative`}>
-                            <div className="absolute inset-0 bg-black/10" />
-                            <div className="relative z-10">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <div className="bg-white/20 backdrop-blur-sm rounded-lg p-1.5">
-                                        <RouteIcon className="w-5 h-5 text-white" />
-                                    </div>
-                                    <span className="text-white/80 text-sm font-medium">
-                                        {t.paths.pathDetail}
-                                    </span>
-                                </div>
-                                <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight mb-3">
-                                    {title}
-                                </h1>
-                                {description && (
-                                    <p className="text-white/70 text-sm mb-4 max-w-xl">
-                                        {description}
-                                    </p>
-                                )}
-                                <div className="flex flex-wrap items-center gap-3 mb-4">
-                                    <span className={`px-3 py-1.5 rounded-md text-sm font-bold tracking-wide border bg-white/90 dark:bg-gray-900/90 ${badgeStyle}`}>
-                                        {pathData.difficulty}
-                                    </span>
-                                    <div className="flex items-center gap-2 text-sm text-white/80">
-                                        <BookOpenIcon className="w-4 h-4" />
-                                        <span>{pathData.completedCourses}/{pathData.totalCourses} {t.paths.courses}</span>
-                                    </div>
-                                </div>
+                    <Card padding="none" className={`overflow-hidden rounded-2xl border-t-4 ${borderColor} mb-8`}>
+                        <div className="p-6 md:p-8">
+                            {/* Top: label + badge */}
+                            <div className="flex items-center gap-2 mb-3">
+                                <RouteIcon className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                    {t.paths.pathDetail}
+                                </span>
+                            </div>
 
-                                {/* Overall progress bar */}
-                                <div>
-                                    <div className="flex items-center justify-between text-xs text-white/80 mb-1.5">
-                                        <span>{t.paths.overallProgress}</span>
-                                        <span className="font-bold text-white">{overallProgress}%</span>
-                                    </div>
-                                    <div className="h-2 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
-                                        <div
-                                            className={`h-full rounded-full transition-all duration-700 ${overallProgress === 100 ? "bg-green-400" : "bg-white"}`}
-                                            style={{ width: `${overallProgress}%` }}
-                                        />
-                                    </div>
+                            {/* Title */}
+                            <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight mb-2">
+                                {title}
+                            </h1>
+
+                            {/* Description */}
+                            {description && (
+                                <p className="text-muted-foreground text-sm mb-5 max-w-xl leading-relaxed">
+                                    {description}
+                                </p>
+                            )}
+
+                            {/* Meta row */}
+                            <div className="flex flex-wrap items-center gap-3 mb-6">
+                                <span className={`px-2.5 py-1 rounded-md text-xs font-bold tracking-wide ${badgeStyle}`}>
+                                    {pathData.difficulty}
+                                </span>
+                                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                    <BookOpenIcon className="w-4 h-4" />
+                                    <span>{pathData.completedCourses}/{pathData.totalCourses} {t.paths.courses}</span>
+                                </div>
+                            </div>
+
+                            {/* Overall progress bar */}
+                            <div className="p-4 bg-muted rounded-xl">
+                                <div className="flex items-center justify-between text-xs mb-2">
+                                    <span className="text-muted-foreground font-medium">{t.paths.overallProgress}</span>
+                                    <span className={`font-bold ${overallProgress === 100 ? "text-success" : "text-accent"}`}>{overallProgress}%</span>
+                                </div>
+                                <div className="h-2 bg-background rounded-full overflow-hidden">
+                                    <div
+                                        className={`h-full rounded-full transition-all duration-700 ${overallProgress === 100 ? "bg-success" : "bg-accent"}`}
+                                        style={{ width: `${overallProgress}%` }}
+                                    />
                                 </div>
                             </div>
                         </div>

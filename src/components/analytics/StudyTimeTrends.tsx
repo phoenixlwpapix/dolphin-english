@@ -24,7 +24,7 @@ export function StudyTimeTrends({ data }: StudyTimeTrendsProps) {
     return (
         <div className="glass-card rounded-2xl p-6 border border-border/50 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-                <TrendingUpIcon className="w-5 h-5 text-primary" />
+                <TrendingUpIcon className="w-5 h-5 text-accent" />
                 <h3 className="text-lg font-semibold text-foreground">
                     {t.analytics.studyTrends}
                 </h3>
@@ -46,12 +46,12 @@ export function StudyTimeTrends({ data }: StudyTimeTrendsProps) {
                             >
                                 <stop
                                     offset="5%"
-                                    stopColor="var(--color-primary)"
+                                    stopColor="var(--color-accent)"
                                     stopOpacity={0.3}
                                 />
                                 <stop
                                     offset="95%"
-                                    stopColor="var(--color-primary)"
+                                    stopColor="var(--color-accent)"
                                     stopOpacity={0}
                                 />
                             </linearGradient>
@@ -89,7 +89,7 @@ export function StudyTimeTrends({ data }: StudyTimeTrendsProps) {
                         <Area
                             type="monotone"
                             dataKey="count"
-                            stroke="var(--color-primary)"
+                            stroke="var(--color-accent)"
                             fill="url(#colorActivity)"
                             strokeWidth={2}
                         />

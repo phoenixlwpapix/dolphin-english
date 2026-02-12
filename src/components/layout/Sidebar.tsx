@@ -58,7 +58,7 @@ export function Sidebar({ className = "", activeTab, onTabChange }: SidebarProps
 
     return (
         <aside
-            className={`w-64 border-r border-border/50 bg-card/50 backdrop-blur-sm h-[calc(100vh-5rem)] flex flex-col ${className}`}
+            className={`w-64 border-r border-border bg-surface h-[calc(100vh-5rem)] flex flex-col ${className}`}
         >
             {/* Navigation */}
             <div className="p-4 space-y-2 flex-1 overflow-y-auto">
@@ -77,8 +77,8 @@ export function Sidebar({ className = "", activeTab, onTabChange }: SidebarProps
                             key={item.id}
                             onClick={() => onTabChange(item.id)}
                             className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left transition-all duration-200 group ${isActive
-                                ? "bg-gradient-to-r from-primary to-primary-600 text-white shadow-lg shadow-primary/25"
-                                : "text-foreground hover:bg-muted/80"
+                                ? "bg-accent text-white shadow-lg shadow-accent/25"
+                                : "text-foreground hover:bg-muted"
                                 }`}
                         >
                             <div className="flex items-center gap-3">
@@ -90,7 +90,7 @@ export function Sidebar({ className = "", activeTab, onTabChange }: SidebarProps
                             {typeof item.count === "number" && item.count > 0 && (
                                 <span className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${isActive
                                     ? "bg-white/20 text-white"
-                                    : "bg-primary/10 text-primary"
+                                    : "bg-accent/10 text-accent"
                                     }`}>
                                     {item.count}
                                 </span>
@@ -102,12 +102,12 @@ export function Sidebar({ className = "", activeTab, onTabChange }: SidebarProps
 
             {/* Settings Tab (Bottom) */}
             {currentUser && (
-                <div className="p-4 border-t border-border/50">
+                <div className="p-4 border-t border-border">
                     <button
                         onClick={() => onTabChange("settings")}
                         className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left transition-all duration-200 group ${activeTab === "settings"
-                            ? "bg-gradient-to-r from-primary to-primary-600 text-white shadow-lg shadow-primary/25"
-                            : "text-foreground hover:bg-muted/80"
+                            ? "bg-accent text-white shadow-lg shadow-accent/25"
+                            : "text-foreground hover:bg-muted"
                             }`}
                     >
                         <div className="flex items-center gap-3">

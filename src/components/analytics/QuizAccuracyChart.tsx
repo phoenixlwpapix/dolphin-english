@@ -57,7 +57,7 @@ export function QuizAccuracyChart({ data }: QuizAccuracyChartProps) {
     return (
         <div className="glass-card rounded-2xl p-6 border border-border/50 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-                <TargetIcon className="w-5 h-5 text-primary" />
+                <TargetIcon className="w-5 h-5 text-accent" />
                 <h3 className="text-lg font-semibold text-foreground">
                     {t.analytics.quizAccuracy}
                 </h3>
@@ -102,7 +102,7 @@ export function QuizAccuracyChart({ data }: QuizAccuracyChartProps) {
                         />
                         <Bar
                             dataKey="accuracy"
-                            fill="var(--color-primary)"
+                            fill="var(--color-accent)"
                             radius={[6, 6, 0, 0]}
                         />
                     </BarChart>

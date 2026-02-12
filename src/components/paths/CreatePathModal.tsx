@@ -190,7 +190,7 @@ export function CreatePathModal({ isOpen, onClose, onSuccess }: CreatePathModalP
                             <button
                                 key={gradient}
                                 onClick={() => setCoverGradient(gradient)}
-                                className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} transition-all ${
+                                className={`w-10 h-10 rounded-xl ${gradient} transition-all ${
                                     coverGradient === gradient
                                         ? "ring-2 ring-primary ring-offset-2 ring-offset-background scale-110"
                                         : "hover:scale-105"

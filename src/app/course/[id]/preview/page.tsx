@@ -125,7 +125,7 @@ export default function CoursePreviewPage() {
 
                     <Card className="overflow-hidden">
                         {/* Header section with gradient */}
-                        <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 md:p-8 border-b border-border/50">
+                        <div className="bg-primary-50 dark:bg-primary-900/20 p-6 md:p-8 border-b border-border">
                             {/* Title row with admin action */}
                             <div className="flex items-start justify-between gap-4 mb-4">
                                 <div className="flex-1 min-w-0">

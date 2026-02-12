@@ -38,8 +38,8 @@ export function ConfirmModal({
                     className={`
                         w-14 h-14 rounded-full flex items-center justify-center mb-5
                         ${isDestructive
-                            ? 'bg-gradient-to-br from-red-100 to-red-50 dark:from-red-900/30 dark:to-red-800/20'
-                            : 'bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-900/30 dark:to-amber-800/20'
+                            ? 'bg-red-100 dark:bg-red-900/30'
+                            : 'bg-amber-100 dark:bg-amber-900/30'
                         }
                     `}
                 >

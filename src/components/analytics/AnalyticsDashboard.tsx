@@ -17,7 +17,7 @@ export function AnalyticsDashboard() {
     if (analytics === undefined) {
         return (
             <div className="flex flex-col items-center justify-center py-32 animate-pulse">
-                <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin mb-4" />
+                <div className="w-12 h-12 rounded-full border-4 border-accent/20 border-t-accent animate-spin mb-4" />
                 <p className="text-muted-foreground text-sm">
                     {t.common.loading}
                 </p>
@@ -31,7 +31,7 @@ export function AnalyticsDashboard() {
         <div className="max-w-5xl mx-auto space-y-8 animate-slide-up">
             {/* Header */}
             <div className="flex items-center gap-3 mb-6">
-                <div className="glass-card p-2 rounded-xl text-primary">
+                <div className="bg-primary-100 p-2 rounded-xl text-primary-700">
                     <BarChart3Icon className="w-6 h-6" />
                 </div>
                 <h2 className="text-2xl font-bold text-foreground">

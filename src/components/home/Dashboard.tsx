@@ -208,7 +208,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                             onClick={() => setActiveTab("my")}
                             className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
                                 activeTab === "my"
-                                    ? "bg-background text-foreground shadow-sm"
+                                    ? "bg-accent text-white shadow-sm"
                                     : "text-muted-foreground hover:text-foreground"
                             }`}
                         >
@@ -219,7 +219,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                             onClick={() => setActiveTab("public")}
                             className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
                                 activeTab === "public"
-                                    ? "bg-background text-foreground shadow-sm"
+                                    ? "bg-accent text-white shadow-sm"
                                     : "text-muted-foreground hover:text-foreground"
                             }`}
                         >
@@ -231,7 +231,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                         onClick={() => setActiveTab("paths")}
                         className={`p-2.5 rounded-xl transition-all ${
                             activeTab === "paths"
-                                ? "bg-primary/10 text-primary"
+                                ? "bg-accent/10 text-accent"
                                 : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"
                         }`}
                         aria-label={t.sidebar.learningPaths}
@@ -242,7 +242,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                         onClick={() => setActiveTab("analytics")}
                         className={`p-2.5 rounded-xl transition-all ${
                             activeTab === "analytics"
-                                ? "bg-primary/10 text-primary"
+                                ? "bg-accent/10 text-accent"
                                 : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"
                         }`}
                         aria-label={t.sidebar.analytics}
@@ -253,7 +253,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                         onClick={() => setActiveTab("settings")}
                         className={`p-2.5 rounded-xl transition-all ${
                             activeTab === "settings"
-                                ? "bg-primary/10 text-primary"
+                                ? "bg-accent/10 text-accent"
                                 : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"
                         }`}
                         aria-label={t.sidebar.settings}
@@ -275,7 +275,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                     // Settings View
                     <div className="max-w-2xl mx-auto space-y-8 animate-slide-up">
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="glass-card p-2 rounded-xl text-primary">
+                            <div className="bg-primary-100 p-2 rounded-xl text-primary-700">
                                 <SettingsIcon className="w-6 h-6" />
                             </div>
                             <h2 className="text-2xl font-bold text-foreground">
@@ -283,9 +283,9 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                             </h2>
                         </div>
 
-                        <Card className="glass-card border-border/50 shadow-lg shadow-black/5 overflow-hidden">
+                        <Card className="border-border shadow-lg shadow-black/5 overflow-hidden">
                             <CardContent className="p-0">
-                                <div className="p-6 bg-gradient-to-br from-primary/5 to-transparent">
+                                <div className="p-6 bg-primary-50 dark:bg-primary-900/20">
                                     <h3 className="text-lg font-semibold text-foreground mb-1">
                                         {t.auth?.signInTitle || "Account"}
                                     </h3>
@@ -293,8 +293,8 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                                 </div>
 
                                 <div className="p-6 space-y-6">
-                                    <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl border border-border/50">
-                                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white shadow-lg">
+                                    <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl border border-border">
+                                        <div className="w-12 h-12 rounded-full bg-primary-700 flex items-center justify-center text-white shadow-lg">
                                             {currentUser?.email?.charAt(0).toUpperCase() || <UserIcon className="w-6 h-6" />}
                                         </div>
                                         <div>
@@ -303,7 +303,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                                         </div>
                                     </div>
 
-                                    <div className="flex justify-end pt-4 border-t border-border/50">
+                                    <div className="flex justify-end pt-4 border-t border-border">
                                         <Button
                                             variant="secondary"
                                             className="text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors"
@@ -323,7 +323,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                     <>
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                                <div className="p-2 rounded-xl bg-primary-100 text-primary-700">
                                     {activeTab === "my" ? (
                                         <BookOpenIcon className="w-6 h-6" />
                                     ) : (
@@ -335,7 +335,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                                         {activeTab === "my" ? t.sidebar.myCourses : t.sidebar.publicCourses}
                                     </h2>
                                     {!isLoading && (
-                                        <span className="px-2.5 py-0.5 text-xs font-semibold text-primary bg-primary/10 rounded-full">
+                                        <span className="px-2.5 py-0.5 text-xs font-semibold text-accent bg-accent/10 rounded-full">
                                             {activeTab === "my" ? (myCourses?.length ?? 0) : (publicCourses?.length ?? 0)}
                                         </span>
                                     )}
@@ -344,7 +344,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                         </div>
 
                         {/* Search, Filter, Sort Controls */}
-                        <div className="glass-card mb-8 p-4 rounded-2xl border border-border/50 shadow-sm space-y-4 md:space-y-0 md:flex md:items-center md:gap-4 flex-wrap">
+                        <div className="bg-surface mb-8 p-4 rounded-2xl border border-border shadow-sm space-y-4 md:space-y-0 md:flex md:items-center md:gap-4 flex-wrap">
                             {/* Search */}
                             <div className="relative flex-1 min-w-[200px]">
                                 <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -353,7 +353,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                                     placeholder={t.home.searchPlaceholder || "Search..."}
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-9 pr-4 py-2.5 text-sm bg-background/50 border border-border/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder:text-muted-foreground transition-all"
+                                    className="w-full pl-9 pr-4 py-2.5 text-sm bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/50 text-foreground placeholder:text-muted-foreground transition-all"
                                 />
                             </div>
 
@@ -362,7 +362,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                                 <button
                                     onClick={() => setDifficultyFilter(null)}
                                     className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${difficultyFilter === null
-                                        ? "bg-gradient-to-r from-primary to-primary-600 text-white shadow-md shadow-primary/25"
+                                        ? "bg-accent text-white shadow-md shadow-accent/25"
                                         : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
                                         }`}
                                 >
@@ -375,7 +375,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                                             setDifficultyFilter(difficultyFilter === diff ? null : diff)
                                         }
                                         className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${difficultyFilter === diff
-                                            ? "bg-gradient-to-r from-primary to-primary-600 text-white shadow-md shadow-primary/25"
+                                            ? "bg-accent text-white shadow-md shadow-accent/25"
                                             : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
                                             }`}
                                     >
@@ -390,7 +390,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                                     <div className="relative" ref={sortRef}>
                                         <button
                                             onClick={() => setIsSortOpen(!isSortOpen)}
-                                            className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground bg-background/50 border border-border/50 rounded-xl hover:border-primary/50 transition-all hover:bg-muted/30"
+                                            className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground bg-muted border border-border rounded-xl hover:border-accent/50 transition-all hover:bg-muted"
                                         >
                                             <SortIcon className="w-4 h-4 text-muted-foreground" />
                                             <span>
@@ -402,15 +402,15 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
 
                                         {isSortOpen && (
                                             <div className="absolute right-0 top-full pt-2 w-48 z-20">
-                                                <div className="glass-card border border-border/50 rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                                                <div className="bg-surface border border-border rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                                                     <div className="p-1">
                                                         <button
                                                             onClick={() => {
                                                                 setSortOrder("lastStudied");
                                                                 setIsSortOpen(false);
                                                             }}
-                                                            className={`w-full text-left px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10 transition-colors ${sortOrder === "lastStudied"
-                                                                ? "text-primary font-medium bg-primary/5"
+                                                            className={`w-full text-left px-4 py-2.5 text-sm rounded-lg hover:bg-accent/10 transition-colors ${sortOrder === "lastStudied"
+                                                                ? "text-accent font-medium bg-accent/5"
                                                                 : "text-foreground"
                                                                 }`}
                                                         >
@@ -421,8 +421,8 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                                                                 setSortOrder("addedDate");
                                                                 setIsSortOpen(false);
                                                             }}
-                                                            className={`w-full text-left px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10 transition-colors ${sortOrder === "addedDate"
-                                                                ? "text-primary font-medium bg-primary/5"
+                                                            className={`w-full text-left px-4 py-2.5 text-sm rounded-lg hover:bg-accent/10 transition-colors ${sortOrder === "addedDate"
+                                                                ? "text-accent font-medium bg-accent/5"
                                                                 : "text-foreground"
                                                                 }`}
                                                         >
@@ -439,13 +439,13 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
 
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center py-32 animate-pulse">
-                                <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin mb-4" />
+                                <div className="w-12 h-12 rounded-full border-4 border-accent/20 border-t-accent animate-spin mb-4" />
                                 <p className="text-muted-foreground text-sm">{t.home.loadingCourses}</p>
                             </div>
                         ) : filteredCourses.length === 0 ? (
                             // Empty state
                             searchQuery || difficultyFilter ? (
-                                <div className="flex flex-col items-center justify-center py-32 glass-card rounded-3xl border border-dashed border-border animate-slide-up">
+                                <div className="flex flex-col items-center justify-center py-32 bg-surface rounded-3xl border border-dashed border-border animate-slide-up">
                                     <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted/50 flex items-center justify-center">
                                         <SearchIcon className="w-8 h-8 text-muted-foreground/50" />
                                     </div>
@@ -467,9 +467,9 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                                     </Button>
                                 </div>
                             ) : (
-                                <div className="text-center py-32 glass-card rounded-3xl border border-dashed border-border animate-slide-up">
-                                    <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center animate-pulse-soft">
-                                        <BookOpenIcon className="w-10 h-10 text-primary" />
+                                <div className="text-center py-32 bg-surface rounded-3xl border border-dashed border-border animate-slide-up">
+                                    <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-primary-100 flex items-center justify-center animate-pulse-soft">
+                                        <BookOpenIcon className="w-10 h-10 text-accent" />
                                     </div>
                                     <h3 className="text-2xl font-bold text-foreground mb-3">
                                         {t.home.noCourses}
@@ -480,7 +480,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                                     <Button
                                         size="lg"
                                         onClick={onCreateCourse}
-                                        className="rounded-2xl px-8 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-shadow"
+                                        className="rounded-2xl px-8 shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-shadow"
                                     >
                                         <PlusIcon className="w-5 h-5 mr-2" />
                                         {t.home.newCourse}
@@ -575,14 +575,14 @@ function CourseCard({ course, t, formatDate, isPublicTab = false }: CourseCardPr
 
     // Border and accent colors for card decoration
     const borderStyle = difficultyConfig?.border ?? "border-gray-300";
-    const accentGradient = difficultyConfig?.accent ?? "from-gray-400 to-gray-500";
+    const accentBg = difficultyConfig?.accent ?? "bg-gray-400";
 
     // Progress ring color
     const progressColor =
         progressPercent === 100
             ? "stroke-success"
             : progressPercent > 0
-                ? "stroke-primary"
+                ? "stroke-accent"
                 : "stroke-border";
 
     // SVG circle properties for progress ring
@@ -599,15 +599,15 @@ function CourseCard({ course, t, formatDate, isPublicTab = false }: CourseCardPr
     return (
         <a href={courseUrl} className="block group h-full">
             <Card
-                className={`h-full flex flex-col bg-card border-l-4 ${borderStyle} border-t-0 border-r-0 border-b-0 hover:border-l-4 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-primary/5 overflow-hidden rounded-2xl`}
+                className={`h-full flex flex-col bg-card border-l-4 ${borderStyle} border-t-0 border-r-0 border-b-0 hover:border-l-4 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-accent/5 overflow-hidden rounded-2xl`}
             >
                 <CardContent className="flex-1 flex flex-col p-6 relative">
                     {/* Decorative gradient blob */}
-                    <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${accentGradient} opacity-[0.03] rounded-bl-full -z-0 group-hover:opacity-[0.08] transition-opacity duration-500`} />
+                    <div className={`absolute top-0 right-0 w-32 h-32 ${accentBg} opacity-[0.03] rounded-bl-full -z-0 group-hover:opacity-[0.08] transition-opacity duration-500`} />
 
                     {/* Top Section: Title and Difficulty Badge */}
                     <div className="relative z-10 flex items-start justify-between gap-3 mb-2">
-                        <h3 className="text-xl font-bold text-foreground leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                        <h3 className="text-xl font-bold text-foreground leading-snug group-hover:text-accent transition-colors line-clamp-2">
                             {course.title}
                         </h3>
                         <span
@@ -697,7 +697,7 @@ function CourseCard({ course, t, formatDate, isPublicTab = false }: CourseCardPr
                                         className={`text-[10px] font-bold ${progressPercent === 100
                                             ? "text-success"
                                             : progressPercent > 0
-                                                ? "text-primary"
+                                                ? "text-accent"
                                                 : "text-muted-foreground"
                                             }`}
                                     >

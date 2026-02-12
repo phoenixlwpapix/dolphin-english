@@ -44,7 +44,7 @@ export function VocabularyMasteryChart({ data }: VocabularyMasteryChartProps) {
     return (
         <div className="glass-card rounded-2xl p-6 border border-border/50 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-                <BookOpenIcon className="w-5 h-5 text-primary" />
+                <BookOpenIcon className="w-5 h-5 text-accent" />
                 <h3 className="text-lg font-semibold text-foreground">
                     {t.analytics.vocabularyMastery}
                 </h3>

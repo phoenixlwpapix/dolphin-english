@@ -1,9 +1,9 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui";
-import { RouteIcon } from "@/components/ui/Icons";
+import { RouteIcon, BookOpenIcon } from "@/components/ui/Icons";
 import { useI18n } from "@/lib/i18n";
-import { DIFFICULTY_CONFIG, TOTAL_MODULES, PATH_GRADIENTS } from "@/lib/constants";
+import { DIFFICULTY_CONFIG, TOTAL_MODULES } from "@/lib/constants";
 
 interface PathCardProps {
     path: {
@@ -16,7 +16,6 @@ interface PathCardProps {
         courseIds: string[];
         coverGradient?: string;
         _creationTime: number;
-        // Present when from listMyPaths
         completedCourses?: number;
         totalCourses?: number;
     };
@@ -37,58 +36,67 @@ export function PathCard({ path, isJoined = false }: PathCardProps) {
     const badgeStyle = difficultyConfig
         ? `${difficultyConfig.color} border border-current/20`
         : "text-gray-700 bg-gray-50 border-gray-200";
-
-    // Use path's gradient or fallback based on index
-    const gradient = path.coverGradient || PATH_GRADIENTS[Math.abs(path._id.charCodeAt(0)) % PATH_GRADIENTS.length];
+    const borderStyle = difficultyConfig?.border ?? "border-gray-300";
 
     const pathUrl = isJoined ? `/path/${path._id}` : `/path/${path._id}/preview`;
 
     return (
         <a href={pathUrl} className="block group h-full">
-            <Card padding="none" className="h-full flex flex-col overflow-hidden rounded-2xl transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-primary/5">
-                {/* Gradient cover */}
-                <div className={`h-28 bg-gradient-to-br ${gradient} relative overflow-hidden`}>
-                    <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors" />
-                    <div className="absolute bottom-3 left-3 flex items-center gap-2">
-                        <div className="bg-white/20 backdrop-blur-sm rounded-lg p-1.5">
-                            <RouteIcon className="w-4 h-4 text-white" />
-                        </div>
-                        <span className="text-white/90 text-xs font-medium">
-                            {courseCount} {language === "zh" ? "门课程" : courseCount === 1 ? "course" : "courses"}
+            <Card
+                padding="none"
+                className={`h-full flex flex-col overflow-hidden rounded-2xl border-l-4 ${borderStyle} border-t-0 border-r-0 border-b-0 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-accent/5`}
+            >
+                <CardContent className="flex-1 flex flex-col p-5">
+                    {/* Top row: badge + course count */}
+                    <div className="flex items-center justify-between mb-3">
+                        <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase ${badgeStyle}`}>
+                            {path.difficulty}
                         </span>
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <BookOpenIcon className="w-3.5 h-3.5" />
+                            <span className="font-medium">
+                                {courseCount} {language === "zh" ? "门课程" : courseCount === 1 ? "course" : "courses"}
+                            </span>
+                        </div>
                     </div>
-                    <span className={`absolute top-2.5 right-2.5 px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase ${badgeStyle} bg-white/90`}>
-                        {path.difficulty}
-                    </span>
-                </div>
 
-                <CardContent className="flex-1 flex flex-col px-3.5 py-3">
-                    <h3 className="text-[15px] font-bold text-foreground leading-snug group-hover:text-primary transition-colors line-clamp-2 mb-1">
+                    {/* Title */}
+                    <h3 className="text-lg font-bold text-foreground leading-snug group-hover:text-accent transition-colors line-clamp-2 mb-1.5">
                         {title}
                     </h3>
-                    <p className="text-xs text-muted-foreground line-clamp-2">
+
+                    {/* Description */}
+                    <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                         {description}
                     </p>
 
                     {/* Spacer */}
                     <div className="flex-1" />
 
-                    {/* Progress bar — only show if joined */}
-                    {isJoined && (
-                        <div className="pt-3 mt-2 border-t border-border/50">
-                            <div className="flex items-center justify-between text-xs mb-1.5">
-                                <span className="text-muted-foreground font-medium">
+                    {/* Footer: path icon + progress */}
+                    {isJoined ? (
+                        <div className="pt-4 mt-3 border-t border-border">
+                            <div className="flex items-center justify-between text-xs mb-2">
+                                <span className="text-muted-foreground font-medium flex items-center gap-1.5">
+                                    <RouteIcon className="w-3.5 h-3.5" />
                                     {completedCourses}/{courseCount}
                                 </span>
-                                <span className={`font-bold ${progressPercent === 100 ? "text-success" : "text-primary"}`}>
+                                <span className={`font-bold ${progressPercent === 100 ? "text-success" : "text-accent"}`}>
                                     {progressPercent}%
                                 </span>
                             </div>
-                            <div className="h-1.5 bg-muted/50 rounded-full overflow-hidden">
+                            <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                                 <div
-                                    className={`h-full rounded-full transition-all duration-700 ${progressPercent === 100 ? "bg-success" : "bg-primary"}`}
+                                    className={`h-full rounded-full transition-all duration-700 ${progressPercent === 100 ? "bg-success" : "bg-accent"}`}
                                     style={{ width: `${progressPercent}%` }}
                                 />
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="pt-4 mt-3 border-t border-border">
+                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                <RouteIcon className="w-3.5 h-3.5" />
+                                <span>{language === "zh" ? "学习路径" : "Learning Path"}</span>
                             </div>
                         </div>
                     )}

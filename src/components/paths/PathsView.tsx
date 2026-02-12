@@ -81,7 +81,7 @@ export function PathsView({ onCreatePath, isAdmin }: PathsViewProps) {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                    <div className="p-2 rounded-xl bg-primary-100 text-primary-700">
                         <RouteIcon className="w-6 h-6" />
                     </div>
                     <div className="flex items-baseline gap-3">
@@ -89,7 +89,7 @@ export function PathsView({ onCreatePath, isAdmin }: PathsViewProps) {
                             {t.sidebar.learningPaths}
                         </h2>
                         {!isLoading && (
-                            <span className="px-2.5 py-0.5 text-xs font-semibold text-primary bg-primary/10 rounded-full">
+                            <span className="px-2.5 py-0.5 text-xs font-semibold text-accent bg-accent/10 rounded-full">
                                 {publicPaths?.length ?? 0}
                             </span>
                         )}
@@ -104,7 +104,7 @@ export function PathsView({ onCreatePath, isAdmin }: PathsViewProps) {
             </div>
 
             {/* Search + Filter */}
-            <div className="glass-card mb-8 p-4 rounded-2xl border border-border/50 shadow-sm space-y-4 md:space-y-0 md:flex md:items-center md:gap-4 flex-wrap">
+            <div className="bg-surface mb-8 p-4 rounded-2xl border border-border shadow-sm space-y-4 md:space-y-0 md:flex md:items-center md:gap-4 flex-wrap">
                 <div className="relative flex-1 min-w-[200px]">
                     <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <input
@@ -112,7 +112,7 @@ export function PathsView({ onCreatePath, isAdmin }: PathsViewProps) {
                         placeholder={t.home.searchPlaceholder}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2.5 text-sm bg-background/50 border border-border/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder:text-muted-foreground transition-all"
+                        className="w-full pl-9 pr-4 py-2.5 text-sm bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/50 text-foreground placeholder:text-muted-foreground transition-all"
                     />
                 </div>
 
@@ -121,7 +121,7 @@ export function PathsView({ onCreatePath, isAdmin }: PathsViewProps) {
                         onClick={() => setDifficultyFilter(null)}
                         className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
                             difficultyFilter === null
-                                ? "bg-gradient-to-r from-primary to-primary-600 text-white shadow-md shadow-primary/25"
+                                ? "bg-accent text-white shadow-md shadow-accent/25"
                                 : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
                         }`}
                     >
@@ -133,7 +133,7 @@ export function PathsView({ onCreatePath, isAdmin }: PathsViewProps) {
                             onClick={() => setDifficultyFilter(difficultyFilter === diff ? null : diff)}
                             className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
                                 difficultyFilter === diff
-                                    ? "bg-gradient-to-r from-primary to-primary-600 text-white shadow-md shadow-primary/25"
+                                    ? "bg-accent text-white shadow-md shadow-accent/25"
                                     : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
                             }`}
                         >
@@ -146,12 +146,12 @@ export function PathsView({ onCreatePath, isAdmin }: PathsViewProps) {
             {/* Content */}
             {isLoading ? (
                 <div className="flex flex-col items-center justify-center py-32 animate-pulse">
-                    <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin mb-4" />
+                    <div className="w-12 h-12 rounded-full border-4 border-accent/20 border-t-accent animate-spin mb-4" />
                     <p className="text-muted-foreground text-sm">{t.home.loadingCourses}</p>
                 </div>
             ) : filteredPaths.length === 0 ? (
                 searchQuery || difficultyFilter ? (
-                    <div className="flex flex-col items-center justify-center py-32 glass-card rounded-3xl border border-dashed border-border animate-slide-up">
+                    <div className="flex flex-col items-center justify-center py-32 bg-surface rounded-3xl border border-dashed border-border animate-slide-up">
                         <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted/50 flex items-center justify-center">
                             <SearchIcon className="w-8 h-8 text-muted-foreground/50" />
                         </div>
@@ -170,9 +170,9 @@ export function PathsView({ onCreatePath, isAdmin }: PathsViewProps) {
                         </Button>
                     </div>
                 ) : (
-                    <div className="text-center py-32 glass-card rounded-3xl border border-dashed border-border animate-slide-up">
-                        <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center animate-pulse-soft">
-                            <RouteIcon className="w-10 h-10 text-primary" />
+                    <div className="text-center py-32 bg-surface rounded-3xl border border-dashed border-border animate-slide-up">
+                        <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-primary-100 flex items-center justify-center animate-pulse-soft">
+                            <RouteIcon className="w-10 h-10 text-accent" />
                         </div>
                         <h3 className="text-2xl font-bold text-foreground mb-3">
                             {t.paths.noPaths}

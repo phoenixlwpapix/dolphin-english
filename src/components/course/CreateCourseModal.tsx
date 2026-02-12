@@ -299,8 +299,8 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                             onClick={() => setIsPublic(!isPublic)}
                             className={`
                                 relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent 
-                                transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
-                                ${isPublic ? 'bg-primary' : 'bg-input'}
+                                transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2
+                                ${isPublic ? 'bg-accent' : 'bg-input'}
                             `}
                         >
                             <span className="sr-only">{t.create.publicCourse}</span>
