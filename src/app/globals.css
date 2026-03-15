@@ -2,7 +2,7 @@
 @variant dark (&:where(.dark, .dark *));
 
 /* Design Tokens — Ocean Blue palette */
-@theme inline {
+@theme {
   /* Primary palette — ocean blue */
   --color-primary-50: #eff6ff;
   --color-primary-100: #dbeafe;
@@ -68,8 +68,36 @@
 
 /* Dark mode overrides */
 .dark {
+  /* Primary palette — inverted for dark backgrounds */
+  --color-primary-50: #172554;
+  --color-primary-100: #1e3a5f;
+  --color-primary-200: #1e3a8a;
+  --color-primary-300: #2563eb;
+  --color-primary-400: #3b82f6;
+  --color-primary-500: #60a5fa;
+  --color-primary-600: #93c5fd;
+  --color-primary-700: #bfdbfe;
+  --color-primary-800: #dbeafe;
+  --color-primary-900: #eff6ff;
+
+  /* Accent palette — brighter for dark backgrounds */
+  --color-accent-50: #0c3644;
+  --color-accent-100: #134e5e;
+  --color-accent-200: #155e75;
+  --color-accent-300: #0891b2;
+  --color-accent-400: #06b6d4;
+  --color-accent-500: #22d3ee;
+
+  /* Semantic Colors */
   --color-primary: #dbeafe;
   --color-accent: #22d3ee;
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+  --color-error: #f87171;
+  --color-destructive: #f87171;
+  --color-info: #60a5fa;
+
+  /* Base Colors */
   --color-background: #0f172a;
   --color-foreground: #eff6ff;
   --color-muted: #1e293b;

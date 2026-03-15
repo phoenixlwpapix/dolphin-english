@@ -108,7 +108,7 @@ export function Header({
               </Button>
             )}
 
-            {/* <ThemeToggle /> */}
+            <ThemeToggle />
             <LanguageSwitcher />
           </div>
         </div>
