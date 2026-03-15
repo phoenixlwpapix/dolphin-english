@@ -10,7 +10,14 @@
       "Bash(git push)",
       "Bash(del \"\\\\?\\\\D:\\\\my-apps\\\\01-deployed\\\\dolphin-english\\\\nul\")",
       "Bash(pnpm add:*)",
-      "Bash(pnpm build:*)"
+      "Bash(pnpm build:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx convex:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
     ]
   }
 }

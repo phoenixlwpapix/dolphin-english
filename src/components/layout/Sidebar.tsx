@@ -3,10 +3,17 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useI18n } from "@/lib/i18n";
-import { SettingsIcon, BarChart3Icon } from "@/components/ui/Icons";
-import { Library, BookOpen, BarChart3, Route } from "lucide-react";
+import {
+    SettingsIcon,
+    BarChart3Icon,
+    LibraryIcon,
+    BookOpenIcon,
+    RouteIcon,
+    BookAIcon,
+    ShieldIcon,
+} from "@/components/ui/Icons";
 
-export type SidebarTab = "public" | "my" | "settings" | "analytics" | "paths";
+export type SidebarTab = "explore" | "my" | "settings" | "analytics" | "vocab" | "admin";
 
 interface SidebarProps {
     className?: string;
@@ -21,6 +28,7 @@ export function Sidebar({ className = "", activeTab, onTabChange }: SidebarProps
     const myCourses = useQuery(api.userCourses.listMyCourses);
     const publicPaths = useQuery(api.learningPaths.listPublic);
 
+    const isAdmin = currentUser?.role === "admin";
     const publicCount = publicCourses?.length ?? 0;
     const myCount = myCourses?.length ?? 0;
     const pathCount = publicPaths?.length ?? 0;
@@ -28,30 +36,30 @@ export function Sidebar({ className = "", activeTab, onTabChange }: SidebarProps
     const navItems = [
         {
             id: "my" as const,
-            icon: BookOpen,
+            icon: BookOpenIcon,
             label: t.sidebar.myCourses,
             count: myCount,
             show: !!currentUser,
         },
         {
+            id: "vocab" as const,
+            icon: BookAIcon,
+            label: t.sidebar.vocabPractice,
+            count: undefined as number | undefined,
+            show: !!currentUser,
+        },
+        {
             id: "analytics" as const,
-            icon: BarChart3,
+            icon: BarChart3Icon,
             label: t.sidebar.analytics,
             count: undefined as number | undefined,
             show: !!currentUser,
         },
         {
-            id: "paths" as const,
-            icon: Route,
-            label: t.sidebar.learningPaths,
-            count: pathCount,
-            show: true,
-        },
-        {
-            id: "public" as const,
-            icon: Library,
-            label: t.sidebar.publicCourses,
-            count: publicCount,
+            id: "explore" as const,
+            icon: LibraryIcon,
+            label: t.sidebar.explore,
+            count: publicCount + pathCount > 0 ? publicCount + pathCount : undefined,
             show: true,
         },
     ];
@@ -100,9 +108,25 @@ export function Sidebar({ className = "", activeTab, onTabChange }: SidebarProps
                 })}
             </div>
 
-            {/* Settings Tab (Bottom) */}
+            {/* Bottom actions */}
             {currentUser && (
-                <div className="p-4 border-t border-border">
+                <div className="p-4 border-t border-border space-y-2">
+                    {isAdmin && (
+                        <button
+                            onClick={() => onTabChange("admin")}
+                            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left transition-all duration-200 group ${activeTab === "admin"
+                                ? "bg-accent text-white shadow-lg shadow-accent/25"
+                                : "text-foreground hover:bg-muted"
+                                }`}
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className={`transition-transform duration-200 ${activeTab !== "admin" && "group-hover:scale-110"}`}>
+                                    <ShieldIcon className="w-5 h-5" />
+                                </div>
+                                <span className="font-medium">{t.sidebar.admin}</span>
+                            </div>
+                        </button>
+                    )}
                     <button
                         onClick={() => onTabChange("settings")}
                         className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left transition-all duration-200 group ${activeTab === "settings"

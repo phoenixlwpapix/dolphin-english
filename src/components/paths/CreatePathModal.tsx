@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
@@ -11,16 +11,31 @@ import { PATH_GRADIENTS, DIFFICULTY_CONFIG } from "@/lib/constants";
 
 const CEFR_LEVELS = ["A1", "A1+", "A2", "A2+", "B1", "B1+", "B2", "B2+", "C1", "C1+", "C2"] as const;
 
+export interface EditPathData {
+    id: Id<"learningPaths">;
+    titleEn: string;
+    titleZh: string;
+    descriptionEn: string;
+    descriptionZh: string;
+    difficulty: string;
+    courseIds: Id<"courses">[];
+    coverGradient?: string;
+}
+
 interface CreatePathModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
+    editData?: EditPathData;
 }
 
-export function CreatePathModal({ isOpen, onClose, onSuccess }: CreatePathModalProps) {
+export function CreatePathModal({ isOpen, onClose, onSuccess, editData }: CreatePathModalProps) {
     const { t, language } = useI18n();
     const publicCourses = useQuery(api.courses.listPublic);
     const createPath = useMutation(api.learningPaths.create);
+    const updatePath = useMutation(api.learningPaths.update);
+
+    const isEditMode = !!editData;
 
     const [titleEn, setTitleEn] = useState("");
     const [titleZh, setTitleZh] = useState("");
@@ -31,6 +46,20 @@ export function CreatePathModal({ isOpen, onClose, onSuccess }: CreatePathModalP
     const [coverGradient, setCoverGradient] = useState<string>(PATH_GRADIENTS[0]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // Populate form when editData changes
+    useEffect(() => {
+        if (editData && isOpen) {
+            setTitleEn(editData.titleEn);
+            setTitleZh(editData.titleZh);
+            setDescriptionEn(editData.descriptionEn);
+            setDescriptionZh(editData.descriptionZh);
+            setDifficulty(editData.difficulty);
+            setSelectedCourseIds(editData.courseIds);
+            setCoverGradient(editData.coverGradient ?? PATH_GRADIENTS[0]);
+            setError(null);
+        }
+    }, [editData, isOpen]);
 
     const resetForm = () => {
         setTitleEn("");
@@ -44,7 +73,7 @@ export function CreatePathModal({ isOpen, onClose, onSuccess }: CreatePathModalP
     };
 
     const handleClose = () => {
-        resetForm();
+        if (!isEditMode) resetForm();
         onClose();
     };
 
@@ -62,19 +91,32 @@ export function CreatePathModal({ isOpen, onClose, onSuccess }: CreatePathModalP
         setError(null);
 
         try {
-            await createPath({
-                titleEn: titleEn.trim(),
-                titleZh: titleZh.trim(),
-                descriptionEn: descriptionEn.trim(),
-                descriptionZh: descriptionZh.trim(),
-                difficulty: difficulty as typeof CEFR_LEVELS[number],
-                courseIds: selectedCourseIds,
-                coverGradient,
-            });
-            resetForm();
+            if (isEditMode) {
+                await updatePath({
+                    id: editData.id,
+                    titleEn: titleEn.trim(),
+                    titleZh: titleZh.trim(),
+                    descriptionEn: descriptionEn.trim(),
+                    descriptionZh: descriptionZh.trim(),
+                    difficulty: difficulty as typeof CEFR_LEVELS[number],
+                    courseIds: selectedCourseIds,
+                    coverGradient,
+                });
+            } else {
+                await createPath({
+                    titleEn: titleEn.trim(),
+                    titleZh: titleZh.trim(),
+                    descriptionEn: descriptionEn.trim(),
+                    descriptionZh: descriptionZh.trim(),
+                    difficulty: difficulty as typeof CEFR_LEVELS[number],
+                    courseIds: selectedCourseIds,
+                    coverGradient,
+                });
+                resetForm();
+            }
             onSuccess();
         } catch (err) {
-            setError(err instanceof Error ? err.message : "Failed to create path");
+            setError(err instanceof Error ? err.message : "Failed");
         } finally {
             setIsSubmitting(false);
         }
@@ -96,8 +138,16 @@ export function CreatePathModal({ isOpen, onClose, onSuccess }: CreatePathModalP
         setSelectedCourseIds(newIds);
     };
 
+    const modalTitle = isEditMode
+        ? (language === "zh" ? "编辑路径" : "Edit Path")
+        : t.paths.createPath;
+
+    const submitLabel = isEditMode
+        ? t.common.save
+        : t.paths.createPath;
+
     return (
-        <Modal isOpen={isOpen} onClose={handleClose} title={t.paths.createPath} size="xl">
+        <Modal isOpen={isOpen} onClose={handleClose} title={modalTitle} size="xl">
             <div className="space-y-5 max-h-[70vh] overflow-y-auto px-1">
                 {/* Bilingual titles */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -299,7 +349,7 @@ export function CreatePathModal({ isOpen, onClose, onSuccess }: CreatePathModalP
                     {t.common.cancel}
                 </Button>
                 <Button onClick={handleSubmit} isLoading={isSubmitting}>
-                    {t.paths.createPath}
+                    {submitLabel}
                 </Button>
             </div>
         </Modal>

@@ -223,6 +223,130 @@ export const listPublic = query({
 });
 
 /**
+ * Get all vocabulary from user's enrolled courses
+ */
+export const getMyVocabulary = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) return [];
+
+    const userCourses = await ctx.db
+      .query("userCourses")
+      .withIndex("by_userId", (q) => q.eq("userId", userId.toString()))
+      .collect();
+
+    const results = await Promise.all(
+      userCourses.map(async (uc) => {
+        const course = await ctx.db.get(uc.courseId);
+        if (!course || !course.analyzedData?.vocabulary?.length) return null;
+
+        const progress = await ctx.db
+          .query("progress")
+          .withIndex("by_courseId", (q) => q.eq("courseId", uc.courseId))
+          .first();
+
+        return {
+          courseId: course._id,
+          courseTitle: course.title,
+          difficulty: course.difficulty,
+          vocabulary: course.analyzedData.vocabulary,
+          vocabularyClicks: progress?.vocabularyClicks ?? [],
+        };
+      })
+    );
+
+    return results.filter((r) => r !== null);
+  },
+});
+
+/**
+ * List all public courses with enrollment stats (admin use)
+ */
+export const listPublicWithStats = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) return [];
+
+    const user = await ctx.db.get(userId);
+    if (user?.role !== "admin") return [];
+
+    const courses = await ctx.db
+      .query("courses")
+      .order("desc")
+      .collect();
+
+    const publicCourses = courses.filter((c) => c.isPublic === true);
+
+    const result = await Promise.all(
+      publicCourses.map(async (course) => {
+        const enrollments = await ctx.db
+          .query("userCourses")
+          .filter((q) => q.eq(q.field("courseId"), course._id))
+          .collect();
+
+        return {
+          _id: course._id,
+          title: course.title,
+          difficulty: course.difficulty,
+          wordCount: course.wordCount,
+          _creationTime: course._creationTime,
+          enrollmentCount: enrollments.length,
+        };
+      }),
+    );
+
+    return result;
+  },
+});
+
+/**
+ * Update course metadata (admin only)
+ */
+export const updateMeta = mutation({
+  args: {
+    id: v.id("courses"),
+    title: v.optional(v.string()),
+    difficulty: v.optional(
+      v.union(
+        v.literal("A1"),
+        v.literal("A1+"),
+        v.literal("A2"),
+        v.literal("A2+"),
+        v.literal("B1"),
+        v.literal("B1+"),
+        v.literal("B2"),
+        v.literal("B2+"),
+        v.literal("C1"),
+        v.literal("C1+"),
+        v.literal("C2"),
+      ),
+    ),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) throw new Error("Must be logged in");
+
+    const user = await ctx.db.get(userId);
+    if (user?.role !== "admin") throw new Error("Admin only");
+
+    const course = await ctx.db.get(args.id);
+    if (!course) throw new Error("Course not found");
+    if (!course.isPublic) throw new Error("Can only edit public courses");
+    if (course.authorId !== userId.toString()) throw new Error("Only author can edit");
+
+    const updates: Record<string, string> = {};
+    if (args.title !== undefined) updates.title = args.title;
+    if (args.difficulty !== undefined) updates.difficulty = args.difficulty;
+
+    if (Object.keys(updates).length > 0) {
+      await ctx.db.patch(args.id, updates);
+    }
+  },
+});
+
+/**
  * Get course preview (for non-enrolled users)
  */
 export const getPreview = query({

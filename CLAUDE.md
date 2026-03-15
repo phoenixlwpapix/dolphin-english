@@ -22,11 +22,12 @@ pnpm dev:convex  # Convex backend only
 ```bash
 pnpm build       # Build Next.js for production
 pnpm lint        # Run ESLint
+pnpm typecheck   # Type-check without building (fast validation)
 ```
 
 ## Tech Stack
 
-- **Frontend**: Next.js 15 (App Router), React 19, TypeScript
+- **Frontend**: Next.js 16 (App Router), React 19, TypeScript
 - **Backend**: Convex (real-time database and serverless functions)
 - **Styling**: Tailwind CSS 4
 - **Charts**: recharts (used in analytics dashboard)
@@ -143,15 +144,104 @@ Fonts are loaded in `src/app/layout.tsx` and stored in `public/fonts/`.
 
 ### Components
 - `src/components/modules/` - 6 learning module components
-- `src/components/home/Dashboard.tsx` - Main dashboard with tab switching (my courses, public courses, paths, analytics, settings)
-- `src/components/layout/Sidebar.tsx` - Sidebar navigation; defines `SidebarTab` type: `"public" | "my" | "settings" | "analytics" | "paths"`
+- `src/components/home/Dashboard.tsx` - Main dashboard with tab switching (my courses, explore, analytics, vocab, admin, settings)
+- `src/components/layout/Sidebar.tsx` - Sidebar navigation; defines `SidebarTab` type: `"explore" | "my" | "settings" | "analytics" | "vocab" | "admin"`
 - `src/components/analytics/` - Analytics dashboard: AnalyticsDashboard, SummaryCards, QuizAccuracyChart, VocabularyMasteryChart, ActivityHeatmap, StudyTimeTrends
 - `src/components/paths/` - Learning paths: PathCard, PathsView, CreatePathModal
+- `src/components/admin/AdminView.tsx` - Admin panel with course/path management tables, enrollment stats, inline editing
 - `src/components/course/CreateCourseModal.tsx` - Course creation modal with text/image input
 - `src/components/ui/` - Shared UI components (Button, Card, Modal, ConfirmModal, Icons, Progress, LanguageSwitcher)
 
 ### Config
 - `src/lib/constants.ts` - Module timing, difficulty levels (`DIFFICULTY_CONFIG`), CEFR color schemes, `PATH_GRADIENTS`
+
+## Common Pitfalls
+
+These are critical rules Claude Code must follow to avoid repeated mistakes:
+
+- **Icons**: Never import directly from `lucide-react`. Always use wrapper functions from `src/components/ui/Icons.tsx`. If a needed icon doesn't exist, add a new wrapper there first.
+- **Server Components first**: Never add `"use client"` unless the component genuinely needs browser APIs, event handlers, or hooks. Default to Server Components.
+- **i18n interface**: The `Translations` TypeScript interface is defined in `zh.ts`, not `en.ts`. When adding new translation keys, update the interface in `zh.ts` first, then add values to both `zh.ts` and `en.ts`.
+- **Auth guards**: Convex mutations/queries that need authentication must call `auth.getUserId(ctx)` and throw if null. Never assume the user is authenticated.
+- **Design tokens**: All colors are defined as semantic tokens in `globals.css` `@theme` block. Never hardcode hex color values in components — use `bg-surface`, `text-foreground`, `border-border`, `bg-muted`, `text-muted-foreground`, etc.
+- **Dark mode**: All components must work in both light and dark mode. Use semantic color tokens, not raw palette colors (e.g., use `bg-surface` not `bg-white`).
+- **No gradients**: The current design intentionally removed gradients (Happy Hues redesign). Don't add gradient backgrounds unless asked.
+- **No tests**: No test framework is configured. Do not create test files unless explicitly asked.
+
+## Design System
+
+- **Color palette**: Ocean Blue primary + Cyan accent (Happy Hues palette, coral accent, deep purple)
+- **Semantic tokens**: `bg-surface`, `text-foreground`, `border-border`, `bg-muted`, `text-muted-foreground`, `bg-card`, `text-primary`, `text-accent`, `bg-background`
+- **Dark mode**: `.dark` class variant — defined in `globals.css` with full token overrides
+- **Border radius**: `rounded-xl` (cards), `rounded-2xl` (modals), `rounded-full` (pills/avatars)
+- **Shadows**: Custom `shadow-sm` through `shadow-2xl` + `shadow-glow` defined in globals.css
+- **Animations**: `animate-float`, `animate-float-slow`, `animate-shimmer`, `animate-slide-up`, `animate-pulse-soft` with delay utilities (`delay-100` to `delay-400`)
+- **Custom CSS classes**: `glass-card`, `gradient-text`, `hero-gradient`, `module-step`
+- **Fonts**: Outfit (body), Mali (EN handwriting via `font-handwriting`), ZCOOL KuaiLe (ZH handwriting via `font-handwriting-zh`)
+
+## Convex API Reference
+
+### courses
+- `api.courses.list` (query): `{}` — all courses
+- `api.courses.listPublic` (query): `{}` — public courses only
+- `api.courses.get` (query): `{ id }` — full course with analyzed data
+- `api.courses.getPreview` (query): `{ id }` — course preview (no auth required)
+- `api.courses.getMyVocabulary` (query): `{}` — user's vocabulary across courses
+- `api.courses.create` (mutation): `{ content, title, difficulty, wordCount, isPublic?, analyzedData? }`
+- `api.courses.updateAnalysis` (mutation): `{ id, analyzedData }`
+- `api.courses.remove` (mutation): `{ id }`
+- `api.courses.listPublicWithStats` (query): `{}` — admin only, returns public courses with enrollment counts
+- `api.courses.updateMeta` (mutation): `{ id, title?, difficulty? }` — admin only, edit public course metadata
+
+### userCourses
+- `api.userCourses.listMyCourses` (query): `{}`
+- `api.userCourses.isJoined` (query): `{ courseId }`
+- `api.userCourses.addCourse` (mutation): `{ courseId }`
+- `api.userCourses.removeCourse` (mutation): `{ courseId }`
+
+### progress
+- `api.progress.get` (query): `{ courseId }`
+- `api.progress.create` (mutation): `{ courseId }`
+- `api.progress.updateCurrentModule` (mutation): `{ courseId, moduleNumber }`
+- `api.progress.completeModule` (mutation): `{ courseId, moduleNumber }`
+- `api.progress.saveQuizResults` (mutation): `{ courseId, results: [{ questionId, selectedAnswer, isCorrect }] }`
+- `api.progress.recordVocabularyClick` (mutation): `{ courseId, word }`
+- `api.progress.reset` (mutation): `{ courseId }`
+
+### learningPaths
+- `api.learningPaths.listPublic` (query): `{}`
+- `api.learningPaths.listMyPaths` (query): `{}`
+- `api.learningPaths.get` (query): `{ id }`
+- `api.learningPaths.isJoined` (query): `{ pathId }`
+- `api.learningPaths.create` (mutation): `{ titleEn, titleZh, descriptionEn, descriptionZh, difficulty, courseIds, coverGradient? }`
+- `api.learningPaths.update` (mutation): `{ id, titleEn?, titleZh?, descriptionEn?, descriptionZh?, difficulty?, courseIds?, coverGradient? }`
+- `api.learningPaths.remove` (mutation): `{ id }`
+- `api.learningPaths.joinPath` (mutation): `{ pathId }`
+- `api.learningPaths.leavePath` (mutation): `{ pathId }`
+- `api.learningPaths.listPublicWithStats` (query): `{}` — admin only, returns paths with enrollment counts
+
+## Checklists
+
+### Adding a New Convex Table
+1. Define schema in `convex/schema.ts` with proper indexes
+2. Create `convex/{tableName}.ts` with queries/mutations
+3. Dev auto-syncs; remind user to run `npx convex deploy` for production
+
+### Adding a New Icon
+1. Find the icon name in lucide-react
+2. Add wrapper function in `src/components/ui/Icons.tsx` following existing pattern
+3. Import from `@/components/ui/Icons` (or `@/components/ui`) in your component
+
+### Adding a New Translation Key
+1. Add the key to the `Translations` interface in `src/lib/i18n/translations/zh.ts`
+2. Add corresponding values in both `zh.ts` and `en.ts`
+3. Use via `const { t } = useI18n()` then `t.your.key`
+
+### Adding a New Dashboard Tab
+1. Add tab value to `SidebarTab` type union in `src/components/layout/Sidebar.tsx`
+2. Add tab button in Sidebar (desktop sidebar + mobile tab bar)
+3. Add conditional rendering branch in `src/components/home/Dashboard.tsx`
+4. Add translations for tab label in both `zh.ts` and `en.ts`
 
 ## Important Patterns
 
@@ -166,8 +256,9 @@ Validators are duplicated in both `convex/schema.ts` and individual query/mutati
 
 ### Dashboard Tab System
 - `SidebarTab` type controls which view is displayed in the Dashboard
-- Tabs: "my" (My Courses with in-progress/completed separation), "public" (Public Courses), "paths" (Learning Paths), "analytics" (Analytics Dashboard), "settings" (Account Settings)
+- Tabs: "my" (My Courses with paths + standalone courses, in-progress/completed separation), "explore" (Explore — public paths + standalone public courses combined), "vocab" (Vocabulary Practice), "analytics" (Analytics Dashboard), "admin" (Admin Panel, admin-only), "settings" (Account Settings)
 - Mobile has a tab switcher with icon buttons for each tab
+- Admin tab is only visible when `currentUser.role === "admin"`
 
 ### Learning Paths
 - Admins group public courses into ordered sequences

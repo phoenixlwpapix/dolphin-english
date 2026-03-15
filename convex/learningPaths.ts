@@ -52,6 +52,41 @@ export const update = mutation({
         if (!path) throw new Error("Path not found")
         if (path.authorId !== userId.toString()) throw new Error("Not the author")
 
+        // If courseIds changed, sync new courses to all enrolled users
+        if (args.courseIds !== undefined) {
+            const oldCourseIds = new Set(path.courseIds.map((id) => id.toString()))
+            const newCourseIds = args.courseIds.filter(
+                (id) => !oldCourseIds.has(id.toString())
+            )
+
+            if (newCourseIds.length > 0) {
+                // Find all users who joined this path
+                const userPaths = await ctx.db
+                    .query("userPaths")
+                    .filter((q) => q.eq(q.field("pathId"), args.id))
+                    .collect()
+
+                // Enroll each user in the new courses
+                for (const up of userPaths) {
+                    for (const courseId of newCourseIds) {
+                        const alreadyJoined = await ctx.db
+                            .query("userCourses")
+                            .withIndex("by_userId_courseId", (q) =>
+                                q.eq("userId", up.userId).eq("courseId", courseId)
+                            )
+                            .first()
+                        if (!alreadyJoined) {
+                            await ctx.db.insert("userCourses", {
+                                userId: up.userId,
+                                courseId,
+                                addedAt: Date.now(),
+                            })
+                        }
+                    }
+                }
+            }
+        }
+
         const { id, ...updates } = args
         // Filter out undefined values
         const patch: Record<string, unknown> = {}
@@ -152,6 +187,45 @@ export const leavePath = mutation({
         if (userPath) {
             await ctx.db.delete(userPath._id)
         }
+    },
+})
+
+// ─── Admin Queries ──────────────────────────────────────────────
+
+export const listPublicWithStats = query({
+    args: {},
+    handler: async (ctx) => {
+        const userId = await auth.getUserId(ctx)
+        if (!userId) return []
+        const user = await ctx.db.get(userId)
+        if (user?.role !== "admin") return []
+
+        const paths = await ctx.db.query("learningPaths").order("desc").collect()
+        const publicPaths = paths.filter((p) => p.isPublic)
+
+        const result = await Promise.all(
+            publicPaths.map(async (path) => {
+                const enrollments = await ctx.db
+                    .query("userPaths")
+                    .filter((q) => q.eq(q.field("pathId"), path._id))
+                    .collect()
+
+                return {
+                    _id: path._id,
+                    titleEn: path.titleEn,
+                    titleZh: path.titleZh,
+                    descriptionEn: path.descriptionEn,
+                    descriptionZh: path.descriptionZh,
+                    difficulty: path.difficulty,
+                    courseIds: path.courseIds,
+                    coverGradient: path.coverGradient,
+                    _creationTime: path._creationTime,
+                    enrollmentCount: enrollments.length,
+                }
+            }),
+        )
+
+        return result
     },
 })
 

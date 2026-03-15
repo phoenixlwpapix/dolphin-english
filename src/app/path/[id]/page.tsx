@@ -13,10 +13,12 @@ import {
     CheckCircleIcon,
     ConfirmModal,
 } from "@/components/ui";
-import { RouteIcon, BookOpenIcon } from "@/components/ui/Icons";
+import { RouteIcon, BookOpenIcon, EditIcon } from "@/components/ui/Icons";
 import { useI18n } from "@/lib/i18n";
 import type { Id } from "../../../../convex/_generated/dataModel";
 import { DIFFICULTY_CONFIG, TOTAL_MODULES } from "@/lib/constants";
+import { CreatePathModal } from "@/components/paths";
+import type { EditPathData } from "@/components/paths/CreatePathModal";
 
 export default function PathDetailPage() {
     const params = useParams();
@@ -25,6 +27,7 @@ export default function PathDetailPage() {
     const pathId = params.id as Id<"learningPaths">;
     const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
     const [isLeaving, setIsLeaving] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     const pathData = useQuery(api.learningPaths.get, { id: pathId });
     const currentUser = useQuery(api.users.getCurrentUser);
@@ -81,6 +84,21 @@ export default function PathDetailPage() {
     const badgeStyle = difficultyConfig
         ? `${difficultyConfig.color} border border-current/20`
         : "text-gray-700 bg-gray-50 border-gray-200";
+
+    const isAdmin = currentUser?.role === "admin";
+    const isAuthor = pathData.authorId === currentUser?._id?.toString();
+    const canEdit = isAdmin && isAuthor;
+
+    const editData: EditPathData | undefined = canEdit ? {
+        id: pathId,
+        titleEn: pathData.titleEn,
+        titleZh: pathData.titleZh,
+        descriptionEn: pathData.descriptionEn,
+        descriptionZh: pathData.descriptionZh,
+        difficulty: pathData.difficulty,
+        courseIds: pathData.courses.map((c) => c._id as Id<"courses">),
+        coverGradient: pathData.coverGradient,
+    } : undefined;
 
     const borderColor = difficultyConfig?.border ?? "border-gray-300";
     const overallProgress = pathData.totalCourses > 0
@@ -141,6 +159,17 @@ export default function PathDetailPage() {
                                     <BookOpenIcon className="w-4 h-4" />
                                     <span>{pathData.completedCourses}/{pathData.totalCourses} {t.paths.courses}</span>
                                 </div>
+                                {canEdit && (
+                                    <Button
+                                        variant="secondary"
+                                        size="sm"
+                                        onClick={() => setShowEditModal(true)}
+                                        className="ml-auto"
+                                    >
+                                        <EditIcon className="w-4 h-4 mr-1.5" />
+                                        {language === "zh" ? "编辑路径" : "Edit Path"}
+                                    </Button>
+                                )}
                             </div>
 
                             {/* Overall progress bar */}
@@ -287,6 +316,15 @@ export default function PathDetailPage() {
                 cancelText={t.common.cancel}
                 isLoading={isLeaving}
             />
+
+            {canEdit && editData && (
+                <CreatePathModal
+                    isOpen={showEditModal}
+                    onClose={() => setShowEditModal(false)}
+                    onSuccess={() => setShowEditModal(false)}
+                    editData={editData}
+                />
+            )}
         </div>
     );
 }

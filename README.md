@@ -24,11 +24,13 @@ An English learning app for A1-C2 learners that transforms real-world articles i
 - **Analytics Dashboard** - Track study activity, quiz accuracy, vocabulary mastery, and weekly trends
 - **Progress Tracking** - Real-time progress saving with resume support
 - **TTS Playback** - Browser-native speech synthesis with sentence highlighting
+- **Vocabulary Practice** - Dedicated flashcard-based vocabulary review across all enrolled courses, with flip animations, course/category filters (essential, transferable, extended), shuffle mode, TTS pronunciation, progress tracking, and quick-nav word grid
 - **Course Separation** - In-progress and completed courses displayed separately
+- **Admin Panel** - Dedicated management interface for public courses and learning paths with enrollment stats, inline editing, and batch operations
 
 ## Tech Stack
 
-- **Framework**: [Next.js 15](https://nextjs.org/) (App Router), React 19, TypeScript
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router), React 19, TypeScript
 - **Database**: [Convex](https://convex.dev/) (real-time database + serverless functions)
 - **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
 - **Charts**: [Recharts](https://recharts.org/) (analytics dashboard)
@@ -94,6 +96,7 @@ dolphin-english/
 │   │   ├── path/[id]/       # Path pages (detail + preview)
 │   │   └── page.tsx         # Homepage
 │   ├── components/
+│   │   ├── admin/           # Admin panel (course/path management)
 │   │   ├── analytics/       # Analytics dashboard (6 chart components)
 │   │   ├── course/          # Course creation modal
 │   │   ├── home/            # Dashboard + landing page
@@ -115,10 +118,17 @@ dolphin-english/
 3. **Study** - Complete six learning modules in sequence
 4. **Track Progress** - View your analytics dashboard for study insights
 
-### Learning Paths (Admin)
+### Admin Panel
+
+1. Admins see a shield icon in the sidebar to access the Admin Panel
+2. **Manage Courses** - View all public courses with enrollment counts, edit titles/difficulty inline, delete courses
+3. **Manage Paths** - View all learning paths with enrollment stats, edit path details, delete paths
+4. **Create Content** - Quick-access buttons to create new public courses or learning paths
+
+### Learning Paths
 
 1. Navigate to the Paths tab in the sidebar
-2. Click "Create Path" to group public courses into an ordered sequence
+2. Admins click "Create Path" to group public courses into an ordered sequence
 3. Set bilingual titles, difficulty level, and cover gradient
 4. Users can browse and join paths, auto-enrolling in all contained courses
 

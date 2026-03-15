@@ -24,11 +24,16 @@ import {
     BarChart3Icon,
     CheckCircleIcon,
     RouteIcon,
+    BookAIcon,
+    ChevronDownIcon,
+    ShieldIcon,
 } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
 import { TOTAL_MODULES, DIFFICULTY_CONFIG } from "@/lib/constants";
 import { AnalyticsDashboard } from "@/components/analytics/AnalyticsDashboard";
-import { PathsView } from "@/components/paths";
+import { PathCard } from "@/components/paths";
+import { VocabularyPractice } from "@/components/vocabulary";
+import { AdminView } from "@/components/admin";
 
 type DifficultyLevel = "A2" | "A2+" | "B1" | string;
 type SortOrder = "lastStudied" | "addedDate";
@@ -41,16 +46,19 @@ function getProgressPercentage(completedModules: number[] | undefined): number {
 interface DashboardProps {
     onCreateCourse: () => void;
     onCreatePath?: () => void;
+    onEditPath?: (pathId: string) => void;
 }
 
-export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
-    const { t } = useI18n();
+export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: DashboardProps) {
+    const { t, language } = useI18n();
     const { signOut } = useAuthActions();
     const currentUser = useQuery(api.users.getCurrentUser);
     const coursesData = useQuery(api.courses.list);
     const publicCourses = useQuery(api.courses.listPublic);
     const myCourses = useQuery(api.userCourses.listMyCourses);
+    const myPaths = useQuery(api.learningPaths.listMyPaths);
     const [activeTab, setActiveTab] = useState<SidebarTab>("my");
+    const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set());
     const [isSigningOut, setIsSigningOut] = useState(false);
 
     // Search, filter, and sort state
@@ -73,13 +81,40 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
         };
     }, []);
 
+    // Set of course IDs the user has joined (for "joined" badge on public tab)
+    const joinedCourseIds = useMemo(() => {
+        if (!myCourses) return new Set<string>();
+        return new Set(myCourses.map((c) => c._id));
+    }, [myCourses]);
+
+    // Set of course IDs that belong to any joined path
+    const pathCourseIds = useMemo(() => {
+        if (!myPaths) return new Set<string>();
+        const ids = new Set<string>();
+        for (const path of myPaths) {
+            for (const courseId of path.courseIds) {
+                ids.add(courseId.toString());
+            }
+        }
+        return ids;
+    }, [myPaths]);
+
+    const togglePathExpanded = (pathId: string) => {
+        setExpandedPaths(prev => {
+            const next = new Set(prev);
+            if (next.has(pathId)) next.delete(pathId);
+            else next.add(pathId);
+            return next;
+        });
+    };
+
     const isLoading = activeTab === "my" ? myCourses === undefined : publicCourses === undefined;
 
     // Get the correct data source based on active tab
     const currentCourses = useMemo(() => {
         if (activeTab === "my") {
             return myCourses ?? [];
-        } else if (activeTab === "public") {
+        } else if (activeTab === "explore") {
             return publicCourses?.map(course => ({
                 ...course,
                 progress: null,
@@ -87,6 +122,42 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
         }
         return [];
     }, [activeTab, myCourses, publicCourses]);
+
+    // For explore tab: separate courses in paths vs standalone
+    const publicPathsList = useQuery(api.learningPaths.listPublic);
+    const myPathsList = useQuery(api.learningPaths.listMyPaths);
+
+    const explorePathCourseIds = useMemo(() => {
+        if (!publicPathsList) return new Set<string>();
+        const ids = new Set<string>();
+        for (const path of publicPathsList) {
+            for (const courseId of path.courseIds) {
+                ids.add(courseId.toString());
+            }
+        }
+        return ids;
+    }, [publicPathsList]);
+
+    const joinedPathIds = useMemo(() => {
+        if (!myPathsList) return new Set<string>();
+        return new Set(myPathsList.map(p => p._id));
+    }, [myPathsList]);
+
+    // For explore tab: filter paths by search/difficulty
+    const filteredExplorePaths = useMemo(() => {
+        if (activeTab !== "explore" || !publicPathsList) return [];
+        let result = [...publicPathsList];
+        if (searchQuery.trim()) {
+            const q = searchQuery.toLowerCase();
+            result = result.filter(p =>
+                p.titleEn.toLowerCase().includes(q) || p.titleZh.toLowerCase().includes(q)
+            );
+        }
+        if (difficultyFilter) {
+            result = result.filter(p => p.difficulty === difficultyFilter);
+        }
+        return result;
+    }, [activeTab, publicPathsList, searchQuery, difficultyFilter]);
 
     // Filtered and sorted courses
     const filteredCourses = useMemo(() => {
@@ -132,20 +203,42 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
         return result;
     }, [currentCourses, searchQuery, difficultyFilter, sortOrder]);
 
-    // Split into in-progress and completed for "my" tab
-    const { inProgressCourses, completedCourses } = useMemo(() => {
-        if (activeTab !== "my") return { inProgressCourses: filteredCourses, completedCourses: [] };
+    // For explore tab: standalone courses (not in any path)
+    const standaloneExploreCourses = useMemo(() => {
+        if (activeTab !== "explore") return [];
+        return filteredCourses.filter(c => !explorePathCourseIds.has(c._id));
+    }, [activeTab, filteredCourses, explorePathCourseIds]);
+
+    // For "my" tab: separate standalone courses (not in any path) and split by progress
+    const { inProgressCourses, completedCourses, standaloneCourses } = useMemo(() => {
+        if (activeTab !== "my") return { inProgressCourses: filteredCourses, completedCourses: [], standaloneCourses: filteredCourses };
+
+        const standalone = filteredCourses.filter(c => !pathCourseIds.has(c._id));
         const inProgress: typeof filteredCourses = [];
         const completed: typeof filteredCourses = [];
-        for (const course of filteredCourses) {
+        for (const course of standalone) {
             if (course.progress?.completedModules?.length === TOTAL_MODULES) {
                 completed.push(course);
             } else {
                 inProgress.push(course);
             }
         }
-        return { inProgressCourses: inProgress, completedCourses: completed };
-    }, [filteredCourses, activeTab]);
+        return { inProgressCourses: inProgress, completedCourses: completed, standaloneCourses: standalone };
+    }, [filteredCourses, activeTab, pathCourseIds]);
+
+    // Group courses by path for expanded view
+    const pathCoursesMap = useMemo(() => {
+        if (activeTab !== "my" || !myPaths || !myCourses) return new Map<string, typeof filteredCourses>();
+        const courseMap = new Map(myCourses.map(c => [c._id as string, c]));
+        const map = new Map<string, typeof filteredCourses>();
+        for (const path of myPaths) {
+            const courses = path.courseIds
+                .map(id => courseMap.get(id as string))
+                .filter((c): c is NonNullable<typeof c> => c != null);
+            map.set(path._id, courses);
+        }
+        return map;
+    }, [activeTab, myPaths, myCourses]);
 
     function formatDate(timestamp: number): string {
         return new Intl.DateTimeFormat("zh-CN", {
@@ -216,27 +309,27 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                             {t.sidebar.myCourses}
                         </button>
                         <button
-                            onClick={() => setActiveTab("public")}
+                            onClick={() => setActiveTab("explore")}
                             className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                                activeTab === "public"
+                                activeTab === "explore"
                                     ? "bg-accent text-white shadow-sm"
                                     : "text-muted-foreground hover:text-foreground"
                             }`}
                         >
                             <LibraryIcon className="w-4 h-4" />
-                            {t.sidebar.publicCourses}
+                            {t.sidebar.explore}
                         </button>
                     </div>
                     <button
-                        onClick={() => setActiveTab("paths")}
+                        onClick={() => setActiveTab("vocab")}
                         className={`p-2.5 rounded-xl transition-all ${
-                            activeTab === "paths"
+                            activeTab === "vocab"
                                 ? "bg-accent/10 text-accent"
                                 : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"
                         }`}
-                        aria-label={t.sidebar.learningPaths}
+                        aria-label={t.sidebar.vocabPractice}
                     >
-                        <RouteIcon className="w-5 h-5" />
+                        <BookAIcon className="w-5 h-5" />
                     </button>
                     <button
                         onClick={() => setActiveTab("analytics")}
@@ -249,6 +342,19 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                     >
                         <BarChart3Icon className="w-5 h-5" />
                     </button>
+                    {currentUser?.role === "admin" && (
+                        <button
+                            onClick={() => setActiveTab("admin")}
+                            className={`p-2.5 rounded-xl transition-all ${
+                                activeTab === "admin"
+                                    ? "bg-accent/10 text-accent"
+                                    : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"
+                            }`}
+                            aria-label={t.sidebar.admin}
+                        >
+                            <ShieldIcon className="w-5 h-5" />
+                        </button>
+                    )}
                     <button
                         onClick={() => setActiveTab("settings")}
                         className={`p-2.5 rounded-xl transition-all ${
@@ -262,15 +368,19 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                     </button>
                 </div>
 
-                {activeTab === "analytics" ? (
+                {activeTab === "admin" && currentUser?.role === "admin" ? (
+                    // Admin View
+                    <AdminView
+                        onCreateCourse={onCreateCourse}
+                        onCreatePath={onCreatePath ?? (() => {})}
+                        onEditPath={onEditPath ?? (() => {})}
+                    />
+                ) : activeTab === "vocab" ? (
+                    // Vocabulary Practice View
+                    <VocabularyPractice />
+                ) : activeTab === "analytics" ? (
                     // Analytics View
                     <AnalyticsDashboard />
-                ) : activeTab === "paths" ? (
-                    // Paths View
-                    <PathsView
-                        onCreatePath={onCreatePath}
-                        isAdmin={currentUser?.role === "admin"}
-                    />
                 ) : activeTab === "settings" ? (
                     // Settings View
                     <div className="max-w-2xl mx-auto space-y-8 animate-slide-up">
@@ -332,7 +442,7 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                                 </div>
                                 <div className="flex items-baseline gap-3">
                                     <h2 className="text-2xl font-bold text-foreground">
-                                        {activeTab === "my" ? t.sidebar.myCourses : t.sidebar.publicCourses}
+                                        {activeTab === "my" ? t.sidebar.myCourses : t.sidebar.explore}
                                     </h2>
                                     {!isLoading && (
                                         <span className="px-2.5 py-0.5 text-xs font-semibold text-accent bg-accent/10 rounded-full">
@@ -442,7 +552,10 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                                 <div className="w-12 h-12 rounded-full border-4 border-accent/20 border-t-accent animate-spin mb-4" />
                                 <p className="text-muted-foreground text-sm">{t.home.loadingCourses}</p>
                             </div>
-                        ) : filteredCourses.length === 0 ? (
+                        ) : (activeTab === "my"
+                            ? (standaloneCourses.length === 0 && (!myPaths || myPaths.length === 0))
+                            : (filteredExplorePaths.length === 0 && standaloneExploreCourses.length === 0)
+                        ) ? (
                             // Empty state
                             searchQuery || difficultyFilter ? (
                                 <div className="flex flex-col items-center justify-center py-32 bg-surface rounded-3xl border border-dashed border-border animate-slide-up">
@@ -490,20 +603,194 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                         ) : (
                             // Course grid with stagger animation
                             <div className="space-y-8">
-                                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-                                    {inProgressCourses.map((course, index) => (
-                                        <div key={course._id} className="animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
-                                            <CourseCard
-                                                course={course}
-                                                t={t}
-                                                formatDate={formatDate}
-                                                isPublicTab={activeTab === "public"}
-                                            />
+                                {/* My Paths section — only on "my" tab */}
+                                {activeTab === "my" && myPaths && myPaths.length > 0 && (
+                                    <div className="space-y-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-px flex-1 bg-border/50" />
+                                            <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
+                                                <RouteIcon className="w-4 h-4 text-accent" />
+                                                {t.home.myPaths} ({myPaths.length})
+                                            </span>
+                                            <div className="h-px flex-1 bg-border/50" />
                                         </div>
-                                    ))}
-                                </div>
+                                        <div className="space-y-3">
+                                            {myPaths.map((path) => {
+                                                const title = language === "zh" ? path.titleZh : path.titleEn;
+                                                const isExpanded = expandedPaths.has(path._id);
+                                                const courses = pathCoursesMap.get(path._id) ?? [];
+                                                const progressPercent = path.totalCourses > 0
+                                                    ? Math.round((path.completedCourses / path.totalCourses) * 100)
+                                                    : 0;
+                                                const difficultyKey = path.difficulty as keyof typeof DIFFICULTY_CONFIG;
+                                                const difficultyConfig = DIFFICULTY_CONFIG[difficultyKey];
+                                                const borderStyle = difficultyConfig?.border ?? "border-gray-300";
+                                                const badgeStyle = difficultyConfig
+                                                    ? `${difficultyConfig.color} border border-current/20`
+                                                    : "text-gray-700 bg-gray-50 border-gray-200";
 
-                                {completedCourses.length > 0 && (
+                                                return (
+                                                    <div key={path._id} className="animate-slide-up">
+                                                        <div
+                                                            className={`bg-card border-l-4 ${borderStyle} border border-border rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-accent/5`}
+                                                        >
+                                                            {/* Path header — clickable to expand */}
+                                                            <button
+                                                                onClick={() => togglePathExpanded(path._id)}
+                                                                className="w-full flex items-center gap-4 p-5 text-left hover:bg-muted/30 transition-colors"
+                                                            >
+                                                                <div className="flex-1 min-w-0">
+                                                                    <div className="flex items-center gap-2.5 mb-1.5">
+                                                                        <h3 className="text-lg font-bold text-foreground truncate">
+                                                                            {title}
+                                                                        </h3>
+                                                                        <span className={`shrink-0 px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase ${badgeStyle}`}>
+                                                                            {path.difficulty}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium border bg-success/10 text-success border-success/20">
+                                                                            <CheckCircleIcon className="w-3 h-3" />
+                                                                            {t.paths.joined}
+                                                                        </span>
+                                                                        <span className="flex items-center gap-1">
+                                                                            <BookOpenIcon className="w-3.5 h-3.5" />
+                                                                            {path.completedCourses}/{path.totalCourses}
+                                                                        </span>
+                                                                        <span className={`font-bold ${progressPercent === 100 ? "text-success" : "text-accent"}`}>
+                                                                            {progressPercent}%
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                {/* Progress bar */}
+                                                                <div className="w-24 shrink-0">
+                                                                    <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                                                                        <div
+                                                                            className={`h-full rounded-full transition-all duration-700 ${progressPercent === 100 ? "bg-success" : "bg-accent"}`}
+                                                                            style={{ width: `${progressPercent}%` }}
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                                {/* Expand icon */}
+                                                                <ChevronDownIcon
+                                                                    className={`w-5 h-5 text-muted-foreground shrink-0 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                                                                />
+                                                            </button>
+
+                                                            {/* Expanded courses */}
+                                                            {isExpanded && (
+                                                                <div className="px-5 pb-5 border-t border-border/50">
+                                                                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 pt-4">
+                                                                        {courses.map((course, index) => (
+                                                                            <div key={course._id} className="animate-slide-up" style={{ animationDelay: `${index * 30}ms` }}>
+                                                                                <CourseCard
+                                                                                    course={course}
+                                                                                    t={t}
+                                                                                    formatDate={formatDate}
+                                                                                />
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                    <div className="mt-3 text-center">
+                                                                        <a
+                                                                            href={`/path/${path._id}`}
+                                                                            className="text-xs text-accent hover:underline font-medium"
+                                                                        >
+                                                                            {t.paths.pathDetail} →
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Explore tab: learning paths section */}
+                                {activeTab === "explore" && filteredExplorePaths.length > 0 && (
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-px flex-1 bg-border/50" />
+                                            <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
+                                                <RouteIcon className="w-4 h-4 text-accent" />
+                                                {t.sidebar.learningPaths} ({filteredExplorePaths.length})
+                                            </span>
+                                            <div className="h-px flex-1 bg-border/50" />
+                                        </div>
+                                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                                            {filteredExplorePaths.map((path, index) => (
+                                                <div key={path._id} className="animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
+                                                    <PathCard
+                                                        path={path}
+                                                        isJoined={joinedPathIds.has(path._id)}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Explore tab: standalone courses header */}
+                                {activeTab === "explore" && filteredExplorePaths.length > 0 && standaloneExploreCourses.length > 0 && (
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-px flex-1 bg-border/50" />
+                                        <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
+                                            <BookOpenIcon className="w-4 h-4 text-accent" />
+                                            {t.home.standaloneCourses} ({standaloneExploreCourses.length})
+                                        </span>
+                                        <div className="h-px flex-1 bg-border/50" />
+                                    </div>
+                                )}
+
+                                {/* Explore tab: standalone courses grid */}
+                                {activeTab === "explore" && standaloneExploreCourses.length > 0 && (
+                                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+                                        {standaloneExploreCourses.map((course, index) => (
+                                            <div key={course._id} className="animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
+                                                <CourseCard
+                                                    course={course}
+                                                    t={t}
+                                                    formatDate={formatDate}
+                                                    isPublicTab
+                                                    isJoined={joinedCourseIds.has(course._id)}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* My tab: standalone courses header */}
+                                {activeTab === "my" && myPaths && myPaths.length > 0 && standaloneCourses.length > 0 && (
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-px flex-1 bg-border/50" />
+                                        <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
+                                            <BookOpenIcon className="w-4 h-4 text-accent" />
+                                            {t.home.standaloneCourses} ({standaloneCourses.length})
+                                        </span>
+                                        <div className="h-px flex-1 bg-border/50" />
+                                    </div>
+                                )}
+
+                                {/* My tab: in-progress courses */}
+                                {activeTab === "my" && inProgressCourses.length > 0 && (
+                                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+                                        {inProgressCourses.map((course, index) => (
+                                            <div key={course._id} className="animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
+                                                <CourseCard
+                                                    course={course}
+                                                    t={t}
+                                                    formatDate={formatDate}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* My tab: completed courses */}
+                                {activeTab === "my" && completedCourses.length > 0 && (
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-3">
                                             <div className="h-px flex-1 bg-border/50" />
@@ -520,7 +807,6 @@ export function Dashboard({ onCreateCourse, onCreatePath }: DashboardProps) {
                                                         course={course}
                                                         t={t}
                                                         formatDate={formatDate}
-                                                        isPublicTab={activeTab === "public"}
                                                     />
                                                 </div>
                                             ))}
@@ -556,9 +842,10 @@ interface CourseCardProps {
     t: ReturnType<typeof useI18n>["t"];
     formatDate: (timestamp: number) => string;
     isPublicTab?: boolean;
+    isJoined?: boolean;
 }
 
-function CourseCard({ course, t, formatDate, isPublicTab = false }: CourseCardProps) {
+function CourseCard({ course, t, formatDate, isPublicTab = false, isJoined = false }: CourseCardProps) {
     const progressPercent = getProgressPercentage(
         course.progress?.completedModules,
     );
@@ -626,6 +913,16 @@ function CourseCard({ course, t, formatDate, isPublicTab = false }: CourseCardPr
                             >
                                 <GlobeIcon className="w-3 h-3" />
                                 <span>{t.common.public}</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Joined Tag - on public tab for courses the user has joined */}
+                    {isPublicTab && isJoined && (
+                        <div className="relative z-10 mb-4">
+                            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-medium border bg-success/10 text-success border-success/20">
+                                <CheckCircleIcon className="w-3 h-3" />
+                                <span>{t.course.joined}</span>
                             </div>
                         </div>
                     )}

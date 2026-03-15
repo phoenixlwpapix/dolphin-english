@@ -43,6 +43,8 @@ export interface Translations {
     loadingCourses: string;
     tryAdjusting: string;
     completedCourses: string;
+    myPaths: string;
+    standaloneCourses: string;
   };
   create: {
     title: string;
@@ -179,6 +181,9 @@ export interface Translations {
     navigation: string;
     analytics: string;
     learningPaths: string;
+    vocabPractice: string;
+    admin: string;
+    explore: string;
   };
   paths: {
     title: string;
@@ -224,6 +229,26 @@ export interface Translations {
     less: string;
     more: string;
   };
+  vocabPractice: {
+    title: string;
+    allCourses: string;
+    allCategories: string;
+    flipCard: string;
+    known: string;
+    learning: string;
+    noCourses: string;
+    noCoursesDesc: string;
+    totalWords: string;
+    reviewedWords: string;
+    fromCourse: string;
+    showAnswer: string;
+    nextWord: string;
+    prevWord: string;
+    shuffleMode: string;
+    progress: string;
+    filterByCourse: string;
+    filterByCategory: string;
+  };
   landing: {
     heroTitle: string;
     heroSubtitle: string;
@@ -251,6 +276,24 @@ export interface Translations {
       level: { title: string; desc: string };
       ai: { title: string; desc: string };
     };
+  };
+  admin: {
+    title: string;
+    courses: string;
+    paths: string;
+    enrollments: string;
+    editCourse: string;
+    editPath: string;
+    noCourses: string;
+    noPaths: string;
+    courseTitle: string;
+    created: string;
+    actions: string;
+    editMeta: string;
+    saveChanges: string;
+    totalPublicCourses: string;
+    totalPaths: string;
+    totalEnrollments: string;
   };
   footer: {
     product: string;
@@ -320,6 +363,8 @@ export const zh: Translations = {
     loadingCourses: "正在加载课程...",
     tryAdjusting: "尝试调整搜索或筛选条件。",
     completedCourses: "已完成",
+    myPaths: "我的路径",
+    standaloneCourses: "单独课程",
   },
 
   // Create Course
@@ -480,6 +525,9 @@ export const zh: Translations = {
     navigation: "导航",
     analytics: "学习分析",
     learningPaths: "学习路径",
+    vocabPractice: "词汇练习",
+    admin: "管理后台",
+    explore: "探索",
   },
 
   // Paths
@@ -530,6 +578,28 @@ export const zh: Translations = {
     more: "多",
   },
 
+  // Vocabulary Practice
+  vocabPractice: {
+    title: "词汇练习",
+    allCourses: "全部课程",
+    allCategories: "全部分类",
+    flipCard: "点击翻转",
+    known: "已掌握",
+    learning: "学习中",
+    noCourses: "暂无词汇",
+    noCoursesDesc: "加入课程后，这里会显示课程中的词汇供你练习",
+    totalWords: "总词汇",
+    reviewedWords: "已复习",
+    fromCourse: "来自课程",
+    showAnswer: "显示释义",
+    nextWord: "下一个",
+    prevWord: "上一个",
+    shuffleMode: "随机模式",
+    progress: "练习进度",
+    filterByCourse: "按课程筛选",
+    filterByCategory: "按分类筛选",
+  },
+
   // Landing Page
   landing: {
     heroTitle: "Dolphin English",
@@ -570,6 +640,26 @@ export const zh: Translations = {
         desc: "对文章词汇和句式的深度解析。",
       },
     },
+  },
+
+  // Admin
+  admin: {
+    title: "管理后台",
+    courses: "公共课程",
+    paths: "学习路径",
+    enrollments: "注册人数",
+    editCourse: "编辑课程",
+    editPath: "编辑路径",
+    noCourses: "暂无公共课程",
+    noPaths: "暂无学习路径",
+    courseTitle: "课程标题",
+    created: "创建时间",
+    actions: "操作",
+    editMeta: "编辑信息",
+    saveChanges: "保存修改",
+    totalPublicCourses: "公共课程总数",
+    totalPaths: "学习路径总数",
+    totalEnrollments: "总注册数",
   },
 
   // Footer

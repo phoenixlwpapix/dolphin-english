@@ -6,7 +6,7 @@ import { api } from "../../../convex/_generated/api";
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { useI18n } from '@/lib/i18n'
-import { FileText, Image, Upload } from 'lucide-react'
+import { FileTextIcon, ImageIcon, UploadIcon } from '@/components/ui/Icons'
 
 interface CreateCourseModalProps {
     isOpen: boolean
@@ -171,7 +171,7 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                     `}
                 >
                     <span className="flex items-center justify-center gap-2">
-                        <FileText className="w-4 h-4" />
+                        <FileTextIcon className="w-4 h-4" />
                         {t.create.textTab}
                     </span>
                 </button>
@@ -186,7 +186,7 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                     `}
                 >
                     <span className="flex items-center justify-center gap-2">
-                        <Image className="w-4 h-4" />
+                        <ImageIcon className="w-4 h-4" />
                         {t.create.imageTab}
                     </span>
                 </button>
@@ -249,7 +249,7 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                         ) : (
                             <>
                                 <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
-                                    <Upload className="w-8 h-8 text-muted-foreground" />
+                                    <UploadIcon className="w-8 h-8 text-muted-foreground" />
                                 </div>
                                 <div className="text-center">
                                     <p className="text-foreground font-medium mb-1">{t.create.clickOrDrop}</p>

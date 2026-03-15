@@ -50,6 +50,8 @@ export const en: Translations = {
     loadingCourses: "Loading courses...",
     tryAdjusting: "Try adjusting your search or filters to find what you're looking for.",
     completedCourses: "Completed",
+    myPaths: "My Paths",
+    standaloneCourses: "Standalone Courses",
   },
 
   // Create Course
@@ -212,6 +214,9 @@ export const en: Translations = {
     navigation: "Navigation",
     analytics: "Analytics",
     learningPaths: "Learning Paths",
+    vocabPractice: "Vocabulary",
+    admin: "Admin",
+    explore: "Explore",
   },
 
   // Paths
@@ -262,6 +267,28 @@ export const en: Translations = {
     more: "More",
   },
 
+  // Vocabulary Practice
+  vocabPractice: {
+    title: "Vocabulary Practice",
+    allCourses: "All Courses",
+    allCategories: "All Categories",
+    flipCard: "Click to flip",
+    known: "Known",
+    learning: "Learning",
+    noCourses: "No vocabulary yet",
+    noCoursesDesc: "Join courses to see their vocabulary here for practice",
+    totalWords: "Total Words",
+    reviewedWords: "Reviewed",
+    fromCourse: "From",
+    showAnswer: "Show Definition",
+    nextWord: "Next",
+    prevWord: "Previous",
+    shuffleMode: "Shuffle",
+    progress: "Progress",
+    filterByCourse: "Filter by course",
+    filterByCategory: "Filter by category",
+  },
+
   // Landing Page
   landing: {
     heroTitle: "Dolphin English",
@@ -303,6 +330,26 @@ export const en: Translations = {
         desc: "Deep analysis of vocabulary and sentence structure.",
       },
     },
+  },
+
+  // Admin
+  admin: {
+    title: "Admin Panel",
+    courses: "Public Courses",
+    paths: "Learning Paths",
+    enrollments: "Enrollments",
+    editCourse: "Edit Course",
+    editPath: "Edit Path",
+    noCourses: "No public courses yet",
+    noPaths: "No learning paths yet",
+    courseTitle: "Course Title",
+    created: "Created",
+    actions: "Actions",
+    editMeta: "Edit Info",
+    saveChanges: "Save Changes",
+    totalPublicCourses: "Public Courses",
+    totalPaths: "Learning Paths",
+    totalEnrollments: "Total Enrollments",
   },
 
   // Footer

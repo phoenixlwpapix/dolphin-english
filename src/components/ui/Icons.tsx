@@ -6,6 +6,7 @@ import {
   Square,
   ChevronRight,
   ChevronLeft,
+  ChevronDown,
   Check,
   CircleCheck,
   CircleX,
@@ -36,6 +37,12 @@ import {
   TrendingUp,
   Target,
   Route,
+  BookA,
+  Shield,
+  FileText,
+  ImageIcon as LucideImageIcon,
+  Upload,
+  Users,
   LucideProps,
 } from "lucide-react";
 
@@ -64,6 +71,11 @@ export function ChevronRightIcon(props: IconProps) {
 /** Chevron left icon for navigation */
 export function ChevronLeftIcon(props: IconProps) {
   return <ChevronLeft {...props} />;
+}
+
+/** Chevron down icon for expandable sections */
+export function ChevronDownIcon(props: IconProps) {
+  return <ChevronDown {...props} />;
 }
 
 /** Check icon for success states */
@@ -227,5 +239,35 @@ export function TargetIcon(props: IconProps) {
 /** Route icon for learning paths */
 export function RouteIcon(props: IconProps) {
   return <Route {...props} />;
+}
+
+/** BookA icon for vocabulary practice */
+export function BookAIcon(props: IconProps) {
+  return <BookA {...props} />;
+}
+
+/** Shield icon for admin panel */
+export function ShieldIcon(props: IconProps) {
+  return <Shield {...props} />;
+}
+
+/** FileText icon for text input */
+export function FileTextIcon(props: IconProps) {
+  return <FileText {...props} />;
+}
+
+/** Image icon for image input */
+export function ImageIcon(props: IconProps) {
+  return <LucideImageIcon {...props} />;
+}
+
+/** Upload icon for file upload */
+export function UploadIcon(props: IconProps) {
+  return <Upload {...props} />;
+}
+
+/** Users icon for enrollment count */
+export function UsersIcon(props: IconProps) {
+  return <Users {...props} />;
 }
 

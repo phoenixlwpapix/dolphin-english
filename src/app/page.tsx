@@ -7,14 +7,16 @@ import { Header } from "@/components/layout";
 import { Button, PlusIcon } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
 import { CreateCourseModal } from "@/components/course/CreateCourseModal";
-import { CreatePathModal } from "@/components/paths";
+import { CreatePathModal, type EditPathData } from "@/components/paths";
 import { Dashboard, LandingPage } from "@/components/home";
 
 export default function HomePage() {
   const { t } = useI18n();
   const currentUser = useQuery(api.users.getCurrentUser);
+  const publicPaths = useQuery(api.learningPaths.listPublic);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCreatePathModalOpen, setIsCreatePathModalOpen] = useState(false);
+  const [editPathData, setEditPathData] = useState<EditPathData | undefined>(undefined);
   const [isSignInOpen, setIsSignInOpen] = useState(false);
 
   // Show loading state while checking authentication
@@ -44,7 +46,26 @@ export default function HomePage() {
       {currentUser ? (
         <Dashboard
           onCreateCourse={() => setIsCreateModalOpen(true)}
-          onCreatePath={() => setIsCreatePathModalOpen(true)}
+          onCreatePath={() => {
+            setEditPathData(undefined);
+            setIsCreatePathModalOpen(true);
+          }}
+          onEditPath={(pathId) => {
+            const path = publicPaths?.find((p) => p._id === pathId);
+            if (path) {
+              setEditPathData({
+                id: path._id,
+                titleEn: path.titleEn,
+                titleZh: path.titleZh,
+                descriptionEn: path.descriptionEn,
+                descriptionZh: path.descriptionZh,
+                difficulty: path.difficulty,
+                courseIds: path.courseIds,
+                coverGradient: path.coverGradient,
+              });
+              setIsCreatePathModalOpen(true);
+            }
+          }}
         />
       ) : (
         <LandingPage onStart={() => setIsSignInOpen(true)} />
@@ -61,10 +82,15 @@ export default function HomePage() {
           />
           <CreatePathModal
             isOpen={isCreatePathModalOpen}
-            onClose={() => setIsCreatePathModalOpen(false)}
+            onClose={() => {
+              setIsCreatePathModalOpen(false);
+              setEditPathData(undefined);
+            }}
             onSuccess={() => {
               setIsCreatePathModalOpen(false);
+              setEditPathData(undefined);
             }}
+            editData={editPathData}
           />
         </>
       )}

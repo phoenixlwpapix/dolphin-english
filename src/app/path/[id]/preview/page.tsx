@@ -14,10 +14,12 @@ import {
     TrashIcon,
     ConfirmModal,
 } from "@/components/ui";
-import { RouteIcon, BookOpenIcon } from "@/components/ui/Icons";
+import { RouteIcon, BookOpenIcon, EditIcon } from "@/components/ui/Icons";
 import { useI18n } from "@/lib/i18n";
 import type { Id } from "../../../../../convex/_generated/dataModel";
 import { DIFFICULTY_CONFIG } from "@/lib/constants";
+import { CreatePathModal } from "@/components/paths";
+import type { EditPathData } from "@/components/paths/CreatePathModal";
 
 export default function PathPreviewPage() {
     const params = useParams();
@@ -27,6 +29,7 @@ export default function PathPreviewPage() {
     const [isJoining, setIsJoining] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     const pathData = useQuery(api.learningPaths.get, { id: pathId });
     const isJoined = useQuery(api.learningPaths.isJoined, { pathId });
@@ -127,13 +130,22 @@ export default function PathPreviewPage() {
                                     </span>
                                 </div>
                                 {isAuthor && (
-                                    <button
-                                        onClick={() => setShowDeleteConfirm(true)}
-                                        className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                                        title={t.paths.deletePath}
-                                    >
-                                        <TrashIcon className="w-4 h-4" />
-                                    </button>
+                                    <div className="flex items-center gap-1">
+                                        <button
+                                            onClick={() => setShowEditModal(true)}
+                                            className="p-1.5 rounded-lg text-muted-foreground hover:text-accent hover:bg-accent/10 transition-colors"
+                                            title={language === "zh" ? "编辑路径" : "Edit Path"}
+                                        >
+                                            <EditIcon className="w-4 h-4" />
+                                        </button>
+                                        <button
+                                            onClick={() => setShowDeleteConfirm(true)}
+                                            className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                                            title={t.paths.deletePath}
+                                        >
+                                            <TrashIcon className="w-4 h-4" />
+                                        </button>
+                                    </div>
                                 )}
                             </div>
 
@@ -245,6 +257,24 @@ export default function PathPreviewPage() {
                 variant="destructive"
                 isLoading={isDeleting}
             />
+
+            {isAuthor && pathData && (
+                <CreatePathModal
+                    isOpen={showEditModal}
+                    onClose={() => setShowEditModal(false)}
+                    onSuccess={() => setShowEditModal(false)}
+                    editData={{
+                        id: pathId,
+                        titleEn: pathData.titleEn,
+                        titleZh: pathData.titleZh,
+                        descriptionEn: pathData.descriptionEn,
+                        descriptionZh: pathData.descriptionZh,
+                        difficulty: pathData.difficulty,
+                        courseIds: pathData.courses.map((c) => c._id as Id<"courses">),
+                        coverGradient: pathData.coverGradient,
+                    }}
+                />
+            )}
         </div>
     );
 }
