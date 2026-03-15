@@ -43,6 +43,11 @@ import {
   ImageIcon as LucideImageIcon,
   Upload,
   Users,
+  Brain,
+  Sparkles,
+  Lightbulb,
+  MessageSquare,
+  Layers,
   LucideProps,
 } from "lucide-react";
 
@@ -269,5 +274,30 @@ export function UploadIcon(props: IconProps) {
 /** Users icon for enrollment count */
 export function UsersIcon(props: IconProps) {
   return <Users {...props} />;
+}
+
+/** Brain icon for quiz/AI features */
+export function BrainIcon(props: IconProps) {
+  return <Brain {...props} />;
+}
+
+/** Sparkles icon for AI generation */
+export function SparklesIcon(props: IconProps) {
+  return <Sparkles {...props} />;
+}
+
+/** Lightbulb icon for hints */
+export function LightbulbIcon(props: IconProps) {
+  return <Lightbulb {...props} />;
+}
+
+/** MessageSquare icon for sentences */
+export function MessageSquareIcon(props: IconProps) {
+  return <MessageSquare {...props} />;
+}
+
+/** Layers icon for card stack */
+export function LayersIcon(props: IconProps) {
+  return <Layers {...props} />;
 }
 

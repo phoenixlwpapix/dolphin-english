@@ -31,7 +31,7 @@ pnpm typecheck   # Type-check without building (fast validation)
 - **Backend**: Convex (real-time database and serverless functions)
 - **Styling**: Tailwind CSS 4
 - **Charts**: recharts (used in analytics dashboard)
-- **AI**: Google Gemini 3 Flash (via @ai-sdk/google) for article analysis
+- **AI**: Google Gemini 3 Flash (via @ai-sdk/google) for article analysis, vocabulary quiz generation, and example sentence generation
 - **Auth**: @convex-dev/auth
 - **Validation**: Zod
 
@@ -140,6 +140,8 @@ Fonts are loaded in `src/app/layout.tsx` and stored in `public/fonts/`.
 - `src/app/path/[id]/page.tsx` - Path detail page (enrolled) with vertical course timeline
 - `src/app/path/[id]/preview/page.tsx` - Path preview page (browse/join)
 - `src/app/api/analyze/route.ts` - AI article analysis endpoint (60s timeout)
+- `src/app/api/vocab-quiz/route.ts` - AI vocabulary quiz generation (30s timeout)
+- `src/app/api/vocab-sentences/route.ts` - AI example sentence generation (15s timeout)
 - `src/app/api/ocr/route.ts` - OCR endpoint for image-to-text
 
 ### Components

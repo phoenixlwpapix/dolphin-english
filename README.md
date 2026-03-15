@@ -24,7 +24,10 @@ An English learning app for A1-C2 learners that transforms real-world articles i
 - **Analytics Dashboard** - Track study activity, quiz accuracy, vocabulary mastery, and weekly trends
 - **Progress Tracking** - Real-time progress saving with resume support
 - **TTS Playback** - Browser-native speech synthesis with sentence highlighting
-- **Vocabulary Practice** - Dedicated flashcard-based vocabulary review across all enrolled courses, with flip animations, course/category filters (essential, transferable, extended), shuffle mode, TTS pronunciation, progress tracking, and quick-nav word grid
+- **Vocabulary Practice** - Comprehensive vocabulary training with two practice modes:
+  - **Flashcard Mode** - Flip-card review with 3D animations, course/category filters, shuffle mode, TTS pronunciation, and quick-nav word grid
+  - **AI Quiz Mode** - Gemini-generated personalized quizzes with three question types (definition matching, fill-in-the-blank, Chinese-English translation), scoring, and wrong-answer review
+  - **AI Example Sentences** - On-demand AI-generated contextual example sentences with Chinese translations for any word
 - **Course Separation** - In-progress and completed courses displayed separately
 - **Admin Panel** - Dedicated management interface for public courses and learning paths with enrollment stats, inline editing, and batch operations
 
@@ -91,7 +94,7 @@ dolphin-english/
 │   └── users.ts             # User management
 ├── src/
 │   ├── app/                 # Next.js App Router
-│   │   ├── api/             # API routes (analyze, ocr)
+│   │   ├── api/             # API routes (analyze, ocr, vocab-quiz, vocab-sentences)
 │   │   ├── course/[id]/     # Course pages (learn + preview)
 │   │   ├── path/[id]/       # Path pages (detail + preview)
 │   │   └── page.tsx         # Homepage

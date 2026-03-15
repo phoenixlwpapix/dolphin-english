@@ -248,6 +248,33 @@ export interface Translations {
     progress: string;
     filterByCourse: string;
     filterByCategory: string;
+    // Mode switcher
+    flashcardMode: string;
+    quizMode: string;
+    // Quiz mode
+    quizTitle: string;
+    quizDesc: string;
+    startQuiz: string;
+    quizWordCount: string;
+    generating: string;
+    questionOf: string;
+    checkAnswer: string;
+    correct: string;
+    incorrect: string;
+    nextQuestion: string;
+    quizComplete: string;
+    quizScore: string;
+    quizReview: string;
+    yourAnswer: string;
+    correctAnswer: string;
+    retryQuiz: string;
+    backToCards: string;
+    needMoreWords: string;
+    // AI sentences
+    aiSentences: string;
+    aiSentencesLoading: string;
+    aiSentencesError: string;
+    moreSentences: string;
   };
   landing: {
     heroTitle: string;
@@ -598,6 +625,30 @@ export const zh: Translations = {
     progress: "练习进度",
     filterByCourse: "按课程筛选",
     filterByCategory: "按分类筛选",
+    flashcardMode: "闪卡",
+    quizMode: "AI 测验",
+    quizTitle: "AI 词汇测验",
+    quizDesc: "AI 根据你的词汇生成个性化测验题",
+    startQuiz: "开始测验",
+    quizWordCount: "题目数量",
+    generating: "AI 正在出题...",
+    questionOf: "第 {current} / {total} 题",
+    checkAnswer: "确认答案",
+    correct: "回答正确！",
+    incorrect: "回答错误",
+    nextQuestion: "下一题",
+    quizComplete: "测验完成！",
+    quizScore: "得分：{score}/{total}",
+    quizReview: "回顾错题",
+    yourAnswer: "你的答案",
+    correctAnswer: "正确答案",
+    retryQuiz: "再测一次",
+    backToCards: "返回闪卡",
+    needMoreWords: "至少需要 4 个词汇才能开始测验",
+    aiSentences: "AI 例句",
+    aiSentencesLoading: "生成例句中...",
+    aiSentencesError: "生成失败，请重试",
+    moreSentences: "换一批例句",
   },
 
   // Landing Page

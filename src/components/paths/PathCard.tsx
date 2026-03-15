@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui";
-import { RouteIcon, BookOpenIcon } from "@/components/ui/Icons";
+import { RouteIcon, BookOpenIcon, CheckCircleIcon } from "@/components/ui/Icons";
 import { useI18n } from "@/lib/i18n";
 import { DIFFICULTY_CONFIG, TOTAL_MODULES } from "@/lib/constants";
 
@@ -23,7 +23,7 @@ interface PathCardProps {
 }
 
 export function PathCard({ path, isJoined = false }: PathCardProps) {
-    const { language } = useI18n();
+    const { t, language } = useI18n();
 
     const title = language === "zh" ? path.titleZh : path.titleEn;
     const description = language === "zh" ? path.descriptionZh : path.descriptionEn;
@@ -47,11 +47,19 @@ export function PathCard({ path, isJoined = false }: PathCardProps) {
                 className={`h-full flex flex-col overflow-hidden rounded-2xl border-l-4 ${borderStyle} border-t-0 border-r-0 border-b-0 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-accent/5`}
             >
                 <CardContent className="flex-1 flex flex-col p-5">
-                    {/* Top row: badge + course count */}
+                    {/* Top row: badge + joined tag + course count */}
                     <div className="flex items-center justify-between mb-3">
-                        <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase ${badgeStyle}`}>
-                            {path.difficulty}
-                        </span>
+                        <div className="flex items-center gap-2">
+                            <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase ${badgeStyle}`}>
+                                {path.difficulty}
+                            </span>
+                            {isJoined && (
+                                <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold text-success bg-success/10 border border-success/20">
+                                    <CheckCircleIcon className="w-3 h-3" />
+                                    {t.paths.joined}
+                                </span>
+                            )}
+                        </div>
                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                             <BookOpenIcon className="w-3.5 h-3.5" />
                             <span className="font-medium">
