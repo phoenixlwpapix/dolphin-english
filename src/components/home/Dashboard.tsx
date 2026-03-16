@@ -270,8 +270,8 @@ export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: Dashboar
             ...new Set(coursesData.map((course) => course.difficulty)),
         ];
         return uniqueLevels.sort((a, b) => {
-            const indexA = CEFR_LEVELS.indexOf(a as typeof CEFR_LEVELS[number]);
-            const indexB = CEFR_LEVELS.indexOf(b as typeof CEFR_LEVELS[number]);
+            const indexA = CEFR_LEVELS.indexOf(a);
+            const indexB = CEFR_LEVELS.indexOf(b);
             // If not in CEFR_LEVELS, put at the end
             if (indexA === -1) return 1;
             if (indexB === -1) return -1;

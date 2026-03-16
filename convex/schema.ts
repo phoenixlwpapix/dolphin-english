@@ -69,15 +69,10 @@ const moduleCompletionValidator = v.object({
 
 const difficultyValidator = v.union(
   v.literal("A1"),
-  v.literal("A1+"),
   v.literal("A2"),
-  v.literal("A2+"),
   v.literal("B1"),
-  v.literal("B1+"),
   v.literal("B2"),
-  v.literal("B2+"),
   v.literal("C1"),
-  v.literal("C1+"),
   v.literal("C2"),
 );
 

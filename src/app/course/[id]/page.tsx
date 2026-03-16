@@ -182,7 +182,7 @@ export default function CoursePage() {
                   </h1>
                   <div className="flex flex-wrap gap-2 text-xs text-muted-foreground mb-4">
                     <span
-                      className={`px-2 py-0.5 rounded-full ${(DIFFICULTY_CONFIG[course.difficulty as keyof typeof DIFFICULTY_CONFIG] ?? DIFFICULTY_CONFIG["B2"]).color}`}
+                      className={`px-2 py-0.5 rounded-full ${DIFFICULTY_CONFIG[course.difficulty].color}`}
                     >
                       {course.difficulty}
                     </span>

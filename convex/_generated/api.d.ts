@@ -13,7 +13,6 @@ import type * as auth from "../auth.js";
 import type * as courses from "../courses.js";
 import type * as http from "../http.js";
 import type * as learningPaths from "../learningPaths.js";
-import type * as migrations from "../migrations.js";
 import type * as progress from "../progress.js";
 import type * as userCourses from "../userCourses.js";
 import type * as users from "../users.js";
@@ -30,7 +29,6 @@ declare const fullApi: ApiFromModules<{
   courses: typeof courses;
   http: typeof http;
   learningPaths: typeof learningPaths;
-  migrations: typeof migrations;
   progress: typeof progress;
   userCourses: typeof userCourses;
   users: typeof users;
