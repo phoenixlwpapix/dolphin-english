@@ -43,11 +43,14 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
     const removeCourse = useMutation(api.courses.remove);
     const updateMeta = useMutation(api.courses.updateMeta);
     const removePath = useMutation(api.learningPaths.remove);
+    const migrateDifficulty = useMutation(api.courses.migrateDifficultyLevels);
 
     const [subTab, setSubTab] = useState<AdminSubTab>("courses");
     const [searchQuery, setSearchQuery] = useState("");
     const [coursePathFilter, setCoursePathFilter] = useState<"all" | "in-path" | "no-path">("all");
     const [editingCourseId, setEditingCourseId] = useState<string | null>(null);
+    const [isMigrating, setIsMigrating] = useState(false);
+    const [migrateResult, setMigrateResult] = useState<{ updated: number; total: number } | null>(null);
     const [editTitle, setEditTitle] = useState("");
     const [editDifficulty, setEditDifficulty] = useState("");
     const [deleteTarget, setDeleteTarget] = useState<{ type: "course" | "path"; id: string } | null>(null);
@@ -123,6 +126,17 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
         }
     }
 
+    async function handleMigrateDifficulty() {
+        setIsMigrating(true);
+        setMigrateResult(null);
+        try {
+            const result = await migrateDifficulty({});
+            setMigrateResult(result);
+        } finally {
+            setIsMigrating(false);
+        }
+    }
+
     function formatDate(timestamp: number): string {
         return new Intl.DateTimeFormat(language === "zh" ? "zh-CN" : "en-US", {
             year: "numeric",
@@ -153,6 +167,26 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
                 >
                     <PlusIcon className="w-4 h-4 mr-1.5" />
                     {subTab === "courses" ? t.home.newCourse : t.paths.createPath}
+                </Button>
+            </div>
+
+            {/* Migration Banner */}
+            <div className="mb-6 p-4 rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800 flex items-center justify-between gap-4">
+                <div className="text-sm">
+                    <span className="font-semibold text-amber-800 dark:text-amber-300">数据修复：</span>
+                    <span className="text-amber-700 dark:text-amber-400 ml-1">
+                        {migrateResult
+                            ? `完成！共迁移 ${migrateResult.updated} / ${migrateResult.total} 门课程`
+                            : "将旧的 A1+/B1+ 等难度值迁移到 6 级 CEFR 标准"}
+                    </span>
+                </div>
+                <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={handleMigrateDifficulty}
+                    disabled={isMigrating || migrateResult !== null}
+                >
+                    {isMigrating ? "迁移中..." : migrateResult ? "已完成" : "执行迁移"}
                 </Button>
             </div>
 
