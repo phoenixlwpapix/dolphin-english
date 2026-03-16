@@ -687,6 +687,7 @@ export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: Dashboar
                                                                                     course={course}
                                                                                     t={t}
                                                                                     formatDate={formatDate}
+                                                                                    inPath
                                                                                 />
                                                                             </div>
                                                                         ))}
@@ -843,9 +844,10 @@ interface CourseCardProps {
     formatDate: (timestamp: number) => string;
     isPublicTab?: boolean;
     isJoined?: boolean;
+    inPath?: boolean;
 }
 
-function CourseCard({ course, t, formatDate, isPublicTab = false, isJoined = false }: CourseCardProps) {
+function CourseCard({ course, t, formatDate, isPublicTab = false, isJoined = false, inPath = false }: CourseCardProps) {
     const progressPercent = getProgressPercentage(
         course.progress?.completedModules,
     );
@@ -886,7 +888,7 @@ function CourseCard({ course, t, formatDate, isPublicTab = false, isJoined = fal
     return (
         <a href={courseUrl} className="block group h-full">
             <Card
-                className={`h-full flex flex-col bg-card border-l-4 ${borderStyle} border-t-0 border-r-0 border-b-0 hover:border-l-4 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-accent/5 overflow-hidden rounded-2xl`}
+                className={`h-full flex flex-col bg-card transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-accent/5 overflow-hidden rounded-2xl ${inPath ? `border-2 ${borderStyle}` : `border-l-4 ${borderStyle} border-t-0 border-r-0 border-b-0`}`}
             >
                 <CardContent className="flex-1 flex flex-col p-6 relative">
                     {/* Decorative gradient blob */}
