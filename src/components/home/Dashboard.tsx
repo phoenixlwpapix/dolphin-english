@@ -29,7 +29,7 @@ import {
     ShieldIcon,
 } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
-import { TOTAL_MODULES, DIFFICULTY_CONFIG } from "@/lib/constants";
+import { TOTAL_MODULES, DIFFICULTY_CONFIG, CEFR_LEVELS } from "@/lib/constants";
 import { AnalyticsDashboard } from "@/components/analytics/AnalyticsDashboard";
 import { PathCard } from "@/components/paths";
 import { VocabularyPractice } from "@/components/vocabulary";
@@ -263,21 +263,6 @@ export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: Dashboar
         }
     };
 
-    // CEFR levels in order for sorting
-    const CEFR_ORDER = [
-        "A1",
-        "A1+",
-        "A2",
-        "A2+",
-        "B1",
-        "B1+",
-        "B2",
-        "B2+",
-        "C1",
-        "C1+",
-        "C2",
-    ];
-
     // Dynamically get unique difficulty levels from courses
     const difficulties = useMemo(() => {
         if (!coursesData) return [];
@@ -285,9 +270,9 @@ export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: Dashboar
             ...new Set(coursesData.map((course) => course.difficulty)),
         ];
         return uniqueLevels.sort((a, b) => {
-            const indexA = CEFR_ORDER.indexOf(a);
-            const indexB = CEFR_ORDER.indexOf(b);
-            // If not in CEFR_ORDER, put at the end
+            const indexA = CEFR_LEVELS.indexOf(a as typeof CEFR_LEVELS[number]);
+            const indexB = CEFR_LEVELS.indexOf(b as typeof CEFR_LEVELS[number]);
+            // If not in CEFR_LEVELS, put at the end
             if (indexA === -1) return 1;
             if (indexB === -1) return -1;
             return indexA - indexB;

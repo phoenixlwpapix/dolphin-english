@@ -7,9 +7,7 @@ import type { Id } from "../../../convex/_generated/dataModel";
 import { Modal, Button } from "@/components/ui";
 import { ChevronLeftIcon, ChevronRightIcon, CheckIcon } from "@/components/ui/Icons";
 import { useI18n } from "@/lib/i18n";
-import { PATH_GRADIENTS, DIFFICULTY_CONFIG } from "@/lib/constants";
-
-const CEFR_LEVELS = ["A1", "A1+", "A2", "A2+", "B1", "B1+", "B2", "B2+", "C1", "C1+", "C2"] as const;
+import { PATH_GRADIENTS, DIFFICULTY_CONFIG, CEFR_LEVELS } from "@/lib/constants";
 
 export interface EditPathData {
     id: Id<"learningPaths">;

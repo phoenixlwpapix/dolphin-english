@@ -5,7 +5,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { useI18n } from "@/lib/i18n";
-import { DIFFICULTY_CONFIG } from "@/lib/constants";
+import { DIFFICULTY_CONFIG, CEFR_LEVELS } from "@/lib/constants";
 import {
     Button,
     Card,
@@ -48,8 +48,6 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
     const [editDifficulty, setEditDifficulty] = useState("");
     const [deleteTarget, setDeleteTarget] = useState<{ type: "course" | "path"; id: string } | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
-
-    const CEFR_LEVELS = ["A1", "A1+", "A2", "A2+", "B1", "B1+", "B2", "B2+", "C1", "C1+", "C2"] as const;
 
     // Set of course IDs that belong to at least one path
     const courseIdsInPaths = useMemo(() => {

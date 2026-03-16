@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { auth } from "./auth";
+import { difficultyValidator } from "./schema";
 
 // Validators (matching schema)
 const bilingualObjectiveValidator = v.object({
@@ -91,19 +92,7 @@ export const create = mutation({
   args: {
     content: v.string(),
     title: v.string(),
-    difficulty: v.union(
-      v.literal("A1"),
-      v.literal("A1+"),
-      v.literal("A2"),
-      v.literal("A2+"),
-      v.literal("B1"),
-      v.literal("B1+"),
-      v.literal("B2"),
-      v.literal("B2+"),
-      v.literal("C1"),
-      v.literal("C1+"),
-      v.literal("C2"),
-    ),
+    difficulty: difficultyValidator,
     wordCount: v.number(),
     analyzedData: v.optional(courseAnalysisValidator),
     isPublic: v.optional(v.boolean()),
@@ -314,21 +303,7 @@ export const updateMeta = mutation({
   args: {
     id: v.id("courses"),
     title: v.optional(v.string()),
-    difficulty: v.optional(
-      v.union(
-        v.literal("A1"),
-        v.literal("A1+"),
-        v.literal("A2"),
-        v.literal("A2+"),
-        v.literal("B1"),
-        v.literal("B1+"),
-        v.literal("B2"),
-        v.literal("B2+"),
-        v.literal("C1"),
-        v.literal("C1+"),
-        v.literal("C2"),
-      ),
-    ),
+    difficulty: v.optional(difficultyValidator),
   },
   handler: async (ctx, args) => {
     const userId = await auth.getUserId(ctx);

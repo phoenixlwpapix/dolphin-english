@@ -1,12 +1,8 @@
 import { query } from "./_generated/server"
 import { auth } from "./auth"
+import { CEFR_ORDER } from "./schema"
 
 const TOTAL_MODULES = 6
-
-const CEFR_ORDER = [
-    "A1", "A1+", "A2", "A2+", "B1", "B1+",
-    "B2", "B2+", "C1", "C1+", "C2",
-]
 
 export const getAnalytics = query({
     args: {},
@@ -146,7 +142,7 @@ export const getAnalytics = query({
         // Convert vocabByLevel to sorted array
         const vocabularyByLevel = Object.entries(vocabByLevel)
             .map(([level, data]) => ({ level, ...data }))
-            .sort((a, b) => CEFR_ORDER.indexOf(a.level) - CEFR_ORDER.indexOf(b.level))
+            .sort((a, b) => (CEFR_ORDER as ReadonlyArray<string>).indexOf(a.level) - (CEFR_ORDER as ReadonlyArray<string>).indexOf(b.level))
 
         return {
             summary: {
