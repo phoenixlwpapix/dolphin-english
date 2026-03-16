@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server"
 import { v } from "convex/values"
+import { auth } from "./auth"
 
 const quizResultValidator = v.object({
     questionId: v.string(),
@@ -10,9 +11,13 @@ const quizResultValidator = v.object({
 export const get = query({
     args: { courseId: v.id("courses") },
     handler: async (ctx, args) => {
+        const userId = await auth.getUserId(ctx)
+        if (!userId) return null
         return await ctx.db
             .query("progress")
-            .withIndex("by_courseId", (q) => q.eq("courseId", args.courseId))
+            .withIndex("by_userId_courseId", (q) =>
+                q.eq("userId", userId.toString()).eq("courseId", args.courseId)
+            )
             .first()
     },
 })
@@ -20,7 +25,20 @@ export const get = query({
 export const create = mutation({
     args: { courseId: v.id("courses") },
     handler: async (ctx, args) => {
+        const userId = await auth.getUserId(ctx)
+        if (!userId) throw new Error("Must be logged in")
+
+        // Avoid creating duplicate progress records
+        const existing = await ctx.db
+            .query("progress")
+            .withIndex("by_userId_courseId", (q) =>
+                q.eq("userId", userId.toString()).eq("courseId", args.courseId)
+            )
+            .first()
+        if (existing) return existing._id
+
         const progressId = await ctx.db.insert("progress", {
+            userId: userId.toString(),
             courseId: args.courseId,
             currentModule: 1,
             completedModules: [],
@@ -37,9 +55,14 @@ export const updateCurrentModule = mutation({
         moduleNumber: v.number(),
     },
     handler: async (ctx, args) => {
+        const userId = await auth.getUserId(ctx)
+        if (!userId) throw new Error("Must be logged in")
+
         const progress = await ctx.db
             .query("progress")
-            .withIndex("by_courseId", (q) => q.eq("courseId", args.courseId))
+            .withIndex("by_userId_courseId", (q) =>
+                q.eq("userId", userId.toString()).eq("courseId", args.courseId)
+            )
             .first()
 
         if (progress) {
@@ -57,9 +80,14 @@ export const completeModule = mutation({
         moduleNumber: v.number(),
     },
     handler: async (ctx, args) => {
+        const userId = await auth.getUserId(ctx)
+        if (!userId) throw new Error("Must be logged in")
+
         const progress = await ctx.db
             .query("progress")
-            .withIndex("by_courseId", (q) => q.eq("courseId", args.courseId))
+            .withIndex("by_userId_courseId", (q) =>
+                q.eq("userId", userId.toString()).eq("courseId", args.courseId)
+            )
             .first()
 
         if (progress) {
@@ -73,7 +101,6 @@ export const completeModule = mutation({
                 ? args.moduleNumber + 1
                 : args.moduleNumber
 
-            // Build moduleCompletions with timestamp
             const existingCompletions = progress.moduleCompletions ?? []
             const alreadyLogged = existingCompletions.some(
                 (mc) => mc.moduleNumber === args.moduleNumber
@@ -98,9 +125,14 @@ export const saveQuizResults = mutation({
         results: v.array(quizResultValidator),
     },
     handler: async (ctx, args) => {
+        const userId = await auth.getUserId(ctx)
+        if (!userId) throw new Error("Must be logged in")
+
         const progress = await ctx.db
             .query("progress")
-            .withIndex("by_courseId", (q) => q.eq("courseId", args.courseId))
+            .withIndex("by_userId_courseId", (q) =>
+                q.eq("userId", userId.toString()).eq("courseId", args.courseId)
+            )
             .first()
 
         if (progress) {
@@ -118,9 +150,14 @@ export const recordVocabularyClick = mutation({
         word: v.string(),
     },
     handler: async (ctx, args) => {
+        const userId = await auth.getUserId(ctx)
+        if (!userId) throw new Error("Must be logged in")
+
         const progress = await ctx.db
             .query("progress")
-            .withIndex("by_courseId", (q) => q.eq("courseId", args.courseId))
+            .withIndex("by_userId_courseId", (q) =>
+                q.eq("userId", userId.toString()).eq("courseId", args.courseId)
+            )
             .first()
 
         if (progress) {
@@ -139,9 +176,14 @@ export const recordVocabularyClick = mutation({
 export const reset = mutation({
     args: { courseId: v.id("courses") },
     handler: async (ctx, args) => {
+        const userId = await auth.getUserId(ctx)
+        if (!userId) throw new Error("Must be logged in")
+
         const progress = await ctx.db
             .query("progress")
-            .withIndex("by_courseId", (q) => q.eq("courseId", args.courseId))
+            .withIndex("by_userId_courseId", (q) =>
+                q.eq("userId", userId.toString()).eq("courseId", args.courseId)
+            )
             .first()
 
         if (progress) {

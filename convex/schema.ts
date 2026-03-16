@@ -117,6 +117,7 @@ export default defineSchema({
     .index("by_userId_courseId", ["userId", "courseId"]),
 
   progress: defineTable({
+    userId: v.optional(v.string()),
     courseId: v.id("courses"),
     currentModule: v.number(),
     completedModules: v.array(v.number()),
@@ -124,7 +125,9 @@ export default defineSchema({
     lastStudiedAt: v.optional(v.number()),
     quizResults: v.array(quizResultValidator),
     vocabularyClicks: v.array(v.string()),
-  }).index("by_courseId", ["courseId"]),
+  })
+    .index("by_courseId", ["courseId"])
+    .index("by_userId_courseId", ["userId", "courseId"]),
 
   learningPaths: defineTable({
     titleEn: v.string(),

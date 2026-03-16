@@ -59,15 +59,19 @@ const courseAnalysisValidator = v.object({
 export const list = query({
   args: {},
   handler: async (ctx) => {
+    const userId = await auth.getUserId(ctx);
     const courses = await ctx.db.query("courses").order("desc").collect();
 
-    // Get progress for each course
     const coursesWithProgress = await Promise.all(
       courses.map(async (course) => {
-        const progress = await ctx.db
-          .query("progress")
-          .withIndex("by_courseId", (q) => q.eq("courseId", course._id))
-          .first();
+        const progress = userId
+          ? await ctx.db
+              .query("progress")
+              .withIndex("by_userId_courseId", (q) =>
+                q.eq("userId", userId.toString()).eq("courseId", course._id)
+              )
+              .first()
+          : null;
         return { ...course, progress };
       }),
     );
@@ -243,7 +247,9 @@ export const getMyVocabulary = query({
 
         const progress = await ctx.db
           .query("progress")
-          .withIndex("by_courseId", (q) => q.eq("courseId", uc.courseId))
+          .withIndex("by_userId_courseId", (q) =>
+            q.eq("userId", userId.toString()).eq("courseId", uc.courseId)
+          )
           .first();
 
         return {

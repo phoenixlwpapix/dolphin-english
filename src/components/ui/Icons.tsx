@@ -48,6 +48,7 @@ import {
   Lightbulb,
   MessageSquare,
   Layers,
+  X,
   LucideProps,
 } from "lucide-react";
 
@@ -86,6 +87,11 @@ export function ChevronDownIcon(props: IconProps) {
 /** Check icon for success states */
 export function CheckIcon(props: IconProps) {
   return <Check {...props} />;
+}
+
+/** X / close icon */
+export function XIcon(props: IconProps) {
+  return <X {...props} />;
 }
 
 /** Check icon (filled) for completed states */

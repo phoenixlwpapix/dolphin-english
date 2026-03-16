@@ -13,6 +13,7 @@ import {
     ShieldIcon,
     PlusIcon,
     EditIcon,
+    XIcon,
     TrashIcon,
     SearchIcon,
     UsersIcon,
@@ -41,6 +42,7 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
 
     const [subTab, setSubTab] = useState<AdminSubTab>("courses");
     const [searchQuery, setSearchQuery] = useState("");
+    const [coursePathFilter, setCoursePathFilter] = useState<"all" | "in-path" | "no-path">("all");
     const [editingCourseId, setEditingCourseId] = useState<string | null>(null);
     const [editTitle, setEditTitle] = useState("");
     const [editDifficulty, setEditDifficulty] = useState("");
@@ -49,15 +51,25 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
 
     const CEFR_LEVELS = ["A1", "A1+", "A2", "A2+", "B1", "B1+", "B2", "B2+", "C1", "C1+", "C2"] as const;
 
-    // Filter courses by search
+    // Set of course IDs that belong to at least one path
+    const courseIdsInPaths = useMemo(() => {
+        if (!pathsWithStats) return new Set<string>();
+        return new Set(pathsWithStats.flatMap((p) => p.courseIds as string[]));
+    }, [pathsWithStats]);
+
+    // Filter courses by search + path filter
     const filteredCourses = useMemo(() => {
         if (!publicCoursesWithStats) return [];
-        if (!searchQuery.trim()) return publicCoursesWithStats;
+        let result = publicCoursesWithStats;
+        if (coursePathFilter === "in-path") {
+            result = result.filter((c) => courseIdsInPaths.has(c._id));
+        } else if (coursePathFilter === "no-path") {
+            result = result.filter((c) => !courseIdsInPaths.has(c._id));
+        }
+        if (!searchQuery.trim()) return result;
         const query = searchQuery.toLowerCase();
-        return publicCoursesWithStats.filter((c) =>
-            c.title.toLowerCase().includes(query),
-        );
-    }, [publicCoursesWithStats, searchQuery]);
+        return result.filter((c) => c.title.toLowerCase().includes(query));
+    }, [publicCoursesWithStats, searchQuery, coursePathFilter, courseIdsInPaths]);
 
     // Filter paths by search
     const filteredPaths = useMemo(() => {
@@ -189,7 +201,7 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
             <div className="flex items-center gap-4 mb-6">
                 <div className="flex bg-muted/50 p-1 rounded-xl">
                     <button
-                        onClick={() => { setSubTab("courses"); setSearchQuery(""); }}
+                        onClick={() => { setSubTab("courses"); setSearchQuery(""); setCoursePathFilter("all"); }}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                             subTab === "courses"
                                 ? "bg-surface text-foreground shadow-sm"
@@ -227,6 +239,29 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
                         className="w-full pl-9 pr-4 py-2 text-sm bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/50 text-foreground placeholder:text-muted-foreground"
                     />
                 </div>
+
+                {/* Path filter (courses only) */}
+                {subTab === "courses" && (
+                    <div className="flex bg-muted/50 p-1 rounded-xl gap-0.5">
+                        {(["all", "in-path", "no-path"] as const).map((f) => (
+                            <button
+                                key={f}
+                                onClick={() => setCoursePathFilter(f)}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+                                    coursePathFilter === f
+                                        ? "bg-surface text-foreground shadow-sm"
+                                        : "text-muted-foreground hover:text-foreground"
+                                }`}
+                            >
+                                {f === "all"
+                                    ? (language === "zh" ? "全部" : "All")
+                                    : f === "in-path"
+                                    ? (language === "zh" ? "在路径中" : "In path")
+                                    : (language === "zh" ? "未入路径" : "No path")}
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* Content */}
@@ -327,20 +362,20 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
                                                 <div className="flex items-center justify-end gap-1">
                                                     {isEditing ? (
                                                         <>
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
+                                                            <button
                                                                 onClick={() => setEditingCourseId(null)}
+                                                                className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                                                                title={t.common.cancel}
                                                             >
-                                                                {t.common.cancel}
-                                                            </Button>
-                                                            <Button
-                                                                size="sm"
+                                                                <XIcon className="w-4 h-4" />
+                                                            </button>
+                                                            <button
                                                                 onClick={saveEditCourse}
+                                                                className="p-1.5 rounded-lg hover:bg-primary/10 text-primary transition-colors"
+                                                                title={t.common.save}
                                                             >
-                                                                <CheckIcon className="w-3.5 h-3.5 mr-1" />
-                                                                {t.common.save}
-                                                            </Button>
+                                                                <CheckIcon className="w-4 h-4" />
+                                                            </button>
                                                         </>
                                                     ) : (
                                                         <>

@@ -245,14 +245,20 @@ export const get = query({
         const path = await ctx.db.get(args.id)
         if (!path) return null
 
+        const userId = await auth.getUserId(ctx)
+
         const courses = await Promise.all(
             path.courseIds.map(async (courseId) => {
                 const course = await ctx.db.get(courseId)
                 if (!course) return null
-                const progress = await ctx.db
-                    .query("progress")
-                    .withIndex("by_courseId", (q) => q.eq("courseId", courseId))
-                    .first()
+                const progress = userId
+                    ? await ctx.db
+                          .query("progress")
+                          .withIndex("by_userId_courseId", (q) =>
+                              q.eq("userId", userId.toString()).eq("courseId", courseId)
+                          )
+                          .first()
+                    : null
                 return { ...course, progress }
             })
         )
@@ -287,17 +293,20 @@ export const listMyPaths = query({
                 const path = await ctx.db.get(up.pathId)
                 if (!path) return null
 
-                // Derive progress
-                let completedCourses = 0
-                for (const courseId of path.courseIds) {
-                    const progress = await ctx.db
-                        .query("progress")
-                        .withIndex("by_courseId", (q) => q.eq("courseId", courseId))
-                        .first()
-                    if (progress?.completedModules?.length === TOTAL_MODULES) {
-                        completedCourses++
-                    }
-                }
+                // Derive progress — parallel queries per course
+                const progressList = await Promise.all(
+                    path.courseIds.map((courseId) =>
+                        ctx.db
+                            .query("progress")
+                            .withIndex("by_userId_courseId", (q) =>
+                                q.eq("userId", userId.toString()).eq("courseId", courseId)
+                            )
+                            .first()
+                    )
+                )
+                const completedCourses = progressList.filter(
+                    (p) => p?.completedModules?.length === TOTAL_MODULES
+                ).length
 
                 return {
                     ...path,

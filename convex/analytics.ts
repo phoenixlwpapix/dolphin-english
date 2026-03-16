@@ -44,7 +44,9 @@ export const getAnalytics = query({
                 const course = await ctx.db.get(uc.courseId)
                 const progress = await ctx.db
                     .query("progress")
-                    .withIndex("by_courseId", (q) => q.eq("courseId", uc.courseId))
+                    .withIndex("by_userId_courseId", (q) =>
+                        q.eq("userId", userId.toString()).eq("courseId", uc.courseId)
+                    )
                     .first()
                 return { course, progress, addedAt: uc.addedAt }
             })

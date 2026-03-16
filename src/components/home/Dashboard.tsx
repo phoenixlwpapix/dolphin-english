@@ -149,15 +149,20 @@ export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: Dashboar
         let result = [...publicPathsList];
         if (searchQuery.trim()) {
             const q = searchQuery.toLowerCase();
+            const courseTitleMap = new Map(
+                (publicCourses ?? []).map(c => [c._id as string, c.title.toLowerCase()])
+            );
             result = result.filter(p =>
-                p.titleEn.toLowerCase().includes(q) || p.titleZh.toLowerCase().includes(q)
+                p.titleEn.toLowerCase().includes(q) ||
+                p.titleZh.toLowerCase().includes(q) ||
+                p.courseIds.some(id => courseTitleMap.get(id as string)?.includes(q))
             );
         }
         if (difficultyFilter) {
             result = result.filter(p => p.difficulty === difficultyFilter);
         }
         return result;
-    }, [activeTab, publicPathsList, searchQuery, difficultyFilter]);
+    }, [activeTab, publicPathsList, publicCourses, searchQuery, difficultyFilter]);
 
     // Filtered and sorted courses
     const filteredCourses = useMemo(() => {
@@ -183,9 +188,9 @@ export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: Dashboar
         // Sort
         result.sort((a, b) => {
             if (sortOrder === "lastStudied") {
-                // Use progress update time if available, otherwise creation time
-                const aTime = a.progress?._creationTime ?? 0;
-                const bTime = b.progress?._creationTime ?? 0;
+                // Use lastStudiedAt if available, fall back to progress creation time
+                const aTime = a.progress?.lastStudiedAt ?? a.progress?._creationTime ?? 0;
+                const bTime = b.progress?.lastStudiedAt ?? b.progress?._creationTime ?? 0;
                 // Put courses with no progress at the end
                 if (aTime === 0 && bTime === 0)
                     return b._creationTime - a._creationTime;
@@ -226,10 +231,10 @@ export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: Dashboar
         return { inProgressCourses: inProgress, completedCourses: completed, standaloneCourses: standalone };
     }, [filteredCourses, activeTab, pathCourseIds]);
 
-    // Group courses by path for expanded view
+    // Group courses by path for expanded view — use filteredCourses so search/difficulty filters apply
     const pathCoursesMap = useMemo(() => {
         if (activeTab !== "my" || !myPaths || !myCourses) return new Map<string, typeof filteredCourses>();
-        const courseMap = new Map(myCourses.map(c => [c._id as string, c]));
+        const courseMap = new Map(filteredCourses.map(c => [c._id as string, c]));
         const map = new Map<string, typeof filteredCourses>();
         for (const path of myPaths) {
             const courses = path.courseIds
@@ -238,7 +243,7 @@ export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: Dashboar
             map.set(path._id, courses);
         }
         return map;
-    }, [activeTab, myPaths, myCourses]);
+    }, [activeTab, myPaths, myCourses, filteredCourses]);
 
     function formatDate(timestamp: number): string {
         return new Intl.DateTimeFormat("zh-CN", {
