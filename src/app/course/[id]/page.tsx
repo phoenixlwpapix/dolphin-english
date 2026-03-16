@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
@@ -58,6 +58,14 @@ export default function CoursePage() {
   );
   const deleteCourseMutation = useMutation(api.courses.remove);
   const removeCourseMutation = useMutation(api.userCourses.removeCourse);
+  const createProgressMutation = useMutation(api.progress.create);
+
+  // Auto-create progress record if none exists (handles legacy records without userId)
+  useEffect(() => {
+    if (course !== undefined && progress === null) {
+      createProgressMutation({ courseId });
+    }
+  }, [course, progress, courseId, createProgressMutation]);
 
   const moduleNames = [
     t.modules.objectives,
