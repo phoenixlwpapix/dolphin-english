@@ -158,7 +158,8 @@ export const en: Translations = {
     wrongCount: "You got {count} question(s) wrong",
     retryWrong: "Retry Wrong Questions",
     allCorrect: "All Correct!",
-    round: "Round",
+    round: "Round ",
+    roundSuffix: "",
     questionTypes: {
       mainIdea: "Main Idea",
       detail: "Detail",

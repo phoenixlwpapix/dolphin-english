@@ -235,7 +235,7 @@ export function ComprehensionQuiz({
           <span>
             {round > 1 && (
               <span className="text-warning mr-2">
-                {t.quiz.round} {round}
+                {t.quiz.round}{round}{t.quiz.roundSuffix}
               </span>
             )}
             {t.quiz.question} {currentIndex + 1} {t.quiz.of}{" "}

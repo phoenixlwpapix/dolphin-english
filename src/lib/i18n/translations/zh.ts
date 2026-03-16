@@ -135,6 +135,7 @@ export interface Translations {
     retryWrong: string;
     allCorrect: string;
     round: string;
+    roundSuffix: string;
     questionTypes: {
       mainIdea: string;
       detail: string;
@@ -498,6 +499,7 @@ export const zh: Translations = {
     retryWrong: "重做错题",
     allCorrect: "全部正确！",
     round: "第",
+    roundSuffix: "遍",
     questionTypes: {
       mainIdea: "主旨理解",
       detail: "细节定位",

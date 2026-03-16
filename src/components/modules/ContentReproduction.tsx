@@ -225,8 +225,6 @@ function TimelineExercise({ items, onComplete, t }: TimelineExerciseProps) {
   };
 
   const handleRetry = () => {
-    // Re-shuffle items and reset checked state
-    setOrderedItems([...items].sort(() => Math.random() - 0.5));
     setIsChecked(false);
   };
 
