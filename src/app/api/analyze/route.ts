@@ -43,7 +43,7 @@ Analyze the following English article and provide:
 
 ${titleInstruction}
 2. **Difficulty Assessment**:
-   - Level: Assess the CEFR level (A1, A1+, A2, A2+, B1, B1+, B2, B2+, C1, C1+, or C2)
+   - Level: Assess the CEFR level (A1, A2, B1, B2, C1, or C2)
    - Word count
    - Percentage of vocabulary beyond the assessed level
    - Brief explanation of the difficulty
@@ -131,8 +131,21 @@ export async function POST(req: Request) {
     });
   } catch (error) {
     console.error("Analysis error:", error);
+    const message = error instanceof Error ? error.message : "";
+    if (message.includes("timed out") || message.includes("deadline")) {
+      return Response.json(
+        { error: "Analysis timed out — the article may be too long. Try a shorter excerpt." },
+        { status: 504 },
+      );
+    }
+    if (message.includes("parse") || message.includes("schema") || message.includes("validation")) {
+      return Response.json(
+        { error: "AI returned an unexpected response format. Please try again." },
+        { status: 500 },
+      );
+    }
     return Response.json(
-      { error: error instanceof Error ? error.message : "Analysis failed" },
+      { error: "Analysis failed. Please try again in a moment." },
       { status: 500 },
     );
   }

@@ -34,8 +34,12 @@ interface AdminViewProps {
 
 export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminViewProps) {
     const { t, language } = useI18n();
+    const currentUser = useQuery(api.users.getCurrentUser);
     const publicCoursesWithStats = useQuery(api.courses.listPublicWithStats);
     const pathsWithStats = useQuery(api.learningPaths.listPublicWithStats);
+
+    if (currentUser === undefined) return null;
+    if (currentUser?.role !== "admin") return null;
     const removeCourse = useMutation(api.courses.remove);
     const updateMeta = useMutation(api.courses.updateMeta);
     const removePath = useMutation(api.learningPaths.remove);
