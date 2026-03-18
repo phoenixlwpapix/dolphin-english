@@ -6,6 +6,7 @@ import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { useI18n } from "@/lib/i18n";
 import { DIFFICULTY_CONFIG, CEFR_LEVELS } from "@/lib/constants";
+import { AreaChart, Area, ResponsiveContainer, Tooltip } from "recharts";
 import {
     Button,
     Card,
@@ -37,20 +38,18 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
     const currentUser = useQuery(api.users.getCurrentUser);
     const publicCoursesWithStats = useQuery(api.courses.listPublicWithStats);
     const pathsWithStats = useQuery(api.learningPaths.listPublicWithStats);
+    const adminTrends = useQuery(api.analytics.getAdminTrends);
 
     if (currentUser === undefined) return null;
     if (currentUser?.role !== "admin") return null;
     const removeCourse = useMutation(api.courses.remove);
     const updateMeta = useMutation(api.courses.updateMeta);
     const removePath = useMutation(api.learningPaths.remove);
-    const migrateDifficulty = useMutation(api.courses.migrateDifficultyLevels);
 
     const [subTab, setSubTab] = useState<AdminSubTab>("courses");
     const [searchQuery, setSearchQuery] = useState("");
     const [coursePathFilter, setCoursePathFilter] = useState<"all" | "in-path" | "no-path">("all");
     const [editingCourseId, setEditingCourseId] = useState<string | null>(null);
-    const [isMigrating, setIsMigrating] = useState(false);
-    const [migrateResult, setMigrateResult] = useState<{ updated: number; total: number } | null>(null);
     const [editTitle, setEditTitle] = useState("");
     const [editDifficulty, setEditDifficulty] = useState("");
     const [deleteTarget, setDeleteTarget] = useState<{ type: "course" | "path"; id: string } | null>(null);
@@ -126,17 +125,6 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
         }
     }
 
-    async function handleMigrateDifficulty() {
-        setIsMigrating(true);
-        setMigrateResult(null);
-        try {
-            const result = await migrateDifficulty({});
-            setMigrateResult(result);
-        } finally {
-            setIsMigrating(false);
-        }
-    }
-
     function formatDate(timestamp: number): string {
         return new Intl.DateTimeFormat(language === "zh" ? "zh-CN" : "en-US", {
             year: "numeric",
@@ -170,65 +158,54 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
                 </Button>
             </div>
 
-            {/* Migration Banner */}
-            <div className="mb-6 p-4 rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800 flex items-center justify-between gap-4">
-                <div className="text-sm">
-                    <span className="font-semibold text-amber-800 dark:text-amber-300">数据修复：</span>
-                    <span className="text-amber-700 dark:text-amber-400 ml-1">
-                        {migrateResult
-                            ? `完成！共迁移 ${migrateResult.updated} / ${migrateResult.total} 门课程`
-                            : "将旧的 A1+/B1+ 等难度值迁移到 6 级 CEFR 标准"}
-                    </span>
-                </div>
-                <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={handleMigrateDifficulty}
-                    disabled={isMigrating || migrateResult !== null}
-                >
-                    {isMigrating ? "迁移中..." : migrateResult ? "已完成" : "执行迁移"}
-                </Button>
-            </div>
-
             {/* Summary Stats */}
             <div className="grid grid-cols-3 gap-4 mb-8">
                 <Card className="border-border">
-                    <CardContent className="p-4 flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-accent/10">
-                            <LibraryIcon className="w-5 h-5 text-accent" />
+                    <CardContent className="p-4">
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 rounded-lg bg-accent/10">
+                                <LibraryIcon className="w-5 h-5 text-accent" />
+                            </div>
+                            <div>
+                                <p className="text-2xl font-bold text-foreground">
+                                    {publicCoursesWithStats?.length ?? 0}
+                                </p>
+                                <p className="text-xs text-muted-foreground">{t.admin.totalPublicCourses}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-2xl font-bold text-foreground">
-                                {publicCoursesWithStats?.length ?? 0}
-                            </p>
-                            <p className="text-xs text-muted-foreground">{t.admin.totalPublicCourses}</p>
-                        </div>
+                        <AdminSparkline data={adminTrends?.courseTrend} gradientId="spark-courses" />
                     </CardContent>
                 </Card>
                 <Card className="border-border">
-                    <CardContent className="p-4 flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-accent/10">
-                            <RouteIcon className="w-5 h-5 text-accent" />
+                    <CardContent className="p-4">
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 rounded-lg bg-accent/10">
+                                <RouteIcon className="w-5 h-5 text-accent" />
+                            </div>
+                            <div>
+                                <p className="text-2xl font-bold text-foreground">
+                                    {pathsWithStats?.length ?? 0}
+                                </p>
+                                <p className="text-xs text-muted-foreground">{t.admin.totalPaths}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-2xl font-bold text-foreground">
-                                {pathsWithStats?.length ?? 0}
-                            </p>
-                            <p className="text-xs text-muted-foreground">{t.admin.totalPaths}</p>
-                        </div>
+                        <AdminSparkline data={adminTrends?.pathTrend} gradientId="spark-paths" />
                     </CardContent>
                 </Card>
                 <Card className="border-border">
-                    <CardContent className="p-4 flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-accent/10">
-                            <UsersIcon className="w-5 h-5 text-accent" />
+                    <CardContent className="p-4">
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 rounded-lg bg-accent/10">
+                                <UsersIcon className="w-5 h-5 text-accent" />
+                            </div>
+                            <div>
+                                <p className="text-2xl font-bold text-foreground">
+                                    {totalEnrollments}
+                                </p>
+                                <p className="text-xs text-muted-foreground">{t.admin.totalEnrollments}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-2xl font-bold text-foreground">
-                                {totalEnrollments}
-                            </p>
-                            <p className="text-xs text-muted-foreground">{t.admin.totalEnrollments}</p>
-                        </div>
+                        <AdminSparkline data={adminTrends?.enrollmentTrend} gradientId="spark-enrollments" />
                     </CardContent>
                 </Card>
             </div>
@@ -544,5 +521,48 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
                 isLoading={isDeleting}
             />
         </>
+    );
+}
+
+// ── Sparkline chart for stat cards ───────────────────────────────────────────
+
+function AdminSparkline({ data, gradientId }: { data?: number[]; gradientId: string }) {
+    if (!data) {
+        return <div className="h-12 rounded bg-muted/30 animate-pulse" />;
+    }
+
+    const chartData = data.map((v, i) => ({ i, v }));
+    const hasActivity = data.some((v) => v > 0);
+
+    return (
+        <ResponsiveContainer width="100%" height={48}>
+            <AreaChart data={chartData} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
+                <defs>
+                    <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--color-accent)" stopOpacity={hasActivity ? 0.35 : 0.1} />
+                        <stop offset="95%" stopColor="var(--color-accent)" stopOpacity={0} />
+                    </linearGradient>
+                </defs>
+                <Tooltip
+                    content={({ active, payload }) => {
+                        if (!active || !payload?.length) return null;
+                        return (
+                            <div style={{ background: "var(--color-card)", border: "1px solid var(--color-border)", borderRadius: "8px", fontSize: "12px", padding: "3px 8px" }}>
+                                {payload[0].value}
+                            </div>
+                        );
+                    }}
+                />
+                <Area
+                    type="monotone"
+                    dataKey="v"
+                    stroke="var(--color-accent)"
+                    fill={`url(#${gradientId})`}
+                    strokeWidth={1.5}
+                    dot={false}
+                    activeDot={{ r: 3, fill: "var(--color-accent)" }}
+                />
+            </AreaChart>
+        </ResponsiveContainer>
     );
 }

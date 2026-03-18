@@ -12,7 +12,7 @@ import {
   HomeIcon,
 } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
-import type { ParagraphAnalysis as ParagraphData } from "@/lib/schemas";
+import type { ParagraphAnalysis as ParagraphData, VocabularyItem } from "@/lib/schemas";
 import { ArticleReference } from "@/components/course";
 
 /** Maximum number of keywords to display */
@@ -23,6 +23,7 @@ const TIMELINE_ITEMS_COUNT = 6;
 
 interface ContentReproductionProps {
   paragraphs: ParagraphData[];
+  vocabulary: VocabularyItem[];
   articleContent: string;
   onComplete: () => void;
   onFinish?: () => void;
@@ -30,6 +31,7 @@ interface ContentReproductionProps {
 
 export function ContentReproduction({
   paragraphs,
+  vocabulary,
   articleContent,
   onComplete,
   onFinish,
@@ -173,6 +175,7 @@ export function ContentReproduction({
         {currentExercise === 1 && (
           <KeywordExercise
             paragraphs={paragraphs}
+            vocabulary={vocabulary}
             onComplete={handleExerciseComplete}
             t={t}
             language={language}
@@ -285,6 +288,7 @@ function TimelineExercise({ items, onComplete, t }: TimelineExerciseProps) {
 // Keyword-based retelling exercise
 interface KeywordExerciseProps {
   paragraphs: ParagraphData[];
+  vocabulary: VocabularyItem[];
   onComplete: () => void;
   t: ReturnType<typeof useI18n>["t"];
   language: "zh" | "en";
@@ -292,6 +296,7 @@ interface KeywordExerciseProps {
 
 function KeywordExercise({
   paragraphs,
+  vocabulary,
   onComplete,
   t,
   language,
@@ -301,18 +306,12 @@ function KeywordExercise({
     return language === "zh" ? p.summaryZH : p.summary;
   };
 
-  // Extract keywords from language points
+  // Extract keywords from vocabulary: essential first, then transferable
   const keywords = useMemo(() => {
-    const words: string[] = [];
-    paragraphs.forEach((p) => {
-      p.languagePoints.forEach((lp) => {
-        // Extract the first word/phrase from each language point
-        const match = lp.point.match(/\b\w+\b/);
-        if (match) words.push(match[0]);
-      });
-    });
-    return words.slice(0, MAX_KEYWORDS);
-  }, [paragraphs]);
+    const essential = vocabulary.filter((v) => v.category === "essential").map((v) => v.word);
+    const transferable = vocabulary.filter((v) => v.category === "transferable").map((v) => v.word);
+    return [...essential, ...transferable].slice(0, MAX_KEYWORDS);
+  }, [vocabulary]);
 
   return (
     <div>

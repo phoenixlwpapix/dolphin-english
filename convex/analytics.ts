@@ -158,3 +158,46 @@ export const getAnalytics = query({
         }
     },
 })
+
+/**
+ * Returns 8 weeks of weekly trend data for admin stat cards
+ */
+export const getAdminTrends = query({
+    args: {},
+    handler: async (ctx) => {
+        const userId = await auth.getUserId(ctx)
+        if (!userId) return null
+
+        const user = await ctx.db.get(userId)
+        if (user?.role !== "admin") return null
+
+        const WEEKS = 8
+        const WEEK_MS = 7 * 24 * 60 * 60 * 1000
+        const now = Date.now()
+
+        // Week bucket start times, oldest → newest
+        const weekStarts = Array.from({ length: WEEKS }, (_, i) => now - (WEEKS - i) * WEEK_MS)
+
+        const countByWeek = (timestamps: number[]) =>
+            weekStarts.map((start, i) => {
+                const end = i < WEEKS - 1 ? weekStarts[i + 1] : now + 1
+                return timestamps.filter((ts) => ts >= start && ts < end).length
+            })
+
+        const [courses, paths, userCourses, userPaths] = await Promise.all([
+            ctx.db.query("courses").filter((q) => q.eq(q.field("isPublic"), true)).collect(),
+            ctx.db.query("learningPaths").collect(),
+            ctx.db.query("userCourses").collect(),
+            ctx.db.query("userPaths").collect(),
+        ])
+
+        return {
+            courseTrend: countByWeek(courses.map((c) => c._creationTime)),
+            pathTrend: countByWeek(paths.map((p) => p._creationTime)),
+            enrollmentTrend: countByWeek([
+                ...userCourses.map((uc) => uc.addedAt),
+                ...userPaths.map((up) => up.addedAt),
+            ]),
+        }
+    },
+})

@@ -341,6 +341,7 @@ export default function CoursePage() {
               {currentModule === 6 && (
                 <ContentReproduction
                   paragraphs={course.analyzedData.paragraphs}
+                  vocabulary={course.analyzedData.vocabulary}
                   articleContent={course.content}
                   onComplete={() => handleModuleComplete(6)}
                   onFinish={() => router.push("/")}

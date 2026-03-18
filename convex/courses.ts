@@ -327,41 +327,6 @@ export const updateMeta = mutation({
   },
 });
 
-/**
- * Migrate old 11-level CEFR difficulty values to new 6-level values (admin only)
- */
-export const migrateDifficultyLevels = mutation({
-  args: {},
-  handler: async (ctx) => {
-    const userId = await auth.getUserId(ctx);
-    if (!userId) throw new Error("Must be logged in");
-
-    const user = await ctx.db.get(userId);
-    if (user?.role !== "admin") throw new Error("Admin only");
-
-    const legacyMap: Record<string, string> = {
-      "A1+": "A1",
-      "A2+": "A2",
-      "B1+": "B1",
-      "B2+": "B2",
-      "C1+": "C1",
-    };
-
-    const courses = await ctx.db.query("courses").collect();
-    let updated = 0;
-
-    for (const course of courses) {
-      const mapped = legacyMap[course.difficulty];
-      if (mapped) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await ctx.db.patch(course._id, { difficulty: mapped as any });
-        updated++;
-      }
-    }
-
-    return { updated, total: courses.length };
-  },
-});
 
 /**
  * Get course preview (for non-enrolled users)
