@@ -62,6 +62,8 @@ export interface Translations {
     privateCourse: string;
     clickToChange: string;
     clickOrDrop: string;
+    difficultyLabel: string;
+    difficultyAuto: string;
   };
   course: {
     module: string;
@@ -412,6 +414,8 @@ export const zh: Translations = {
     privateCourse: "仅我的课程",
     clickToChange: "点击更换",
     clickOrDrop: "点击上传或拖拽文件至此",
+    difficultyLabel: "难度",
+    difficultyAuto: "自动检测",
   },
 
   // Course Learning

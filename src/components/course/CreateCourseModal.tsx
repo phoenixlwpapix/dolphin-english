@@ -7,6 +7,7 @@ import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { useI18n } from '@/lib/i18n'
 import { FileTextIcon, ImageIcon, UploadIcon } from '@/components/ui/Icons'
+import { CEFR_LEVELS, DIFFICULTY_CONFIG, type DifficultyLevel } from '@/lib/constants'
 
 interface CreateCourseModalProps {
     isOpen: boolean
@@ -30,16 +31,10 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
     const [isAnalyzing, setIsAnalyzing] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [isPublic, setIsPublic] = useState(false)
+    const [difficulty, setDifficulty] = useState<'auto' | DifficultyLevel>('auto')
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const wordCount = text.trim().split(/\s+/).filter(Boolean).length
-
-    function getWordCountStatus(): { color: string; message: string } {
-        if (wordCount === 0) return { color: 'text-muted-foreground', message: t.create.recommended }
-        if (wordCount < 200) return { color: 'text-warning', message: t.create.tooShort }
-        if (wordCount > 800) return { color: 'text-warning', message: t.create.tooLong }
-        return { color: 'text-success', message: t.create.recommended }
-    }
 
     async function handleImageFile(file: File) {
         if (!file.type.startsWith('image/')) {
@@ -108,7 +103,7 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
             const analyzeResponse = await fetch('/api/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: articleText, language, isPublic }),
+                body: JSON.stringify({ text: articleText, language, isPublic, difficulty: difficulty === 'auto' ? null : difficulty }),
             })
 
             if (!analyzeResponse.ok) {
@@ -146,6 +141,7 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
         setError(null)
         setIsAnalyzing(false)
         setIsPublic(false)
+        setDifficulty('auto')
     }
 
     function handleClose() {
@@ -153,8 +149,7 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
         onClose()
     }
 
-    const canSubmit =
-        (mode === 'text' && wordCount >= 100) || (mode === 'image' && imageFile !== null)
+    const canSubmit = (mode === 'text' && wordCount >= 100) || (mode === 'image' && imageFile !== null)
 
     return (
         <Modal isOpen={isOpen} onClose={handleClose} title={t.create.title} size="lg">
@@ -208,15 +203,18 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                         disabled={isAnalyzing}
                     />
 
-                    {/* Word count */}
+                    {/* Word count + Difficulty */}
                     <div className="flex justify-between items-center text-sm px-1">
                         <span className="text-muted-foreground">
                             {t.create.wordCount}: <span className="font-medium text-foreground">{wordCount}</span>
                         </span>
-                        <span className={`flex items-center gap-1.5 font-medium ${getWordCountStatus().color}`}>
-                            <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                            {getWordCountStatus().message}
-                        </span>
+                        <DifficultySelect
+                            value={difficulty}
+                            onChange={setDifficulty}
+                            disabled={isAnalyzing}
+                            label={t.create.difficultyLabel}
+                            autoLabel={t.create.difficultyAuto}
+                        />
                     </div>
                 </div>
             ) : (
@@ -267,8 +265,8 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                         className="hidden"
                     />
 
-                    {imagePreview && (
-                        <div className="flex justify-end">
+                    <div className="flex justify-between items-center px-1">
+                        {imagePreview ? (
                             <Button variant="ghost" size="sm" onClick={(e) => {
                                 e.stopPropagation();
                                 setImageFile(null)
@@ -276,8 +274,15 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                             }}>
                                 {t.common.delete}
                             </Button>
-                        </div>
-                    )}
+                        ) : <span />}
+                        <DifficultySelect
+                            value={difficulty}
+                            onChange={setDifficulty}
+                            disabled={isAnalyzing}
+                            label={t.create.difficultyLabel}
+                            autoLabel={t.create.difficultyAuto}
+                        />
+                    </div>
                 </div>
             )}
 
@@ -335,5 +340,35 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                 </Button>
             </div>
         </Modal>
+    )
+}
+
+interface DifficultySelectProps {
+    value: 'auto' | DifficultyLevel
+    onChange: (v: 'auto' | DifficultyLevel) => void
+    disabled: boolean
+    label: string
+    autoLabel: string
+}
+
+function DifficultySelect({ value, onChange, disabled, label, autoLabel }: DifficultySelectProps) {
+    return (
+        <div className="flex items-center gap-2">
+            <span className="text-muted-foreground text-sm">{label}:</span>
+            <div className="relative flex items-center">
+                <select
+                    value={value}
+                    onChange={(e) => onChange(e.target.value as 'auto' | DifficultyLevel)}
+                    disabled={disabled}
+                    className="text-sm font-medium bg-background border border-border rounded-lg pl-1 pr-6 py-0.5 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer appearance-none"
+                >
+                    <option value="auto">{autoLabel}</option>
+                    {CEFR_LEVELS.map(level => (
+                        <option key={level} value={level}>{level} — {DIFFICULTY_CONFIG[level].label}</option>
+                    ))}
+                </select>
+                <span className="pointer-events-none absolute right-1.5 text-muted-foreground text-xs">▾</span>
+            </div>
+        </div>
     )
 }

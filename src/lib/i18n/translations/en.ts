@@ -72,6 +72,8 @@ export const en: Translations = {
     privateCourse: "My Course Only",
     clickToChange: "Click to change",
     clickOrDrop: "Click to upload or drag and drop",
+    difficultyLabel: "Difficulty",
+    difficultyAuto: "Auto Detect",
   },
 
   // Course Learning

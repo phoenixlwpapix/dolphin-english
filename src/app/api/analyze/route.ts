@@ -32,12 +32,16 @@ function extractTitleFromText(text: string): {
   return { title: null, contentWithoutTitle: text };
 }
 
-function getAnalysisPrompt(extractedTitle: string | null) {
+function getAnalysisPrompt(extractedTitle: string | null, targetDifficulty: string | null) {
   const titleInstruction = extractedTitle
     ? `1. **Title**: Use the provided title: "${extractedTitle}"`
     : `1. **Title**: Generate a descriptive title for this article`;
 
-  return `You are an expert English language teaching assistant specializing in content analysis across all CEFR levels.
+  const difficultyNote = targetDifficulty
+    ? `\nIMPORTANT: The user has designated this course as **${targetDifficulty}** level. Please calibrate all vocabulary explanations, language point complexity, and quiz difficulty to suit a ${targetDifficulty} learner.\n`
+    : '';
+
+  return `You are an expert English language teaching assistant specializing in content analysis across all CEFR levels.${difficultyNote}
 
 Analyze the following English article and provide:
 
@@ -83,7 +87,7 @@ Important guidelines:
 
 export async function POST(req: Request) {
   try {
-    const { text, isPublic } = await req.json();
+    const { text, isPublic, difficulty: targetDifficulty } = await req.json();
 
     if (!text || typeof text !== "string") {
       return Response.json({ error: "No text provided" }, { status: 400 });
@@ -107,7 +111,7 @@ export async function POST(req: Request) {
     const { output } = await generateText({
       model: google("gemini-3-flash-preview"),
       output: Output.object({ schema: articleAnalysisSchema }),
-      prompt: `${getAnalysisPrompt(extractedTitle)}\n\n---\n\nARTICLE:\n${contentWithoutTitle}`,
+      prompt: `${getAnalysisPrompt(extractedTitle, targetDifficulty ?? null)}\n\n---\n\nARTICLE:\n${contentWithoutTitle}`,
     });
 
     if (!output) {
@@ -124,7 +128,7 @@ export async function POST(req: Request) {
     return Response.json({
       content: text, // 保留原始完整文本（包含标题）
       title: finalTitle,
-      difficulty: output.difficulty.level,
+      difficulty: targetDifficulty ?? output.difficulty.level,
       wordCount: wordCount,
       analyzedData: output.analysis,
       isPublic: isPublic,
