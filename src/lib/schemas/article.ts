@@ -71,7 +71,8 @@ export const courseAnalysisSchema = z.object({
     ),
   paragraphs: z
     .array(paragraphAnalysisSchema)
-    .describe("Analysis for each paragraph"),
+    .min(2)
+    .describe("Analysis for each paragraph (minimum 2, split short articles into logical sections)"),
   vocabulary: z
     .array(vocabularyItemSchema)
     .min(8)

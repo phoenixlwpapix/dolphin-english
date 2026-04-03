@@ -60,6 +60,7 @@ ${titleInstruction}
    - "summary": One-sentence summary in simplified English
    - "summaryZH": One-sentence summary in Chinese (中文)
    - 2-3 key language points, each with:
+   IMPORTANT: There must be at least 2 paragraph entries. If the article has only one paragraph, split it into 2-3 logical sections (e.g., by topic shift, time sequence, or idea progression) and analyze each section as a separate paragraph entry.
      - "point": The language point title (e.g., "Present Perfect Tense")
      - "explanation": Simple English explanation
      - "explanationZH": Chinese explanation (中文解释)

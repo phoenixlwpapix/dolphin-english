@@ -186,6 +186,7 @@ export function ContentReproduction({
           <KeywordExercise
             paragraphs={paragraphs}
             vocabulary={vocabulary}
+            isLast={!hasDolphinSummary}
             onComplete={handleExerciseComplete}
             t={t}
             language={language}
@@ -306,6 +307,7 @@ function TimelineExercise({ items, onComplete, t }: TimelineExerciseProps) {
 interface KeywordExerciseProps {
   paragraphs: ParagraphData[];
   vocabulary: VocabularyItem[];
+  isLast: boolean;
   onComplete: () => void;
   t: ReturnType<typeof useI18n>["t"];
   language: "zh" | "en";
@@ -314,6 +316,7 @@ interface KeywordExerciseProps {
 function KeywordExercise({
   paragraphs,
   vocabulary,
+  isLast,
   onComplete,
   t,
   language,
@@ -364,8 +367,8 @@ function KeywordExercise({
 
       <div className="flex justify-end">
         <Button onClick={onComplete}>
-          {t.common.complete}
-          <CheckIcon className="w-4 h-4" />
+          {isLast ? t.common.complete : t.common.next}
+          {isLast ? <CheckIcon className="w-4 h-4" /> : <ChevronRightIcon className="w-4 h-4" />}
         </Button>
       </div>
     </div>
