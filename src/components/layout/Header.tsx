@@ -69,7 +69,7 @@ export function Header({
           <a href="/" className="flex items-center gap-3 group">
             <div className="relative w-12 h-12 transition-transform duration-300 group-hover:scale-105">
               <Image
-                src="/dolphin-logo-1.png"
+                src="/dolphin-logo-2.png"
                 alt="Dolphin English Logo"
                 fill
                 sizes="48px"

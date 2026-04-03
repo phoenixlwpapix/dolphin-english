@@ -95,7 +95,7 @@ Each module component lives in `src/components/modules/`.
 ### AI Analysis Pipeline
 
 Article analysis happens via API route at `src/app/api/analyze/route.ts`:
-1. User submits text (min 100 words)
+1. User submits text (min 50 words)
 2. Backend calls Google Gemini 3 Flash with structured prompt
 3. AI generates bilingual content: learning objectives, paragraph summaries, language points, vocabulary, quiz questions
 4. Response validated against Zod schema (`src/lib/schemas/article.ts`)

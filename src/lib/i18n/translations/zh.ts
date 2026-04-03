@@ -149,6 +149,8 @@ export interface Translations {
     timeline: string;
     retelling: string;
     paraphrase: string;
+    dolphinSummary: string;
+    dolphinSummaryDesc: string;
     dragToSort: string;
     selectAnswer: string;
     keywordHint: string;
@@ -517,6 +519,8 @@ export const zh: Translations = {
     timeline: "时间线排序",
     retelling: "关键词复述",
     paraphrase: "句型改写",
+    dolphinSummary: "海豚小结",
+    dolphinSummaryDesc: "轻松回顾本课重点语法和语言知识",
     dragToSort: "拖拽排序",
     selectAnswer: "选择正确的改写",
     keywordHint: "使用这些关键词复述文章主旨：",

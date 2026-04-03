@@ -175,6 +175,8 @@ export const en: Translations = {
     timeline: "Timeline Ordering",
     retelling: "Keyword Retelling",
     paraphrase: "Sentence Paraphrase",
+    dolphinSummary: "Dolphin Notes",
+    dolphinSummaryDesc: "A fun review of key grammar and language points",
     dragToSort: "Drag to sort",
     selectAnswer: "Select the correct paraphrase",
     keywordHint: "Use these keywords to retell the main ideas of the article:",

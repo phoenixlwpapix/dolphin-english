@@ -54,6 +54,8 @@ const courseAnalysisValidator = v.object({
   paragraphs: v.array(paragraphValidator),
   vocabulary: v.array(vocabularyValidator),
   quizQuestions: v.array(quizQuestionValidator),
+  dolphinSummary: v.optional(v.string()),
+  dolphinSummaryEN: v.optional(v.string()),
 });
 
 const quizResultValidator = v.object({

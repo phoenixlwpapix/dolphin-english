@@ -9,6 +9,7 @@ import {
   CheckIcon,
   ChevronRightIcon,
   EditIcon,
+  FishIcon,
   HomeIcon,
 } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
@@ -25,6 +26,8 @@ interface ContentReproductionProps {
   paragraphs: ParagraphData[];
   vocabulary: VocabularyItem[];
   articleContent: string;
+  dolphinSummary?: string;
+  dolphinSummaryEN?: string;
   onComplete: () => void;
   onFinish?: () => void;
 }
@@ -33,6 +36,8 @@ export function ContentReproduction({
   paragraphs,
   vocabulary,
   articleContent,
+  dolphinSummary,
+  dolphinSummaryEN,
   onComplete,
   onFinish,
 }: ContentReproductionProps) {
@@ -81,9 +86,14 @@ export function ContentReproduction({
     }));
   }, [paragraphs]);
 
+  const hasDolphinSummary = !!(dolphinSummary || dolphinSummaryEN);
+
   const exercises = [
     { type: "timeline" as const, title: t.reproduction.timeline },
     { type: "keywords" as const, title: t.reproduction.retelling },
+    ...(hasDolphinSummary
+      ? [{ type: "dolphinSummary" as const, title: t.reproduction.dolphinSummary }]
+      : []),
   ];
 
   const handleExerciseComplete = () => {
@@ -179,6 +189,13 @@ export function ContentReproduction({
             onComplete={handleExerciseComplete}
             t={t}
             language={language}
+          />
+        )}
+        {currentExercise === 2 && hasDolphinSummary && (
+          <DolphinSummarySection
+            summary={language === "zh" ? (dolphinSummary ?? dolphinSummaryEN!) : (dolphinSummaryEN ?? dolphinSummary!)}
+            onComplete={handleExerciseComplete}
+            t={t}
           />
         )}
       </CardContent>
@@ -343,6 +360,35 @@ function KeywordExercise({
             </li>
           ))}
         </ul>
+      </div>
+
+      <div className="flex justify-end">
+        <Button onClick={onComplete}>
+          {t.common.complete}
+          <CheckIcon className="w-4 h-4" />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// Dolphin summary section
+interface DolphinSummarySectionProps {
+  summary: string;
+  onComplete: () => void;
+  t: ReturnType<typeof useI18n>["t"];
+}
+
+function DolphinSummarySection({ summary, onComplete, t }: DolphinSummarySectionProps) {
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-4">
+        <FishIcon className="w-5 h-5 text-primary-500" />
+        <p className="text-muted-foreground">{t.reproduction.dolphinSummaryDesc}</p>
+      </div>
+
+      <div className="bg-surface rounded-xl p-6 mb-6 text-base text-foreground leading-relaxed whitespace-pre-line border border-border/50">
+        {summary}
       </div>
 
       <div className="flex justify-end">

@@ -343,6 +343,8 @@ export default function CoursePage() {
                   paragraphs={course.analyzedData.paragraphs}
                   vocabulary={course.analyzedData.vocabulary}
                   articleContent={course.content}
+                  dolphinSummary={course.analyzedData.dolphinSummary}
+                  dolphinSummaryEN={course.analyzedData.dolphinSummaryEN}
                   onComplete={() => handleModuleComplete(6)}
                   onFinish={() => router.push("/")}
                 />

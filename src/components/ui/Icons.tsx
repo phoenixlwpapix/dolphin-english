@@ -48,6 +48,7 @@ import {
   Lightbulb,
   MessageSquare,
   Layers,
+  Fish,
   X,
   LucideProps,
 } from "lucide-react";
@@ -305,5 +306,10 @@ export function MessageSquareIcon(props: IconProps) {
 /** Layers icon for card stack */
 export function LayersIcon(props: IconProps) {
   return <Layers {...props} />;
+}
+
+/** Fish icon for dolphin summary */
+export function FishIcon(props: IconProps) {
+  return <Fish {...props} />;
 }
 

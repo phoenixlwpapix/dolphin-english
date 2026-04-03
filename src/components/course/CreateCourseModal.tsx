@@ -149,7 +149,7 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
         onClose()
     }
 
-    const canSubmit = (mode === 'text' && wordCount >= 100) || (mode === 'image' && imageFile !== null)
+    const canSubmit = (mode === 'text' && wordCount >= 50) || (mode === 'image' && imageFile !== null)
 
     return (
         <Modal isOpen={isOpen} onClose={handleClose} title={t.create.title} size="lg">

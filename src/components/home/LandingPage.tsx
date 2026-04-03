@@ -283,7 +283,7 @@ function LandingFooter() {
                         <div className="flex items-center gap-2 mb-4">
                             <div className="relative w-8 h-8">
                                 <Image
-                                    src="/dolphin-logo-1.png"
+                                    src="/dolphin-logo-2.png"
                                     alt="Dolphin English Logo"
                                     fill
                                     sizes="32px"

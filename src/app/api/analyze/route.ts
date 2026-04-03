@@ -77,6 +77,12 @@ ${titleInstruction}
    - Vocabulary in context questions
    Include 4 options each, the correct answer index, and a reference quote from the article.
 
+7. **Dolphin Summary (海豚小结)**: Write a casual, warm lesson wrap-up in the voice of a friendly dolphin tutor. Create TWO versions:
+   - "dolphinSummary": Chinese version (primary). Aimed at Chinese English learners. Cover 2-3 key grammar points and language structures from this specific article. Reference actual sentences from the article as examples. Explain tricky distinctions learners commonly confuse (e.g., adjective vs. gerund, different tense usages). Use a relaxed, encouraging tone — like a patient friend explaining things over coffee. End with brief encouragement. 200-400 Chinese characters.
+   - "dolphinSummaryEN": English version covering the same grammar/language points, adapted for English-speaking learners. 150-300 words.
+
+   Tone: Address the reader directly ("你"/"you"), be conversational not textbook-formal, naturally weave in 1-2 dolphin/ocean metaphors (e.g., "让我们潜入这篇文章的语法海洋", "Let's dive into the grammar"), and keep it fun and approachable.
+
 Important guidelines:
 - Adapt your language complexity based on the assessed CEFR level
 - All language points should be practical and immediately usable
@@ -103,8 +109,8 @@ export async function POST(req: Request) {
       .split(/\s+/)
       .filter(Boolean).length;
 
-    if (wordCount < 100) {
-      return Response.json({ error: "Article too short" }, { status: 400 });
+    if (wordCount < 50) {
+      return Response.json({ error: "Article too short (minimum 50 words)" }, { status: 400 });
     }
 
     // Use Gemini to analyze the article with bilingual content

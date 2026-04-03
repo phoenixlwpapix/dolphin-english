@@ -84,6 +84,18 @@ export const courseAnalysisSchema = z.object({
     .describe(
       "5-8 comprehension questions covering main idea, details, and vocabulary",
     ),
+  dolphinSummary: z
+    .string()
+    .optional()
+    .describe(
+      "A casual, humorous dolphin-tutor-style lesson summary in Chinese, explaining key grammar and language points from the article",
+    ),
+  dolphinSummaryEN: z
+    .string()
+    .optional()
+    .describe(
+      "English version of the dolphin-tutor-style lesson summary",
+    ),
 });
 
 // Difficulty assessment schema
