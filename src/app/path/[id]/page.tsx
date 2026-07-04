@@ -115,197 +115,215 @@ export default function PathDetailPage() {
             <Header />
 
             <main className="container mx-auto px-4 py-8 mt-4">
-                <div className="max-w-3xl mx-auto">
-                    {/* Path header card */}
-                    <Card padding="none" className={`overflow-hidden rounded-2xl border-t-4 ${borderColor} mb-8`}>
-                        <div className="p-6 md:p-8">
-                            {/* Back button */}
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="-ml-3 mb-4 group text-muted-foreground hover:text-foreground font-medium transition-colors"
-                                onClick={() => router.push("/")}
-                            >
-                                <ChevronLeftIcon className="w-5 h-5 mr-1.5 transition-transform duration-200 group-hover:-translate-x-1" />
-                                {t.common.back}
-                            </Button>
-
-                            {/* Top: label + badge */}
-                            <div className="flex items-center gap-2 mb-3">
-                                <RouteIcon className="w-4 h-4 text-muted-foreground" />
-                                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                                    {t.paths.pathDetail}
-                                </span>
-                            </div>
-
-                            {/* Title */}
-                            <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight mb-2">
-                                {title}
-                            </h1>
-
-                            {/* Description */}
-                            {description && (
-                                <p className="text-muted-foreground text-sm mb-5 max-w-xl leading-relaxed">
-                                    {description}
-                                </p>
-                            )}
-
-                            {/* Meta row */}
-                            <div className="flex flex-wrap items-center gap-3 mb-6">
-                                <span className={`px-2.5 py-1 rounded-md text-xs font-bold tracking-wide ${badgeStyle}`}>
-                                    {pathData.difficulty}
-                                </span>
-                                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                                    <BookOpenIcon className="w-4 h-4" />
-                                    <span>{pathData.completedCourses}/{pathData.totalCourses} {t.paths.courses}</span>
-                                </div>
-                                {canEdit && (
+                <div className="max-w-6xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+                        {/* Left Column: Path Info (Sticky on desktop) */}
+                        <div className="md:col-span-4 md:sticky md:top-24 space-y-6">
+                            <Card padding="none" className={`overflow-hidden rounded-2xl border-t-4 ${borderColor}`}>
+                                <div className="p-6">
+                                    {/* Back button */}
                                     <Button
-                                        variant="secondary"
+                                        variant="ghost"
                                         size="sm"
-                                        onClick={() => setShowEditModal(true)}
-                                        className="ml-auto"
+                                        className="-ml-3 mb-4 group text-muted-foreground hover:text-foreground font-medium transition-colors cursor-pointer"
+                                        onClick={() => router.push("/")}
                                     >
-                                        <EditIcon className="w-4 h-4 mr-1.5" />
-                                        {language === "zh" ? "编辑路径" : "Edit Path"}
+                                        <ChevronLeftIcon className="w-5 h-5 mr-1.5 transition-transform duration-200 group-hover:-translate-x-1" />
+                                        {t.common.back}
                                     </Button>
-                                )}
-                            </div>
 
-                            {/* Overall progress bar */}
-                            <div className="p-5 bg-muted/50 rounded-2xl border border-border/30">
-                                <div className="flex items-center justify-between text-xs mb-2.5">
-                                    <span className="text-muted-foreground font-semibold">{t.paths.overallProgress}</span>
-                                    <span className={`font-bold ${overallProgress === 100 ? "text-success" : "text-accent"}`}>{overallProgress}%</span>
-                                </div>
-                                <div className="h-2.5 bg-background rounded-full overflow-hidden relative">
-                                    <div
-                                        className={`h-full rounded-full transition-all duration-700 ${overallProgress === 100 ? "bg-success" : "bg-accent"}`}
-                                        style={{ width: `${overallProgress}%` }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </Card>
-
-                    {/* Course timeline */}
-                    <div className="space-y-6">
-                        {pathData.courses.map((course, index) => {
-                            const completedModules = course.progress?.completedModules?.length ?? 0;
-                            const courseProgress = Math.round((completedModules / TOTAL_MODULES) * 100);
-                            const isCompleted = completedModules === TOTAL_MODULES;
-                            const isCurrent = index === currentCourseIndex;
-                            const cDiffKey = course.difficulty as keyof typeof DIFFICULTY_CONFIG;
-                            const cDiffConfig = DIFFICULTY_CONFIG[cDiffKey];
-
-                            // Progress ring
-                            const radius = 16;
-                            const circumference = 2 * Math.PI * radius;
-                            const strokeDashoffset = circumference - (courseProgress / 100) * circumference;
-
-                            return (
-                                <div key={course._id} className="relative flex gap-6 items-start">
-                                    {/* Timeline node and connector */}
-                                    <div className="flex flex-col items-center shrink-0 w-8 self-stretch relative">
-                                        {/* Node */}
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold z-10 transition-all ${
-                                            isCompleted
-                                                ? "bg-success text-white shadow-md shadow-success/20 ring-4 ring-success/15"
-                                                : isCurrent
-                                                    ? "bg-primary text-white shadow-lg shadow-primary/25 ring-4 ring-primary/15"
-                                                    : "bg-surface text-muted-foreground border-2 border-border shadow-sm ring-4 ring-muted/5"
-                                        }`}>
-                                            {isCompleted ? (
-                                                <CheckCircleIcon className="w-4 h-4" />
-                                            ) : (
-                                                index + 1
-                                            )}
-                                        </div>
-                                        {/* Timeline connector */}
-                                        {index < pathData.courses.length - 1 && (
-                                            <div className={`absolute left-[15px] top-[32px] bottom-[-24px] w-0.5 z-0 ${isCompleted ? "bg-success/50" : "bg-border"}`} />
-                                        )}
+                                    {/* Top: label + badge */}
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <RouteIcon className="w-4 h-4 text-muted-foreground" />
+                                        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                            {t.paths.pathDetail}
+                                        </span>
                                     </div>
 
-                                    {/* Course Card */}
-                                    <a
-                                        href={`/course/${course._id}`}
-                                        className={`flex-1 block group p-5 rounded-2xl border transition-all duration-300 ${
-                                            isCurrent
-                                                ? "border-primary bg-primary/5 shadow-md shadow-primary/5"
-                                                : isCompleted
-                                                    ? "border-border/60 bg-surface/40 opacity-85 hover:opacity-100 hover:border-success/40"
-                                                    : "border-border bg-surface hover:border-accent/40 hover:shadow-lg hover:shadow-accent/5 hover:-translate-y-0.5"
-                                        }`}
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            <div className="flex-1 min-w-0">
-                                                {isCurrent && (
-                                                    <span className="text-[10px] font-extrabold text-primary uppercase tracking-wider mb-1 block">
-                                                        {t.paths.currentCourse}
-                                                    </span>
-                                                )}
-                                                <h3 className={`text-base font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2 ${
-                                                    isCurrent ? "text-foreground font-extrabold" : isCompleted ? "text-muted-foreground font-medium" : "text-foreground font-semibold"
-                                                }`}>
-                                                    {course.title}
-                                                </h3>
-                                                <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                                                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${cDiffConfig?.color ?? "text-gray-500"}`}>
-                                                        {course.difficulty}
-                                                    </span>
-                                                    <span>{course.wordCount} {t.create.wordCount}</span>
-                                                </div>
-                                            </div>
+                                    {/* Title */}
+                                    <h1 className="text-xl md:text-2xl font-bold text-foreground leading-tight mb-2">
+                                        {title}
+                                    </h1>
 
-                                            {/* Progress ring */}
-                                            <div className="relative w-11 h-11 shrink-0">
-                                                <svg className="w-full h-full -rotate-90" viewBox="0 0 40 40">
-                                                    <circle
-                                                        cx="20" cy="20" r={radius}
-                                                        fill="none" strokeWidth="3"
-                                                        className="stroke-muted/30"
-                                                    />
-                                                    <circle
-                                                        cx="20" cy="20" r={radius}
-                                                        fill="none" strokeWidth="3"
-                                                        strokeLinecap="round"
-                                                        className={`${isCompleted ? "stroke-success" : courseProgress > 0 ? "stroke-primary" : "stroke-border"} transition-all duration-700`}
-                                                        style={{
-                                                            strokeDasharray: circumference,
-                                                            strokeDashoffset: strokeDashoffset,
-                                                        }}
-                                                    />
-                                                </svg>
-                                                <div className="absolute inset-0 flex items-center justify-center">
-                                                    <span className={`text-[9px] font-bold ${
-                                                        isCompleted ? "text-success" : courseProgress > 0 ? "text-primary" : "text-muted-foreground"
-                                                    }`}>
-                                                        {courseProgress}%
-                                                    </span>
-                                                </div>
-                                            </div>
+                                    {/* Description */}
+                                    {description && (
+                                        <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-4 hover:line-clamp-none transition-all duration-300">
+                                            {description}
+                                        </p>
+                                    )}
+
+                                    {/* Meta row */}
+                                    <div className="flex flex-wrap items-center gap-3 mb-4 text-xs">
+                                        <span className={`px-2.5 py-1 rounded-md font-bold tracking-wide ${badgeStyle}`}>
+                                            {pathData.difficulty}
+                                        </span>
+                                        <div className="flex items-center gap-1.5 text-muted-foreground">
+                                            <BookOpenIcon className="w-4 h-4" />
+                                            <span>{pathData.completedCourses}/{pathData.totalCourses} {t.paths.courses}</span>
                                         </div>
-                                    </a>
-                                </div>
-                            );
-                        })}
-                    </div>
+                                    </div>
 
-                    {/* Leave path */}
-                    {currentUser && (
-                        <div className="mt-12 flex justify-center">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setShowLeaveConfirm(true)}
-                                className="text-muted-foreground hover:text-error hover:bg-error/5 rounded-xl px-4 py-2 cursor-pointer transition-all flex items-center gap-2"
-                            >
-                                <LogOutIcon className="w-4 h-4" />
-                                {t.paths.leavePath}
-                            </Button>
+                                    {/* Progress Card */}
+                                    <div className="p-4 bg-muted/50 rounded-xl border border-border/30 mb-4">
+                                        <div className="flex items-center justify-between text-xs mb-1.5">
+                                            <span className="text-muted-foreground font-semibold">{t.paths.overallProgress}</span>
+                                            <span className={`font-bold ${overallProgress === 100 ? "text-success" : "text-accent"}`}>{overallProgress}%</span>
+                                        </div>
+                                        <div className="h-2 bg-background rounded-full overflow-hidden relative">
+                                            <div
+                                                className={`h-full rounded-full transition-all duration-700 ${overallProgress === 100 ? "bg-success" : "bg-accent"}`}
+                                                style={{ width: `${overallProgress}%` }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Action buttons inside left column */}
+                                    <div className="flex flex-col gap-2 pt-2 border-t border-border/40">
+                                        {canEdit && (
+                                            <Button
+                                                variant="secondary"
+                                                size="sm"
+                                                onClick={() => setShowEditModal(true)}
+                                                className="w-full cursor-pointer rounded-xl"
+                                            >
+                                                <EditIcon className="w-4 h-4 mr-1.5" />
+                                                {language === "zh" ? "编辑路径" : "Edit Path"}
+                                            </Button>
+                                        )}
+                                        {currentUser && (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => setShowLeaveConfirm(true)}
+                                                className="w-full text-muted-foreground hover:text-error hover:bg-error/5 rounded-xl cursor-pointer transition-all flex items-center justify-center gap-2"
+                                            >
+                                                <LogOutIcon className="w-4 h-4" />
+                                                {t.paths.leavePath}
+                                            </Button>
+                                        )}
+                                    </div>
+                                </div>
+                            </Card>
                         </div>
-                    )}
+
+                        {/* Right Column: Timeline list */}
+                        <div className="md:col-span-8 space-y-6">
+                            {/* Course timeline heading (desktop only) */}
+                            <div className="hidden md:flex items-center justify-between pb-2 border-b border-border/60">
+                                <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                                    <RouteIcon className="w-5 h-5 text-accent" />
+                                    {language === "zh" ? "学习课文进度" : "Learning Progress"}
+                                </h2>
+                                <span className="text-xs text-muted-foreground font-semibold">
+                                    {language === "zh" ? `共 ${pathData.totalCourses} 篇课文` : `Total ${pathData.totalCourses} courses`}
+                                </span>
+                            </div>
+
+                            {/* Dynamic timeline list */}
+                            <div className="space-y-6">
+                                {pathData.courses.map((course, index) => {
+                                    const completedModules = course.progress?.completedModules?.length ?? 0;
+                                    const courseProgress = Math.round((completedModules / TOTAL_MODULES) * 100);
+                                    const isCompleted = completedModules === TOTAL_MODULES;
+                                    const isCurrent = index === currentCourseIndex;
+                                    const cDiffKey = course.difficulty as keyof typeof DIFFICULTY_CONFIG;
+                                    const cDiffConfig = DIFFICULTY_CONFIG[cDiffKey];
+
+                                    // Progress ring
+                                    const radius = 16;
+                                    const circumference = 2 * Math.PI * radius;
+                                    const strokeDashoffset = circumference - (courseProgress / 100) * circumference;
+
+                                    return (
+                                        <div key={course._id} className="relative flex gap-6 items-start animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
+                                            {/* Timeline node and connector */}
+                                            <div className="flex flex-col items-center shrink-0 w-8 self-stretch relative">
+                                                {/* Node */}
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold z-10 transition-all ${
+                                                    isCompleted
+                                                        ? "bg-success text-white shadow-md shadow-success/20 ring-4 ring-success/15"
+                                                        : isCurrent
+                                                            ? "bg-primary text-white shadow-lg shadow-primary/25 ring-4 ring-primary/15 animate-pulse-soft"
+                                                            : "bg-surface text-muted-foreground border-2 border-border shadow-sm ring-4 ring-muted/5"
+                                                }`}>
+                                                    {isCompleted ? (
+                                                        <CheckCircleIcon className="w-4 h-4" />
+                                                    ) : (
+                                                        index + 1
+                                                    )}
+                                                </div>
+                                                {/* Timeline connector */}
+                                                {index < pathData.courses.length - 1 && (
+                                                    <div className={`absolute left-[15px] top-[32px] bottom-[-24px] w-0.5 z-0 ${isCompleted ? "bg-success/50" : "bg-border"}`} />
+                                                )}
+                                            </div>
+
+                                            {/* Course Card */}
+                                            <a
+                                                href={`/course/${course._id}`}
+                                                className={`flex-1 block group p-5 rounded-2xl border transition-all duration-300 ${
+                                                    isCurrent
+                                                        ? "border-primary bg-primary/5 shadow-md shadow-primary/5"
+                                                        : isCompleted
+                                                            ? "border-border/60 bg-surface/40 opacity-85 hover:opacity-100 hover:border-success/40"
+                                                            : "border-border bg-surface hover:border-accent/40 hover:shadow-lg hover:shadow-accent/5 hover:-translate-y-0.5"
+                                                }`}
+                                            >
+                                                <div className="flex items-center gap-4">
+                                                    <div className="flex-1 min-w-0">
+                                                        {isCurrent && (
+                                                            <span className="text-[10px] font-extrabold text-primary uppercase tracking-wider mb-1 block">
+                                                                {t.paths.currentCourse}
+                                                            </span>
+                                                        )}
+                                                        <h3 className={`text-base font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2 ${
+                                                            isCurrent ? "text-foreground font-extrabold" : isCompleted ? "text-muted-foreground font-medium" : "text-foreground font-semibold"
+                                                        }`}>
+                                                            {course.title}
+                                                        </h3>
+                                                        <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                                                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${cDiffConfig?.color ?? "text-gray-500"}`}>
+                                                                {course.difficulty}
+                                                            </span>
+                                                            <span>{course.wordCount} {t.create.wordCount}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Progress ring */}
+                                                    <div className="relative w-11 h-11 shrink-0">
+                                                        <svg className="w-full h-full -rotate-90" viewBox="0 0 40 40">
+                                                            <circle
+                                                                cx="20" cy="20" r={radius}
+                                                                fill="none" strokeWidth="3"
+                                                                className="stroke-muted/30"
+                                                            />
+                                                            <circle
+                                                                cx="20" cy="20" r={radius}
+                                                                fill="none" strokeWidth="3"
+                                                                strokeLinecap="round"
+                                                                className={`${isCompleted ? "stroke-success" : courseProgress > 0 ? "stroke-primary" : "stroke-border"} transition-all duration-700`}
+                                                                style={{
+                                                                    strokeDasharray: circumference,
+                                                                    strokeDashoffset: strokeDashoffset,
+                                                                }}
+                                                            />
+                                                        </svg>
+                                                        <div className="absolute inset-0 flex items-center justify-center">
+                                                            <span className={`text-[9px] font-bold ${
+                                                                isCompleted ? "text-success" : courseProgress > 0 ? "text-primary" : "text-muted-foreground"
+                                                            }`}>
+                                                                {courseProgress}%
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </main>
 
