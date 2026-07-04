@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     const questionCount = Math.min(words.length, 10);
 
     const { output } = await generateText({
-      model: google("gemini-3-flash-preview"),
+      model: google("gemini-3.5-flash"),
       output: Output.object({ schema: quizResponseSchema }),
       prompt: `You are an English vocabulary quiz generator for ${difficulty || "intermediate"} level learners.
 

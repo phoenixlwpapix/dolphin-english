@@ -112,20 +112,20 @@ export default function CoursePreviewPage() {
 
             <main className="container mx-auto px-4 py-8 mt-4">
                 <div className="max-w-3xl mx-auto">
-                    {/* Back button */}
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="-ml-3 mb-6"
-                        onClick={() => router.push("/")}
-                    >
-                        <ChevronLeftIcon className="w-5 h-5 mr-1" />
-                        {t.common.back}
-                    </Button>
-
                     <Card className="overflow-hidden">
                         {/* Header section with gradient */}
                         <div className="bg-primary-50 dark:bg-primary-900/20 p-6 md:p-8 border-b border-border">
+                            {/* Back button */}
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="-ml-3 mb-4 group text-muted-foreground hover:text-foreground font-medium transition-colors"
+                                onClick={() => router.push("/")}
+                            >
+                                <ChevronLeftIcon className="w-5 h-5 mr-1.5 transition-transform duration-200 group-hover:-translate-x-1" />
+                                {t.common.back}
+                            </Button>
+
                             {/* Title row with admin action */}
                             <div className="flex items-start justify-between gap-4 mb-4">
                                 <div className="flex-1 min-w-0">

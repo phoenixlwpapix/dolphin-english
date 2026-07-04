@@ -17,6 +17,7 @@ import {
     UserIcon,
     LogOutIcon,
     Button,
+    PlusIcon,
 } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
 import { TOTAL_MODULES, DIFFICULTY_CONFIG, CEFR_LEVELS } from "@/lib/constants";
@@ -269,6 +270,13 @@ export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: Dashboar
                                     )}
                                 </div>
                             </div>
+
+                            {activeTab === "my" && (
+                                <Button onClick={onCreateCourse} className="rounded-xl flex items-center gap-1.5 shadow-md">
+                                    <PlusIcon className="w-4 h-4" />
+                                    {t.home.newCourse}
+                                </Button>
+                            )}
                         </div>
 
                         <FilterBar
@@ -319,8 +327,12 @@ type MyPath = {
     _id: string;
     titleEn: string;
     titleZh: string;
+    descriptionEn: string;
+    descriptionZh: string;
     difficulty: string;
     courseIds: string[];
+    coverGradient?: string;
+    _creationTime: number;
     completedCourses: number;
     totalCourses: number;
     addedAt: number;

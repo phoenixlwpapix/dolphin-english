@@ -28,7 +28,7 @@ export function AnalyticsDashboard() {
     if (!analytics) return null;
 
     return (
-        <div className="max-w-5xl mx-auto space-y-8 animate-slide-up">
+        <div className="w-full space-y-8 animate-slide-up">
             {/* Header */}
             <div className="flex items-center gap-3 mb-6">
                 <div className="bg-primary-100 p-2 rounded-xl text-primary-700">

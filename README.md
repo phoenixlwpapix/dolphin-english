@@ -37,7 +37,7 @@ An English learning app for A1-C2 learners that transforms real-world articles i
 - **Database**: [Convex](https://convex.dev/) (real-time database + serverless functions)
 - **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
 - **Charts**: [Recharts](https://recharts.org/) (analytics dashboard)
-- **AI**: Google Gemini 3 Flash (via @ai-sdk/google)
+- **AI**: Google Gemini 3.5 Flash (via @ai-sdk/google)
 - **Auth**: @convex-dev/auth
 - **Fonts**: Outfit (body) + Mali (English handwriting) + ZCOOL KuaiLe (Chinese handwriting)
 

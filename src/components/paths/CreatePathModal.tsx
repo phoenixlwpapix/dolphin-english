@@ -44,6 +44,17 @@ export function CreatePathModal({ isOpen, onClose, onSuccess, editData }: Create
     const [coverGradient, setCoverGradient] = useState<string>(PATH_GRADIENTS[0]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    // Filter out already selected courses from the available list
+    const availableCourses = publicCourses
+        ? publicCourses.filter(course => !selectedCourseIds.includes(course._id as Id<"courses">))
+        : [];
+
+    // Filter available courses by search query
+    const filteredAvailableCourses = availableCourses.filter(course =>
+        course.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     // Populate form when editData changes
     useEffect(() => {
@@ -55,6 +66,7 @@ export function CreatePathModal({ isOpen, onClose, onSuccess, editData }: Create
             setDifficulty(editData.difficulty);
             setSelectedCourseIds(editData.courseIds);
             setCoverGradient(editData.coverGradient ?? PATH_GRADIENTS[0]);
+            setSearchQuery("");
             setError(null);
         }
     }, [editData, isOpen]);
@@ -67,6 +79,7 @@ export function CreatePathModal({ isOpen, onClose, onSuccess, editData }: Create
         setDifficulty("B1");
         setSelectedCourseIds([]);
         setCoverGradient(PATH_GRADIENTS[0]);
+        setSearchQuery("");
         setError(null);
     };
 
@@ -146,7 +159,7 @@ export function CreatePathModal({ isOpen, onClose, onSuccess, editData }: Create
 
     return (
         <Modal isOpen={isOpen} onClose={handleClose} title={modalTitle} size="xl">
-            <div className="space-y-5 max-h-[70vh] overflow-y-auto px-1">
+            <div className="space-y-5 max-h-[70vh] overflow-y-auto px-3">
                 {/* Bilingual titles */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -238,12 +251,16 @@ export function CreatePathModal({ isOpen, onClose, onSuccess, editData }: Create
                             <button
                                 key={gradient}
                                 onClick={() => setCoverGradient(gradient)}
-                                className={`w-10 h-10 rounded-xl ${gradient} transition-all ${
+                                className={`w-8 h-8 rounded-full ${gradient} flex items-center justify-center transition-all ${
                                     coverGradient === gradient
-                                        ? "ring-2 ring-primary ring-offset-2 ring-offset-background scale-110"
+                                        ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
                                         : "hover:scale-105"
                                 }`}
-                            />
+                            >
+                                {coverGradient === gradient && (
+                                    <CheckIcon className="w-4 h-4 text-white drop-shadow-sm" />
+                                )}
+                            </button>
                         ))}
                     </div>
                 </div>
@@ -252,84 +269,145 @@ export function CreatePathModal({ isOpen, onClose, onSuccess, editData }: Create
                 <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
                         {t.paths.selectCourses}
-                        {selectedCourseIds.length > 0 && (
-                            <span className="ml-2 text-primary text-xs">({selectedCourseIds.length})</span>
-                        )}
                     </label>
 
-                    {/* Selected courses with reorder */}
-                    {selectedCourseIds.length > 0 && (
-                        <div className="mb-3 space-y-1.5 p-3 bg-primary/5 rounded-xl border border-primary/10">
-                            <p className="text-xs text-muted-foreground font-medium mb-2">{t.paths.reorderCourses}</p>
-                            {selectedCourseIds.map((courseId, index) => {
-                                const course = publicCourses?.find(c => c._id === courseId);
-                                if (!course) return null;
-                                return (
-                                    <div key={courseId} className="flex items-center gap-2 bg-background rounded-lg px-3 py-2">
-                                        <span className="text-xs font-bold text-primary w-5 shrink-0">{index + 1}</span>
-                                        <span className="text-sm text-foreground flex-1 truncate">{course.title}</span>
-                                        <div className="flex items-center gap-0.5 shrink-0">
-                                            <button
-                                                onClick={() => moveCourse(index, -1)}
-                                                disabled={index === 0}
-                                                className="p-1 rounded hover:bg-muted disabled:opacity-30 transition-colors"
-                                            >
-                                                <ChevronLeftIcon className="w-3.5 h-3.5 rotate-90" />
-                                            </button>
-                                            <button
-                                                onClick={() => moveCourse(index, 1)}
-                                                disabled={index === selectedCourseIds.length - 1}
-                                                className="p-1 rounded hover:bg-muted disabled:opacity-30 transition-colors"
-                                            >
-                                                <ChevronRightIcon className="w-3.5 h-3.5 rotate-90" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border border-border/50 rounded-2xl p-3 bg-muted/10">
+                        {/* Left Column: Available Courses */}
+                        <div className="flex flex-col h-[280px]">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                    {language === "zh" ? "候选课程" : "Available Courses"}
+                                </span>
+                                <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full font-medium">
+                                    {availableCourses.length}
+                                </span>
+                            </div>
 
-                    {/* Course list */}
-                    <div className="max-h-48 overflow-y-auto space-y-1 border border-border/50 rounded-xl p-2">
-                        {publicCourses === undefined ? (
-                            <div className="py-4 text-center text-sm text-muted-foreground">
-                                {t.common.loading}
+                            {/* Search Box */}
+                            <div className="mb-2">
+                                <input
+                                    type="text"
+                                    placeholder={language === "zh" ? "搜索候选课程..." : "Search available..."}
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full px-2.5 py-1.5 text-xs bg-background border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 text-foreground placeholder:text-muted-foreground"
+                                />
                             </div>
-                        ) : publicCourses.length === 0 ? (
-                            <div className="py-4 text-center text-sm text-muted-foreground">
-                                {language === "zh" ? "暂无公开课程" : "No public courses available"}
+
+                            {/* Scrollable List */}
+                            <div className="flex-1 overflow-y-auto space-y-1 bg-background border border-border/30 rounded-xl p-2">
+                                {publicCourses === undefined ? (
+                                    <div className="h-full flex items-center justify-center text-xs text-muted-foreground py-4">
+                                        {t.common.loading}
+                                    </div>
+                                ) : filteredAvailableCourses.length === 0 ? (
+                                    <div className="h-full flex items-center justify-center text-xs text-muted-foreground py-8 text-center px-4">
+                                        {searchQuery
+                                            ? (language === "zh" ? "无匹配课程" : "No matching courses")
+                                            : (language === "zh" ? "无可选课程" : "No courses available")
+                                        }
+                                    </div>
+                                ) : (
+                                    filteredAvailableCourses.map((course) => {
+                                        const diffKey = course.difficulty as keyof typeof DIFFICULTY_CONFIG;
+                                        const diffConfig = DIFFICULTY_CONFIG[diffKey];
+                                        return (
+                                            <button
+                                                key={course._id}
+                                                onClick={() => toggleCourse(course._id as Id<"courses">)}
+                                                className="w-full flex items-center gap-2 px-2 py-1.5 hover:bg-primary-50 dark:hover:bg-primary-950/20 rounded-lg text-left transition-colors border border-transparent hover:border-primary-100 dark:hover:border-primary-900/30 group"
+                                            >
+                                                <div className="w-5 h-5 rounded-full bg-primary-100 dark:bg-primary-950 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
+                                                    <span className="text-sm font-bold leading-none">+</span>
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-xs text-foreground font-medium truncate">{course.title}</p>
+                                                    <p className="text-[10px] text-muted-foreground">{course.wordCount} {t.create.wordCount}</p>
+                                                </div>
+                                                <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold shrink-0 ${diffConfig?.color ?? "text-gray-500"}`}>
+                                                    {course.difficulty}
+                                                </span>
+                                            </button>
+                                        );
+                                    })
+                                )}
                             </div>
-                        ) : (
-                            publicCourses.map((course) => {
-                                const isSelected = selectedCourseIds.includes(course._id as Id<"courses">);
-                                const diffKey = course.difficulty as keyof typeof DIFFICULTY_CONFIG;
-                                const diffConfig = DIFFICULTY_CONFIG[diffKey];
-                                return (
-                                    <button
-                                        key={course._id}
-                                        onClick={() => toggleCourse(course._id as Id<"courses">)}
-                                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all ${
-                                            isSelected
-                                                ? "bg-primary/10 border border-primary/20"
-                                                : "hover:bg-muted/50"
-                                        }`}
-                                    >
-                                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
-                                            isSelected
-                                                ? "bg-primary border-primary text-white"
-                                                : "border-border/50"
-                                        }`}>
-                                            {isSelected && <CheckIcon className="w-3 h-3" />}
-                                        </div>
-                                        <span className="text-sm text-foreground flex-1 truncate">{course.title}</span>
-                                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${diffConfig?.color ?? "text-gray-500"}`}>
-                                            {course.difficulty}
-                                        </span>
-                                    </button>
-                                );
-                            })
-                        )}
+                        </div>
+
+                        {/* Right Column: Selected Courses & Order */}
+                        <div className="flex flex-col h-[280px]">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                    {language === "zh" ? "已选顺序" : "Selected Order"}
+                                </span>
+                                <span className="text-xs text-white bg-primary px-2 py-0.5 rounded-full font-medium">
+                                    {selectedCourseIds.length}
+                                </span>
+                            </div>
+
+                            {/* Scrollable list */}
+                            <div className="flex-1 overflow-y-auto space-y-1 bg-background border border-border/30 rounded-xl p-2">
+                                {selectedCourseIds.length === 0 ? (
+                                    <div className="h-full flex flex-col items-center justify-center text-center p-4">
+                                        <p className="text-xs text-muted-foreground leading-relaxed">
+                                            {language === "zh"
+                                                ? "在左侧点击课程，即可排列其学习顺序"
+                                                : "Click courses on the left to arrange them here"
+                                            }
+                                        </p>
+                                    </div>
+                                ) : (
+                                    selectedCourseIds.map((courseId, index) => {
+                                        const course = publicCourses?.find(c => c._id === courseId);
+                                        if (!course) return null;
+                                        const diffKey = course.difficulty as keyof typeof DIFFICULTY_CONFIG;
+                                        const diffConfig = DIFFICULTY_CONFIG[diffKey];
+                                        return (
+                                            <div
+                                                key={courseId}
+                                                className="flex items-center gap-1.5 px-2 py-1.5 bg-primary/5 border border-primary-100/30 dark:border-primary-900/10 rounded-lg hover:bg-primary-100/10 transition-colors"
+                                            >
+                                                {/* Index badge */}
+                                                <span className="text-xs font-extrabold text-primary w-4 text-center shrink-0">{index + 1}</span>
+
+                                                {/* Course Info */}
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-xs text-foreground font-medium truncate">{course.title}</p>
+                                                    <p className="text-[10px] text-muted-foreground">{course.wordCount} {t.create.wordCount}</p>
+                                                </div>
+
+                                                {/* Actions */}
+                                                <div className="flex items-center gap-0.5 shrink-0">
+                                                    <button
+                                                        onClick={() => moveCourse(index, -1)}
+                                                        disabled={index === 0}
+                                                        className="p-1 rounded hover:bg-muted text-muted-foreground disabled:opacity-20 transition-all hover:text-foreground"
+                                                        title={language === "zh" ? "上移" : "Move Up"}
+                                                    >
+                                                        <ChevronLeftIcon className="w-3 h-3 rotate-90" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => moveCourse(index, 1)}
+                                                        disabled={index === selectedCourseIds.length - 1}
+                                                        className="p-1 rounded hover:bg-muted text-muted-foreground disabled:opacity-20 transition-all hover:text-foreground"
+                                                        title={language === "zh" ? "下移" : "Move Down"}
+                                                    >
+                                                        <ChevronRightIcon className="w-3 h-3 rotate-90" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => toggleCourse(courseId)}
+                                                        className="p-1 rounded hover:bg-error/10 text-muted-foreground hover:text-error transition-all"
+                                                        title={language === "zh" ? "移除" : "Remove"}
+                                                    >
+                                                        <span className="text-base font-bold leading-none block w-3 h-3 text-center">×</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
 

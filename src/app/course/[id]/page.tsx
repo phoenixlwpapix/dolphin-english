@@ -173,18 +173,18 @@ export default function CoursePage() {
           {/* Left Sidebar (Desktop) */}
           <div className="hidden lg:block lg:col-span-3">
             <div className="sticky top-24 space-y-6">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="-ml-3 mb-2"
-                onClick={() => router.push("/")}
-              >
-                <ChevronLeftIcon className="w-5 h-5 mr-1" />
-                {t.common.back}
-              </Button>
-
               <Card padding="lg" className="space-y-6">
                 <div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="-ml-3 mb-4 group text-muted-foreground hover:text-foreground font-medium transition-colors"
+                    onClick={() => router.push("/")}
+                  >
+                    <ChevronLeftIcon className="w-5 h-5 mr-1.5 transition-transform duration-200 group-hover:-translate-x-1" />
+                    {t.common.back}
+                  </Button>
+
                   <h1 className="text-xl font-bold text-foreground mb-3 leading-tight">
                     {course.title}
                   </h1>

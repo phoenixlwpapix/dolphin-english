@@ -19,6 +19,7 @@ import {
   BookOpen,
   Pencil,
   Plus,
+  Shuffle,
   Calendar,
   ChartBar,
   Clock,
@@ -311,5 +312,10 @@ export function LayersIcon(props: IconProps) {
 /** Fish icon for dolphin summary */
 export function FishIcon(props: IconProps) {
   return <Fish {...props} />;
+}
+
+/** Shuffle icon for vocabulary shuffle */
+export function ShuffleIcon(props: IconProps) {
+  return <Shuffle {...props} />;
 }
 

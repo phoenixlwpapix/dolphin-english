@@ -19,7 +19,7 @@ export async function POST(req: Request) {
 
         // Use Gemini's vision capability to extract text
         const { text } = await generateText({
-            model: google('gemini-3-flash-preview'),
+            model: google('gemini-3.5-flash'),
             messages: [
                 {
                     role: 'user',

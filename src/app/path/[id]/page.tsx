@@ -116,20 +116,20 @@ export default function PathDetailPage() {
 
             <main className="container mx-auto px-4 py-8 mt-4">
                 <div className="max-w-3xl mx-auto">
-                    {/* Back button */}
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="-ml-3 mb-6"
-                        onClick={() => router.push("/")}
-                    >
-                        <ChevronLeftIcon className="w-5 h-5 mr-1" />
-                        {t.common.back}
-                    </Button>
-
                     {/* Path header card */}
                     <Card padding="none" className={`overflow-hidden rounded-2xl border-t-4 ${borderColor} mb-8`}>
                         <div className="p-6 md:p-8">
+                            {/* Back button */}
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="-ml-3 mb-4 group text-muted-foreground hover:text-foreground font-medium transition-colors"
+                                onClick={() => router.push("/")}
+                            >
+                                <ChevronLeftIcon className="w-5 h-5 mr-1.5 transition-transform duration-200 group-hover:-translate-x-1" />
+                                {t.common.back}
+                            </Button>
+
                             {/* Top: label + badge */}
                             <div className="flex items-center gap-2 mb-3">
                                 <RouteIcon className="w-4 h-4 text-muted-foreground" />

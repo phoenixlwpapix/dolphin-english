@@ -149,13 +149,6 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
                         {t.admin.title}
                     </h2>
                 </div>
-                <Button
-                    onClick={subTab === "courses" ? onCreateCourse : onCreatePath}
-                    size="sm"
-                >
-                    <PlusIcon className="w-4 h-4 mr-1.5" />
-                    {subTab === "courses" ? t.home.newCourse : t.paths.createPath}
-                </Button>
             </div>
 
             {/* Summary Stats */}
@@ -275,6 +268,16 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
                         ))}
                     </div>
                 )}
+
+                {/* Create Button aligned to the right */}
+                <Button
+                    onClick={subTab === "courses" ? onCreateCourse : onCreatePath}
+                    size="sm"
+                    className="ml-auto rounded-xl flex items-center gap-1.5 shadow-sm"
+                >
+                    <PlusIcon className="w-4 h-4" />
+                    {subTab === "courses" ? t.home.newCourse : t.paths.createPath}
+                </Button>
             </div>
 
             {/* Content */}

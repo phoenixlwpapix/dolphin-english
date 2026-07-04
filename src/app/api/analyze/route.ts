@@ -116,7 +116,7 @@ export async function POST(req: Request) {
 
     // Use Gemini to analyze the article with bilingual content
     const { output } = await generateText({
-      model: google("gemini-3-flash-preview"),
+      model: google("gemini-3.5-flash"),
       output: Output.object({ schema: articleAnalysisSchema }),
       prompt: `${getAnalysisPrompt(extractedTitle, targetDifficulty ?? null)}\n\n---\n\nARTICLE:\n${contentWithoutTitle}`,
     });

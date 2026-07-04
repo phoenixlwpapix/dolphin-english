@@ -255,6 +255,8 @@ export interface Translations {
     filterByCategory: string;
     // Mode switcher
     flashcardMode: string;
+    listMode: string;
+    searchWords: string;
     quizMode: string;
     // Quiz mode
     quizTitle: string;
@@ -636,6 +638,8 @@ export const zh: Translations = {
     filterByCourse: "按课程筛选",
     filterByCategory: "按分类筛选",
     flashcardMode: "闪卡",
+    listMode: "词汇列表",
+    searchWords: "搜索单词...",
     quizMode: "AI 测验",
     quizTitle: "AI 词汇测验",
     quizDesc: "AI 根据你的词汇生成个性化测验题",

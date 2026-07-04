@@ -68,13 +68,7 @@ export function Sidebar({ className = "", activeTab, onTabChange }: SidebarProps
         <aside
             className={`w-64 border-r border-border bg-surface h-[calc(100vh-5rem)] flex flex-col ${className}`}
         >
-            {/* Navigation */}
             <div className="p-4 space-y-2 flex-1 overflow-y-auto">
-                <div className="mb-4">
-                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4">
-                        {t.sidebar.navigation}
-                    </span>
-                </div>
 
                 {navItems.filter(item => item.show).map((item) => {
                     const Icon = item.icon;

@@ -293,6 +293,8 @@ export const en: Translations = {
     filterByCourse: "Filter by course",
     filterByCategory: "Filter by category",
     flashcardMode: "Flashcards",
+    listMode: "Word List",
+    searchWords: "Search words...",
     quizMode: "AI Quiz",
     quizTitle: "AI Vocabulary Quiz",
     quizDesc: "AI generates personalized quiz questions from your vocabulary",

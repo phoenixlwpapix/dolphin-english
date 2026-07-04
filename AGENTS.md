@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 ## Project Overview
 
@@ -159,7 +159,7 @@ Fonts are loaded in `src/app/layout.tsx` and stored in `public/fonts/`.
 
 ## Common Pitfalls
 
-These are critical rules Claude Code must follow to avoid repeated mistakes:
+These are critical rules Codex must follow to avoid repeated mistakes:
 
 - **Icons**: Never import directly from `lucide-react`. Always use wrapper functions from `src/components/ui/Icons.tsx`. If a needed icon doesn't exist, add a new wrapper there first.
 - **Server Components first**: Never add `"use client"` unless the component genuinely needs browser APIs, event handlers, or hooks. Default to Server Components.

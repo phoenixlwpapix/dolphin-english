@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     }
 
     const { output } = await generateText({
-      model: google("gemini-3-flash-preview"),
+      model: google("gemini-3.5-flash"),
       output: Output.object({ schema: sentenceResponseSchema }),
       prompt: `Generate 2 natural English example sentences using the word "${word}" (meaning: ${definition || "N/A"}).
 

@@ -108,19 +108,19 @@ export default function PathPreviewPage() {
 
             <main className="container mx-auto px-4 py-8 mt-4">
                 <div className="max-w-3xl mx-auto">
-                    {/* Back button */}
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="-ml-3 mb-6"
-                        onClick={() => router.push("/")}
-                    >
-                        <ChevronLeftIcon className="w-5 h-5 mr-1" />
-                        {t.common.back}
-                    </Button>
-
                     <Card padding="none" className={`overflow-hidden rounded-2xl border-t-4 ${borderColor}`}>
                         <div className="px-5 py-5 md:px-6 md:py-6">
+                            {/* Back button */}
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="-ml-3 mb-4 group text-muted-foreground hover:text-foreground font-medium transition-colors"
+                                onClick={() => router.push("/")}
+                            >
+                                <ChevronLeftIcon className="w-5 h-5 mr-1.5 transition-transform duration-200 group-hover:-translate-x-1" />
+                                {t.common.back}
+                            </Button>
+
                             {/* Top row: label + delete */}
                             <div className="flex items-center justify-between mb-3">
                                 <div className="flex items-center gap-2">

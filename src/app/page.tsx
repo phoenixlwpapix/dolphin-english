@@ -34,14 +34,7 @@ export default function HomePage() {
         isSignInOpen={isSignInOpen}
         onSignInOpenChange={setIsSignInOpen}
         variant={currentUser ? "default" : "landing"}
-      >
-        {currentUser && (
-          <Button onClick={() => setIsCreateModalOpen(true)}>
-            <PlusIcon className="w-5 h-5" />
-            {t.home.newCourse}
-          </Button>
-        )}
-      </Header>
+      />
 
       {currentUser ? (
         <Dashboard
