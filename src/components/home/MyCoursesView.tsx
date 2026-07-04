@@ -9,7 +9,6 @@ import {
     SearchIcon,
 } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
-import { DIFFICULTY_CONFIG } from "@/lib/constants";
 import { CourseCard, type CourseWithProgress } from "./CourseCard";
 import { PathCard } from "@/components/paths";
 
@@ -42,7 +41,6 @@ interface MyCoursesViewProps {
 
 export function MyCoursesView({
     myPaths,
-    pathCoursesMap,
     inProgressCourses,
     completedCourses,
     standaloneCourses,
@@ -51,7 +49,7 @@ export function MyCoursesView({
     onCreateCourse,
     onClearFilters,
 }: MyCoursesViewProps) {
-    const { t, language } = useI18n();
+    const { t } = useI18n();
 
     if (isLoading) {
         return (

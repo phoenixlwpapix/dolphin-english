@@ -20,7 +20,7 @@ import {
     PlusIcon,
 } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
-import { TOTAL_MODULES, DIFFICULTY_CONFIG, CEFR_LEVELS } from "@/lib/constants";
+import { TOTAL_MODULES, CEFR_LEVELS } from "@/lib/constants";
 import { AnalyticsDashboard } from "@/components/analytics/AnalyticsDashboard";
 import { VocabularyPractice } from "@/components/vocabulary";
 import { AdminView } from "@/components/admin";
@@ -40,7 +40,6 @@ export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: Dashboar
     const { t } = useI18n();
     const { signOut } = useAuthActions();
     const currentUser = useQuery(api.users.getCurrentUser);
-    const coursesData = useQuery(api.courses.list);
     const publicCourses = useQuery(api.courses.listPublic);
     const myCourses = useQuery(api.userCourses.listMyCourses);
     const myPaths = useQuery(api.learningPaths.listMyPaths);
@@ -91,8 +90,8 @@ export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: Dashboar
 
     // Difficulty levels for filter bar (derived from all courses)
     const difficulties = useMemo(() => {
-        if (!coursesData) return [];
-        const unique = [...new Set(coursesData.map((c) => c.difficulty))];
+        const allCourses = [...(myCourses ?? []), ...(publicCourses ?? [])];
+        const unique = [...new Set(allCourses.map((c) => c.difficulty))];
         return unique.sort((a, b) => {
             const ia = CEFR_LEVELS.indexOf(a);
             const ib = CEFR_LEVELS.indexOf(b);
@@ -100,7 +99,7 @@ export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: Dashboar
             if (ib === -1) return -1;
             return ia - ib;
         });
-    }, [coursesData]);
+    }, [myCourses, publicCourses]);
 
     // Base course list per tab
     const currentCourses = useMemo(() => {

@@ -2,6 +2,12 @@ import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { auth } from "./auth";
 import { difficultyValidator } from "./schema";
+import type { Doc } from "./_generated/dataModel";
+import {
+  canPreviewCourse,
+  canStudyCourse,
+  isCourseEnrolled,
+} from "./_lib/permissions";
 
 // Validators (matching schema)
 const bilingualObjectiveValidator = v.object({
@@ -59,22 +65,44 @@ const courseAnalysisValidator = v.object({
   dolphinSummaryEN: v.optional(v.string()),
 });
 
+function toCourseCardData(course: Doc<"courses">) {
+  return {
+    _id: course._id,
+    _creationTime: course._creationTime,
+    title: course.title,
+    difficulty: course.difficulty,
+    wordCount: course.wordCount,
+    isPublic: course.isPublic,
+    authorId: course.authorId,
+  };
+}
+
 export const list = query({
   args: {},
   handler: async (ctx) => {
     const userId = await auth.getUserId(ctx);
     const courses = await ctx.db.query("courses").order("desc").collect();
 
+    if (!userId) return [];
+
+    const visibleCourses: Array<Doc<"courses">> = [];
+    for (const course of courses) {
+      if (
+        course.authorId === userId.toString() ||
+        (await isCourseEnrolled(ctx, userId, course._id))
+      ) {
+        visibleCourses.push(course);
+      }
+    }
+
     const coursesWithProgress = await Promise.all(
-      courses.map(async (course) => {
-        const progress = userId
-          ? await ctx.db
-              .query("progress")
-              .withIndex("by_userId_courseId", (q) =>
-                q.eq("userId", userId.toString()).eq("courseId", course._id)
-              )
-              .first()
-          : null;
+      visibleCourses.map(async (course) => {
+        const progress = await ctx.db
+          .query("progress")
+          .withIndex("by_userId_courseId", (q) =>
+            q.eq("userId", userId.toString()).eq("courseId", course._id)
+          )
+          .first();
         return { ...course, progress };
       }),
     );
@@ -86,7 +114,16 @@ export const list = query({
 export const get = query({
   args: { id: v.id("courses") },
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.id);
+    const userId = await auth.getUserId(ctx);
+    if (!userId) return null;
+
+    const course = await ctx.db.get(args.id);
+    if (!course) return null;
+
+    const canStudy = await canStudyCourse(ctx, course, userId);
+    if (!canStudy) return null;
+
+    return course;
   },
 });
 
@@ -142,6 +179,19 @@ export const updateAnalysis = mutation({
     analyzedData: courseAnalysisValidator,
   },
   handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) throw new Error("Must be logged in");
+
+    const course = await ctx.db.get(args.id);
+    if (!course) throw new Error("Course not found");
+
+    const user = await ctx.db.get(userId);
+    const isAdmin = user?.role === "admin";
+    const isAuthor = course.authorId === userId.toString();
+    if (!isAuthor && !isAdmin) {
+      throw new Error("Course access denied");
+    }
+
     await ctx.db.patch(args.id, { analyzedData: args.analyzedData });
   },
 });
@@ -212,8 +262,9 @@ export const listPublic = query({
       .order("desc")
       .collect();
 
-    // Filter for public courses only
-    return courses.filter((course) => course.isPublic === true);
+    return courses
+      .filter((course) => course.isPublic === true)
+      .map(toCourseCardData);
   },
 });
 
@@ -338,6 +389,10 @@ export const getPreview = query({
   handler: async (ctx, args) => {
     const course = await ctx.db.get(args.id);
     if (!course) return null;
+
+    const userId = await auth.getUserId(ctx);
+    const canPreview = await canPreviewCourse(ctx, course, userId);
+    if (!canPreview) return null;
 
     // Return limited info for preview
     return {

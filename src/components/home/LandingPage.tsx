@@ -208,9 +208,9 @@ export function LandingPage({ onStart }: LandingPageProps) {
                     </div>
 
                     <blockquote className="text-2xl md:text-4xl font-medium text-foreground mb-8 leading-relaxed">
-                        <span className="gradient-text">"{t.landing.quote.text1}</span>
+                        <span className="gradient-text">&ldquo;{t.landing.quote.text1}</span>
                         <br />
-                        <span className="text-foreground/80">{t.landing.quote.text2}"</span>
+                        <span className="text-foreground/80">{t.landing.quote.text2}&rdquo;</span>
                     </blockquote>
 
                     <div className="flex items-center justify-center gap-3">

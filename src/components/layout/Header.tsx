@@ -2,8 +2,8 @@
 
 import { useState, type ReactNode, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useQuery } from "convex/react";
-import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../../convex/_generated/api";
 import { Button, LanguageSwitcher, ThemeToggle, Modal } from "@/components/ui";
 import { SignInForm } from "@/components/auth";
@@ -66,7 +66,7 @@ export function Header({
       <header className={headerClasses}>
         <div className={containerClasses}>
           {/* Logo */}
-          <a href="/" className="flex items-center gap-3 group">
+          <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-12 h-12 transition-transform duration-300 group-hover:scale-105">
               <Image
                 src="/dolphin-logo-2.png"
@@ -85,7 +85,7 @@ export function Header({
                 {t.app.subtitle}
               </p>
             </div>
-          </a>
+          </Link>
 
           {/* Actions */}
           <div className="flex items-center gap-4">

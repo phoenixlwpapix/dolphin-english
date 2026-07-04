@@ -20,7 +20,6 @@ import { useI18n } from "@/lib/i18n";
 import type { Id } from "../../../../convex/_generated/dataModel";
 import {
   MODULE_TIMES,
-  TOTAL_MODULES,
   DIFFICULTY_CONFIG,
 } from "@/lib/constants";
 import {
@@ -49,7 +48,6 @@ export default function CoursePage() {
 
   const course = useQuery(api.courses.get, { id: courseId });
   const progress = useQuery(api.progress.get, { courseId });
-  const currentUser = useQuery(api.users.getCurrentUser);
 
   const completeModuleMutation = useMutation(api.progress.completeModule);
   const resetProgressMutation = useMutation(api.progress.reset);
@@ -159,7 +157,6 @@ export default function CoursePage() {
   }
 
   const currentModule = progress?.currentModule ?? 1;
-  const isComplete = progress?.completedModules.length === TOTAL_MODULES;
   const hasProgress =
     (progress?.currentModule ?? 1) > 1 ||
     (progress?.completedModules.length ?? 0) > 0;

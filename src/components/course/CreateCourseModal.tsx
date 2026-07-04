@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, type ChangeEvent, type DragEvent } from 'react'
+import Image from 'next/image'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from "../../../convex/_generated/api";
 import { Modal } from '@/components/ui/Modal'
@@ -8,6 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { useI18n } from '@/lib/i18n'
 import { FileTextIcon, ImageIcon, UploadIcon } from '@/components/ui/Icons'
 import { CEFR_LEVELS, DIFFICULTY_CONFIG, type DifficultyLevel } from '@/lib/constants'
+import type { CourseAnalysis } from '@/lib/schemas/article'
 
 interface CreateCourseModalProps {
     isOpen: boolean
@@ -16,6 +18,15 @@ interface CreateCourseModalProps {
 }
 
 type InputMode = 'text' | 'image'
+
+interface AnalyzeResponse {
+    content: string
+    title: string
+    difficulty: DifficultyLevel
+    wordCount: number
+    analyzedData: CourseAnalysis
+    isPublic?: boolean
+}
 
 export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseModalProps) {
     const { t, language } = useI18n()
@@ -110,10 +121,9 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                 throw new Error('Analysis failed')
             }
 
-            const result = await analyzeResponse.json()
+            const result = await analyzeResponse.json() as AnalyzeResponse
 
             // Create course in Convex
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const courseId = await createCourse({
                 content: result.content,
                 title: result.title,
@@ -235,10 +245,13 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                     >
                         {imagePreview ? (
                             <div className="relative w-full h-full p-2 group">
-                                <img
+                                <Image
                                     src={imagePreview}
                                     alt="Preview"
-                                    className="w-full h-full object-contain rounded-lg"
+                                    fill
+                                    unoptimized
+                                    sizes="(max-width: 768px) 100vw, 640px"
+                                    className="object-contain rounded-lg p-2"
                                 />
                                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
                                     <p className="text-white font-medium">{t.create.clickToChange}</p>

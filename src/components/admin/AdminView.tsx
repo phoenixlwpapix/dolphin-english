@@ -39,9 +39,6 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
     const publicCoursesWithStats = useQuery(api.courses.listPublicWithStats);
     const pathsWithStats = useQuery(api.learningPaths.listPublicWithStats);
     const adminTrends = useQuery(api.analytics.getAdminTrends);
-
-    if (currentUser === undefined) return null;
-    if (currentUser?.role !== "admin") return null;
     const removeCourse = useMutation(api.courses.remove);
     const updateMeta = useMutation(api.courses.updateMeta);
     const removePath = useMutation(api.learningPaths.remove);
@@ -136,6 +133,9 @@ export function AdminView({ onCreateCourse, onCreatePath, onEditPath }: AdminVie
     const isLoading = subTab === "courses"
         ? publicCoursesWithStats === undefined
         : pathsWithStats === undefined;
+
+    if (currentUser === undefined) return null;
+    if (currentUser?.role !== "admin") return null;
 
     return (
         <>

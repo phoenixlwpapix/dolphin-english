@@ -19,7 +19,6 @@ import { useI18n } from "@/lib/i18n";
 import type { Id } from "../../../../../convex/_generated/dataModel";
 import { DIFFICULTY_CONFIG } from "@/lib/constants";
 import { CreatePathModal } from "@/components/paths";
-import type { EditPathData } from "@/components/paths/CreatePathModal";
 
 export default function PathPreviewPage() {
     const params = useParams();

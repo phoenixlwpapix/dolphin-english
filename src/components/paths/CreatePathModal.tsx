@@ -360,8 +360,6 @@ export function CreatePathModal({ isOpen, onClose, onSuccess, editData }: Create
                                     selectedCourseIds.map((courseId, index) => {
                                         const course = publicCourses?.find(c => c._id === courseId);
                                         if (!course) return null;
-                                        const diffKey = course.difficulty as keyof typeof DIFFICULTY_CONFIG;
-                                        const diffConfig = DIFFICULTY_CONFIG[diffKey];
                                         return (
                                             <div
                                                 key={courseId}

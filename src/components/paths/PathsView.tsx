@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useI18n } from "@/lib/i18n";
-import { DIFFICULTY_CONFIG } from "@/lib/constants";
 import { SearchIcon, RouteIcon, PlusIcon, Button } from "@/components/ui";
 import { PathCard } from "./PathCard";
 

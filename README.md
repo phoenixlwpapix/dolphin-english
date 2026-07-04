@@ -30,6 +30,7 @@ An English learning app for A1-C2 learners that transforms real-world articles i
   - **AI Example Sentences** - On-demand AI-generated contextual example sentences with Chinese translations for any word
 - **Course Separation** - In-progress and completed courses displayed separately
 - **Admin Panel** - Dedicated management interface for public courses and learning paths with enrollment stats, inline editing, and batch operations
+- **Access Controls** - Public course/path previews expose only safe metadata; full course content and progress mutations require author or enrolled-user access
 
 ## Tech Stack
 
@@ -85,6 +86,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 ```
 dolphin-english/
 ├── convex/                  # Convex backend
+│   ├── _lib/                # Shared backend-only helpers
 │   ├── schema.ts            # Database schema (courses, progress, learningPaths, etc.)
 │   ├── courses.ts           # Course CRUD
 │   ├── userCourses.ts       # User enrollment

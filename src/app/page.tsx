@@ -4,14 +4,11 @@ import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Header } from "@/components/layout";
-import { Button, PlusIcon } from "@/components/ui";
-import { useI18n } from "@/lib/i18n";
 import { CreateCourseModal } from "@/components/course/CreateCourseModal";
 import { CreatePathModal, type EditPathData } from "@/components/paths";
 import { Dashboard, LandingPage } from "@/components/home";
 
 export default function HomePage() {
-  const { t } = useI18n();
   const currentUser = useQuery(api.users.getCurrentUser);
   const publicPaths = useQuery(api.learningPaths.listPublic);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);

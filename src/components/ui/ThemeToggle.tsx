@@ -1,34 +1,27 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Sun, Moon } from 'lucide-react'
+import { MoonIcon, SunIcon } from './Icons'
 
 export function ThemeToggle() {
-    const [dark, setDark] = useState(false)
-    const [mounted, setMounted] = useState(false)
+    const [dark, setDark] = useState(() => {
+        if (typeof window === 'undefined') return false
+        return localStorage.getItem('theme') === 'dark'
+    })
 
     useEffect(() => {
-        setMounted(true)
-        const stored = localStorage.getItem('theme')
-        const isDark = stored === 'dark'
-        setDark(isDark)
-        document.documentElement.classList.toggle('dark', isDark)
-    }, [])
+        document.documentElement.classList.toggle('dark', dark)
+        localStorage.setItem('theme', dark ? 'dark' : 'light')
+    }, [dark])
 
     const toggle = () => {
-        const next = !dark
-        setDark(next)
-        document.documentElement.classList.toggle('dark', next)
-        localStorage.setItem('theme', next ? 'dark' : 'light')
-    }
-
-    if (!mounted) {
-        return <div className="w-8 h-8 rounded-lg bg-surface border border-border" />
+        setDark((current) => !current)
     }
 
     return (
         <button
             onClick={toggle}
+            suppressHydrationWarning
             className="
         flex items-center justify-center w-8 h-8 rounded-lg
         bg-surface border border-border
@@ -37,7 +30,7 @@ export function ThemeToggle() {
             aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
             title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
         >
-            {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {dark ? <SunIcon className="w-4 h-4" /> : <MoonIcon className="w-4 h-4" />}
         </button>
     )
 }

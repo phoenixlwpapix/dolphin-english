@@ -2,8 +2,32 @@ import { query, mutation } from "./_generated/server"
 import { v } from "convex/values"
 import { auth } from "./auth"
 import { difficultyValidator } from "./schema"
+import type { MutationCtx } from "./_generated/server"
+import type { Doc, Id } from "./_generated/dataModel"
 
 const TOTAL_MODULES = 6
+
+function toPathCoursePreview(course: Doc<"courses">, progress: Doc<"progress"> | null) {
+    return {
+        _id: course._id,
+        _creationTime: course._creationTime,
+        title: course.title,
+        difficulty: course.difficulty,
+        wordCount: course.wordCount,
+        isPublic: course.isPublic,
+        progress,
+    }
+}
+
+async function requirePublicCourses(ctx: MutationCtx, courseIds: Array<Id<"courses">>) {
+    for (const courseId of courseIds) {
+        const course = await ctx.db.get(courseId)
+        if (!course) throw new Error("Course not found")
+        if (course.isPublic !== true) {
+            throw new Error("Learning paths can only include public courses")
+        }
+    }
+}
 
 // ─── Admin Mutations ────────────────────────────────────────────
 
@@ -22,6 +46,8 @@ export const create = mutation({
         if (!userId) throw new Error("Must be logged in")
         const user = await ctx.db.get(userId)
         if (user?.role !== "admin") throw new Error("Admin only")
+
+        await requirePublicCourses(ctx, args.courseIds)
 
         return await ctx.db.insert("learningPaths", {
             ...args,
@@ -51,6 +77,10 @@ export const update = mutation({
         const path = await ctx.db.get(args.id)
         if (!path) throw new Error("Path not found")
         if (path.authorId !== userId.toString()) throw new Error("Not the author")
+
+        if (args.courseIds !== undefined) {
+            await requirePublicCourses(ctx, args.courseIds)
+        }
 
         // If courseIds changed, sync new courses to all enrolled users
         if (args.courseIds !== undefined) {
@@ -131,6 +161,11 @@ export const joinPath = mutation({
         const userId = await auth.getUserId(ctx)
         if (!userId) throw new Error("Must be logged in")
 
+        const path = await ctx.db.get(args.pathId)
+        if (!path || path.isPublic !== true) {
+            throw new Error("Path not found")
+        }
+
         // Check if already joined
         const existing = await ctx.db
             .query("userPaths")
@@ -147,23 +182,23 @@ export const joinPath = mutation({
             addedAt: Date.now(),
         })
 
-        // Batch-enroll in all courses
-        const path = await ctx.db.get(args.pathId)
-        if (path) {
-            for (const courseId of path.courseIds) {
-                const alreadyJoined = await ctx.db
-                    .query("userCourses")
-                    .withIndex("by_userId_courseId", (q) =>
-                        q.eq("userId", userId.toString()).eq("courseId", courseId)
-                    )
-                    .first()
-                if (!alreadyJoined) {
-                    await ctx.db.insert("userCourses", {
-                        userId: userId.toString(),
-                        courseId,
-                        addedAt: Date.now(),
-                    })
-                }
+        // Batch-enroll in all public courses
+        for (const courseId of path.courseIds) {
+            const course = await ctx.db.get(courseId)
+            if (!course || course.isPublic !== true) continue
+
+            const alreadyJoined = await ctx.db
+                .query("userCourses")
+                .withIndex("by_userId_courseId", (q) =>
+                    q.eq("userId", userId.toString()).eq("courseId", courseId)
+                )
+                .first()
+            if (!alreadyJoined) {
+                await ctx.db.insert("userCourses", {
+                    userId: userId.toString(),
+                    courseId,
+                    addedAt: Date.now(),
+                })
             }
         }
 
@@ -244,6 +279,7 @@ export const get = query({
     handler: async (ctx, args) => {
         const path = await ctx.db.get(args.id)
         if (!path) return null
+        if (path.isPublic !== true) return null
 
         const userId = await auth.getUserId(ctx)
 
@@ -251,6 +287,7 @@ export const get = query({
             path.courseIds.map(async (courseId) => {
                 const course = await ctx.db.get(courseId)
                 if (!course) return null
+                if (course.isPublic !== true) return null
                 const progress = userId
                     ? await ctx.db
                           .query("progress")
@@ -259,7 +296,7 @@ export const get = query({
                           )
                           .first()
                     : null
-                return { ...course, progress }
+                return toPathCoursePreview(course, progress)
             })
         )
 

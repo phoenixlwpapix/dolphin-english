@@ -51,6 +51,8 @@ import {
   Layers,
   Fish,
   X,
+  Sun,
+  Moon,
   LucideProps,
 } from "lucide-react";
 
@@ -312,6 +314,16 @@ export function LayersIcon(props: IconProps) {
 /** Fish icon for dolphin summary */
 export function FishIcon(props: IconProps) {
   return <Fish {...props} />;
+}
+
+/** Sun icon for light mode */
+export function SunIcon(props: IconProps) {
+  return <Sun {...props} />;
+}
+
+/** Moon icon for dark mode */
+export function MoonIcon(props: IconProps) {
+  return <Moon {...props} />;
 }
 
 /** Shuffle icon for vocabulary shuffle */

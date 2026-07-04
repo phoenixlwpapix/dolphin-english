@@ -29,7 +29,7 @@ export function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
 
             await signIn("password", formData);
             onSuccess?.();
-        } catch (err) {
+        } catch {
             setError(
                 mode === "signIn"
                     ? t.auth?.signInError || "Invalid email or password"

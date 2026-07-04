@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { auth } from "./auth";
+import { isCourseAuthor } from "./_lib/permissions";
 
 /**
  * Add a course to user's course list
@@ -13,6 +14,13 @@ export const addCourse = mutation({
         const userId = await auth.getUserId(ctx);
         if (!userId) {
             throw new Error("Must be logged in to add a course");
+        }
+
+        const course = await ctx.db.get(args.courseId);
+        if (!course) throw new Error("Course not found");
+
+        if (course.isPublic !== true && !isCourseAuthor(course, userId)) {
+            throw new Error("Course access denied");
         }
 
         // Check if already added

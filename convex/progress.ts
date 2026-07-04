@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server"
 import { v } from "convex/values"
 import { auth } from "./auth"
+import { requireCourseStudyAccess } from "./_lib/permissions"
 
 const quizResultValidator = v.object({
     questionId: v.string(),
@@ -27,6 +28,8 @@ export const create = mutation({
     handler: async (ctx, args) => {
         const userId = await auth.getUserId(ctx)
         if (!userId) throw new Error("Must be logged in")
+
+        await requireCourseStudyAccess(ctx, args.courseId, userId)
 
         // Avoid creating duplicate progress records
         const existing = await ctx.db
@@ -58,6 +61,8 @@ export const updateCurrentModule = mutation({
         const userId = await auth.getUserId(ctx)
         if (!userId) throw new Error("Must be logged in")
 
+        await requireCourseStudyAccess(ctx, args.courseId, userId)
+
         const progress = await ctx.db
             .query("progress")
             .withIndex("by_userId_courseId", (q) =>
@@ -82,6 +87,8 @@ export const completeModule = mutation({
     handler: async (ctx, args) => {
         const userId = await auth.getUserId(ctx)
         if (!userId) throw new Error("Must be logged in")
+
+        await requireCourseStudyAccess(ctx, args.courseId, userId)
 
         const progress = await ctx.db
             .query("progress")
@@ -128,6 +135,8 @@ export const saveQuizResults = mutation({
         const userId = await auth.getUserId(ctx)
         if (!userId) throw new Error("Must be logged in")
 
+        await requireCourseStudyAccess(ctx, args.courseId, userId)
+
         const progress = await ctx.db
             .query("progress")
             .withIndex("by_userId_courseId", (q) =>
@@ -152,6 +161,8 @@ export const recordVocabularyClick = mutation({
     handler: async (ctx, args) => {
         const userId = await auth.getUserId(ctx)
         if (!userId) throw new Error("Must be logged in")
+
+        await requireCourseStudyAccess(ctx, args.courseId, userId)
 
         const progress = await ctx.db
             .query("progress")
@@ -178,6 +189,8 @@ export const reset = mutation({
     handler: async (ctx, args) => {
         const userId = await auth.getUserId(ctx)
         if (!userId) throw new Error("Must be logged in")
+
+        await requireCourseStudyAccess(ctx, args.courseId, userId)
 
         const progress = await ctx.db
             .query("progress")

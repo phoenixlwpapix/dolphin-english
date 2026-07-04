@@ -4,6 +4,43 @@ import { articleAnalysisSchema } from "@/lib/schemas";
 
 export const maxDuration = 60;
 
+const MAX_ARTICLE_CHARS = 20000;
+const allowedDifficulties = new Set(["A1", "A2", "B1", "B2", "C1", "C2"]);
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 5;
+
+const rateLimitBuckets = new Map<string, { count: number; resetAt: number }>();
+
+function getClientKey(req: Request) {
+  const forwardedFor = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return forwardedFor || req.headers.get("x-real-ip") || "unknown";
+}
+
+function isRateLimited(req: Request) {
+  const now = Date.now();
+  if (rateLimitBuckets.size > 1000) {
+    for (const [bucketKey, bucket] of rateLimitBuckets) {
+      if (bucket.resetAt <= now) rateLimitBuckets.delete(bucketKey);
+    }
+  }
+
+  const key = getClientKey(req);
+  const bucket = rateLimitBuckets.get(key);
+
+  if (!bucket || bucket.resetAt <= now) {
+    rateLimitBuckets.set(key, {
+      count: 1,
+      resetAt: now + RATE_LIMIT_WINDOW_MS,
+    });
+    return false;
+  }
+
+  if (bucket.count >= RATE_LIMIT_MAX_REQUESTS) return true;
+
+  bucket.count += 1;
+  return false;
+}
+
 /**
  * 尝试从文章文本中提取标题
  * 规则：如果第一行是短文本（≤15个单词）且不以句号结尾，则认为是标题
@@ -94,11 +131,30 @@ Important guidelines:
 
 export async function POST(req: Request) {
   try {
-    const { text, isPublic, difficulty: targetDifficulty } = await req.json();
+    if (isRateLimited(req)) {
+      return Response.json(
+        { error: "Too many analysis requests. Please try again shortly." },
+        { status: 429 },
+      );
+    }
+
+    const { text, isPublic, difficulty } = await req.json();
 
     if (!text || typeof text !== "string") {
       return Response.json({ error: "No text provided" }, { status: 400 });
     }
+
+    if (text.length > MAX_ARTICLE_CHARS) {
+      return Response.json(
+        { error: "Article too long (maximum 20,000 characters)" },
+        { status: 413 },
+      );
+    }
+
+    const targetDifficulty =
+      typeof difficulty === "string" && allowedDifficulties.has(difficulty)
+        ? difficulty
+        : null;
 
     // 尝试从文本中提取标题
     const { title: extractedTitle, contentWithoutTitle } =

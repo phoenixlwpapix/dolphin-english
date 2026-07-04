@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui";
 import { RouteIcon, BookOpenIcon, CheckCircleIcon } from "@/components/ui/Icons";
 import { useI18n } from "@/lib/i18n";
-import { DIFFICULTY_CONFIG, TOTAL_MODULES } from "@/lib/constants";
+import { DIFFICULTY_CONFIG } from "@/lib/constants";
 
 interface PathCardProps {
     path: {

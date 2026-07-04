@@ -8,7 +8,6 @@ import {
     BarChart3Icon,
     LibraryIcon,
     BookOpenIcon,
-    RouteIcon,
     BookAIcon,
     ShieldIcon,
 } from "@/components/ui/Icons";
