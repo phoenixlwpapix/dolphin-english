@@ -13,7 +13,7 @@ import {
     CheckCircleIcon,
     ConfirmModal,
 } from "@/components/ui";
-import { RouteIcon, BookOpenIcon, EditIcon } from "@/components/ui/Icons";
+import { RouteIcon, BookOpenIcon, EditIcon, LogOutIcon } from "@/components/ui/Icons";
 import { useI18n } from "@/lib/i18n";
 import type { Id } from "../../../../convex/_generated/dataModel";
 import { DIFFICULTY_CONFIG, TOTAL_MODULES } from "@/lib/constants";
@@ -173,12 +173,12 @@ export default function PathDetailPage() {
                             </div>
 
                             {/* Overall progress bar */}
-                            <div className="p-4 bg-muted rounded-xl">
-                                <div className="flex items-center justify-between text-xs mb-2">
-                                    <span className="text-muted-foreground font-medium">{t.paths.overallProgress}</span>
+                            <div className="p-5 bg-muted/50 rounded-2xl border border-border/30">
+                                <div className="flex items-center justify-between text-xs mb-2.5">
+                                    <span className="text-muted-foreground font-semibold">{t.paths.overallProgress}</span>
                                     <span className={`font-bold ${overallProgress === 100 ? "text-success" : "text-accent"}`}>{overallProgress}%</span>
                                 </div>
-                                <div className="h-2 bg-background rounded-full overflow-hidden">
+                                <div className="h-2.5 bg-background rounded-full overflow-hidden relative">
                                     <div
                                         className={`h-full rounded-full transition-all duration-700 ${overallProgress === 100 ? "bg-success" : "bg-accent"}`}
                                         style={{ width: `${overallProgress}%` }}
@@ -189,7 +189,7 @@ export default function PathDetailPage() {
                     </Card>
 
                     {/* Course timeline */}
-                    <div className="space-y-0">
+                    <div className="space-y-6">
                         {pathData.courses.map((course, index) => {
                             const completedModules = course.progress?.completedModules?.length ?? 0;
                             const courseProgress = Math.round((completedModules / TOTAL_MODULES) * 100);
@@ -204,48 +204,53 @@ export default function PathDetailPage() {
                             const strokeDashoffset = circumference - (courseProgress / 100) * circumference;
 
                             return (
-                                <div key={course._id} className="relative">
-                                    {/* Timeline connector */}
-                                    {index < pathData.courses.length - 1 && (
-                                        <div className={`absolute left-[23px] top-[56px] bottom-0 w-0.5 ${isCompleted ? "bg-success/40" : "bg-border/50"}`} />
-                                    )}
-
-                                    <a
-                                        href={`/course/${course._id}`}
-                                        className={`block group relative pl-14 pr-4 py-4 rounded-2xl mb-2 transition-all ${
-                                            isCurrent
-                                                ? "bg-primary/5 border border-primary/20 shadow-sm"
-                                                : "hover:bg-muted/30"
-                                        }`}
-                                    >
-                                        {/* Timeline node */}
-                                        <div className={`absolute left-3 top-5 w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] font-bold ${
+                                <div key={course._id} className="relative flex gap-6 items-start">
+                                    {/* Timeline node and connector */}
+                                    <div className="flex flex-col items-center shrink-0 w-8 self-stretch relative">
+                                        {/* Node */}
+                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold z-10 transition-all ${
                                             isCompleted
-                                                ? "bg-success text-white"
+                                                ? "bg-success text-white shadow-md shadow-success/20 ring-4 ring-success/15"
                                                 : isCurrent
-                                                    ? "bg-primary text-white shadow-lg shadow-primary/30"
-                                                    : "bg-muted text-muted-foreground border border-border"
+                                                    ? "bg-primary text-white shadow-lg shadow-primary/25 ring-4 ring-primary/15"
+                                                    : "bg-surface text-muted-foreground border-2 border-border shadow-sm ring-4 ring-muted/5"
                                         }`}>
                                             {isCompleted ? (
-                                                <CheckCircleIcon className="w-3.5 h-3.5" />
+                                                <CheckCircleIcon className="w-4 h-4" />
                                             ) : (
                                                 index + 1
                                             )}
                                         </div>
+                                        {/* Timeline connector */}
+                                        {index < pathData.courses.length - 1 && (
+                                            <div className={`absolute left-[15px] top-[32px] bottom-[-24px] w-0.5 z-0 ${isCompleted ? "bg-success/50" : "bg-border"}`} />
+                                        )}
+                                    </div>
 
+                                    {/* Course Card */}
+                                    <a
+                                        href={`/course/${course._id}`}
+                                        className={`flex-1 block group p-5 rounded-2xl border transition-all duration-300 ${
+                                            isCurrent
+                                                ? "border-primary bg-primary/5 shadow-md shadow-primary/5"
+                                                : isCompleted
+                                                    ? "border-border/60 bg-surface/40 opacity-85 hover:opacity-100 hover:border-success/40"
+                                                    : "border-border bg-surface hover:border-accent/40 hover:shadow-lg hover:shadow-accent/5 hover:-translate-y-0.5"
+                                        }`}
+                                    >
                                         <div className="flex items-center gap-4">
                                             <div className="flex-1 min-w-0">
                                                 {isCurrent && (
-                                                    <span className="text-[10px] font-semibold text-primary uppercase tracking-wider mb-1 block">
+                                                    <span className="text-[10px] font-extrabold text-primary uppercase tracking-wider mb-1 block">
                                                         {t.paths.currentCourse}
                                                     </span>
                                                 )}
-                                                <h3 className={`font-semibold leading-snug group-hover:text-primary transition-colors line-clamp-2 ${
-                                                    isCurrent ? "text-foreground" : isCompleted ? "text-muted-foreground" : "text-foreground"
+                                                <h3 className={`text-base font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2 ${
+                                                    isCurrent ? "text-foreground font-extrabold" : isCompleted ? "text-muted-foreground font-medium" : "text-foreground font-semibold"
                                                 }`}>
                                                     {course.title}
                                                 </h3>
-                                                <div className="flex items-center gap-3 mt-1.5 text-xs text-muted-foreground">
+                                                <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                                                     <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${cDiffConfig?.color ?? "text-gray-500"}`}>
                                                         {course.difficulty}
                                                     </span>
@@ -289,13 +294,14 @@ export default function PathDetailPage() {
 
                     {/* Leave path */}
                     {currentUser && (
-                        <div className="mt-8 flex justify-center">
+                        <div className="mt-12 flex justify-center">
                             <Button
-                                variant="secondary"
+                                variant="ghost"
                                 size="sm"
                                 onClick={() => setShowLeaveConfirm(true)}
-                                className="text-muted-foreground hover:text-destructive"
+                                className="text-muted-foreground hover:text-error hover:bg-error/5 rounded-xl px-4 py-2 cursor-pointer transition-all flex items-center gap-2"
                             >
+                                <LogOutIcon className="w-4 h-4" />
                                 {t.paths.leavePath}
                             </Button>
                         </div>
