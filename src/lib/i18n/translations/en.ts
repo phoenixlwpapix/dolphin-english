@@ -263,6 +263,7 @@ export const en: Translations = {
     vocabularyClicked: "Vocabulary Reviewed",
     quizAccuracy: "Quiz Accuracy by Type",
     accuracy: "Accuracy",
+    mastery: "Mastery",
     vocabularyMastery: "Vocabulary Mastery by Level",
     activityHeatmap: "Study Activity",
     studyTrends: "Weekly Study Trends",

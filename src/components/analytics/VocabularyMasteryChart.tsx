@@ -14,17 +14,17 @@ import {
 import { BookOpenIcon } from "@/components/ui/Icons";
 
 const CEFR_COLORS: Record<string, string> = {
-    A1: "#65a30d",
-    "A1+": "#16a34a",
-    A2: "#059669",
-    "A2+": "#0d9488",
-    B1: "#0891b2",
-    "B1+": "#2563eb",
-    B2: "#4f46e5",
-    "B2+": "#7c3aed",
-    C1: "#9333ea",
-    "C1+": "#c026d3",
-    C2: "#e11d48",
+    A1: "#bae6fd",     // Sky 200 (soft light blue)
+    "A1+": "#a5f3fc",   // Cyan 200 (soft light cyan)
+    A2: "#7dd3fc",     // Sky 300 (light sky blue)
+    "A2+": "#67e8f9",   // Cyan 300 (light cyan)
+    B1: "#38bdf8",     // Sky 400 (bright sky blue)
+    "B1+": "#22d3ee",   // Cyan 400 (bright cyan)
+    B2: "#0ea5e9",     // Sky 500 (sky blue)
+    "B2+": "#06b6d4",   // Cyan 500 (ocean cyan)
+    C1: "#2563eb",     // Blue 600 (royal blue)
+    "C1+": "#4f46e5",   // Indigo 600 (indigo)
+    C2: "#7c3aed",     // Violet 600 (purple)
 };
 
 interface VocabularyMasteryChartProps {
@@ -75,6 +75,7 @@ export function VocabularyMasteryChart({ data }: VocabularyMasteryChartProps) {
                             tickLine={false}
                         />
                         <Tooltip
+                            cursor={false}
                             contentStyle={{
                                 background: "var(--color-card)",
                                 backdropFilter: "blur(8px)",
@@ -82,11 +83,13 @@ export function VocabularyMasteryChart({ data }: VocabularyMasteryChartProps) {
                                 borderRadius: "12px",
                                 fontSize: "13px",
                             }}
+                            labelStyle={{ color: "var(--color-foreground)", fontWeight: "bold" }}
+                            itemStyle={{ color: "var(--color-accent)" }}
                             formatter={(value, _name, entry) => {
                                 const payload = entry.payload as { clicked: number; total: number };
                                 return [
                                     `${value}% (${payload.clicked}/${payload.total})`,
-                                    t.analytics.accuracy,
+                                    t.analytics.mastery,
                                 ];
                             }}
                         />

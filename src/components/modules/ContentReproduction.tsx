@@ -89,8 +89,8 @@ export function ContentReproduction({
   const hasDolphinSummary = !!(dolphinSummary || dolphinSummaryEN);
 
   const exercises = [
-    { type: "timeline" as const, title: t.reproduction.timeline },
     { type: "keywords" as const, title: t.reproduction.retelling },
+    { type: "timeline" as const, title: t.reproduction.timeline },
     ...(hasDolphinSummary
       ? [{ type: "dolphinSummary" as const, title: t.reproduction.dolphinSummary }]
       : []),
@@ -176,20 +176,21 @@ export function ContentReproduction({
         </div>
 
         {currentExercise === 0 && (
+          <KeywordExercise
+            paragraphs={paragraphs}
+            vocabulary={vocabulary}
+            isLast={false}
+            onComplete={handleExerciseComplete}
+            t={t}
+            language={language}
+          />
+        )}
+        {currentExercise === 1 && (
           <TimelineExercise
             items={timelineItems}
             onComplete={handleExerciseComplete}
             t={t}
-          />
-        )}
-        {currentExercise === 1 && (
-          <KeywordExercise
-            paragraphs={paragraphs}
-            vocabulary={vocabulary}
             isLast={!hasDolphinSummary}
-            onComplete={handleExerciseComplete}
-            t={t}
-            language={language}
           />
         )}
         {currentExercise === 2 && hasDolphinSummary && (
@@ -197,6 +198,7 @@ export function ContentReproduction({
             summary={language === "zh" ? (dolphinSummary ?? dolphinSummaryEN!) : (dolphinSummaryEN ?? dolphinSummary!)}
             onComplete={handleExerciseComplete}
             t={t}
+            language={language}
           />
         )}
       </CardContent>
@@ -209,9 +211,10 @@ interface TimelineExerciseProps {
   items: { id: number; summary: string }[];
   onComplete: () => void;
   t: ReturnType<typeof useI18n>["t"];
+  isLast: boolean;
 }
 
-function TimelineExercise({ items, onComplete, t }: TimelineExerciseProps) {
+function TimelineExercise({ items, onComplete, t, isLast }: TimelineExerciseProps) {
   const [orderedItems, setOrderedItems] = useState(() => {
     // Shuffle items
     return [...items].sort(() => Math.random() - 0.5);
@@ -290,8 +293,8 @@ function TimelineExercise({ items, onComplete, t }: TimelineExerciseProps) {
           <Button onClick={handleCheck}>{t.quiz.checkAnswer}</Button>
         ) : isCorrect ? (
           <Button onClick={onComplete}>
-            {t.common.next}
-            <ChevronRightIcon className="w-4 h-4" />
+            {isLast ? t.common.complete : t.common.next}
+            {isLast ? <CheckIcon className="w-4 h-4" /> : <ChevronRightIcon className="w-4 h-4" />}
           </Button>
         ) : (
           <Button onClick={handleRetry} variant="secondary">
@@ -380,24 +383,74 @@ interface DolphinSummarySectionProps {
   summary: string;
   onComplete: () => void;
   t: ReturnType<typeof useI18n>["t"];
+  language: "zh" | "en";
 }
 
-function DolphinSummarySection({ summary, onComplete, t }: DolphinSummarySectionProps) {
+function DolphinSummarySection({ summary, onComplete, t, language }: DolphinSummarySectionProps) {
+  const paragraphsText = useMemo(() => {
+    return summary
+      .split("\n")
+      .map((p) => p.trim())
+      .filter((p) => p.length > 0);
+  }, [summary]);
+
+  const isZh = language === "zh";
+  const fontClass = isZh
+    ? "font-handwriting-zh text-lg md:text-xl tracking-wide text-primary-950 dark:text-primary-100"
+    : "font-handwriting text-lg md:text-xl text-primary-900 dark:text-primary-200";
+
   return (
-    <div>
-      <div className="flex items-center gap-2 mb-4">
-        <FishIcon className="w-5 h-5 text-primary-500" />
-        <p className="text-muted-foreground">{t.reproduction.dolphinSummaryDesc}</p>
+    <div className="space-y-6">
+      {/* Decorative Note Header */}
+      <div className="flex items-center gap-4 bg-primary-50/60 dark:bg-primary-900/30 p-4 rounded-2xl border border-primary-100/50 dark:border-primary-800/30">
+        <div className="w-12 h-12 rounded-full bg-primary-500 text-white flex items-center justify-center shadow-lg shadow-primary-500/20 animate-float-slow shrink-0">
+          <FishIcon className="w-6 h-6" />
+        </div>
+        <div>
+          <h3 className="font-bold text-foreground text-lg">
+            {t.reproduction.dolphinSummary}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {t.reproduction.dolphinSummaryDesc}
+          </p>
+        </div>
       </div>
 
-      <div className="bg-surface rounded-xl p-6 mb-6 text-base text-foreground leading-relaxed whitespace-pre-line border border-border/50">
-        {summary}
+      {/* Styled Notebook Note */}
+      <div className="relative overflow-hidden bg-yellow-50/50 dark:bg-slate-900/40 border-2 border-dashed border-yellow-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm">
+        {/* Left notebook line decoration */}
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-400/30 dark:bg-red-500/20" />
+        
+        {/* Content */}
+        <div className={`space-y-4 pl-4 ${fontClass}`}>
+          {paragraphsText.map((para, idx) => {
+            // Check if paragraph looks like a list item or a highlight
+            const isBullet = para.startsWith("-") || para.startsWith("•");
+            const cleanText = isBullet ? para.substring(1).trim() : para;
+
+            if (isBullet) {
+              return (
+                <div key={idx} className="flex items-start gap-2">
+                  <span className="text-accent-500 shrink-0 mt-1.5">•</span>
+                  <span className="leading-relaxed md:leading-loose">{cleanText}</span>
+                </div>
+              );
+            }
+
+            return (
+              <p key={idx} className="leading-relaxed md:leading-loose">
+                {para}
+              </p>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="flex justify-end">
-        <Button onClick={onComplete}>
+      {/* Complete Button */}
+      <div className="flex justify-end pt-2">
+        <Button onClick={onComplete} size="lg">
           {t.common.complete}
-          <CheckIcon className="w-4 h-4" />
+          <CheckIcon className="w-5 h-5" />
         </Button>
       </div>
     </div>

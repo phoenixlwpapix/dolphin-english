@@ -88,6 +88,7 @@ export function QuizAccuracyChart({ data }: QuizAccuracyChartProps) {
                             tickLine={false}
                         />
                         <Tooltip
+                            cursor={false}
                             contentStyle={{
                                 background: "var(--color-card)",
                                 backdropFilter: "blur(8px)",
@@ -95,6 +96,8 @@ export function QuizAccuracyChart({ data }: QuizAccuracyChartProps) {
                                 borderRadius: "12px",
                                 fontSize: "13px",
                             }}
+                            labelStyle={{ color: "var(--color-foreground)", fontWeight: "bold" }}
+                            itemStyle={{ color: "var(--color-accent)" }}
                             formatter={(value) => [
                                 `${value}%`,
                                 t.analytics.accuracy,

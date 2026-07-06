@@ -226,6 +226,7 @@ export interface Translations {
     vocabularyClicked: string;
     quizAccuracy: string;
     accuracy: string;
+    mastery: string;
     vocabularyMastery: string;
     activityHeatmap: string;
     studyTrends: string;
@@ -608,6 +609,7 @@ export const zh: Translations = {
     vocabularyClicked: "已查阅词汇",
     quizAccuracy: "测验正确率（按题型）",
     accuracy: "正确率",
+    mastery: "掌握度",
     vocabularyMastery: "词汇掌握度（按等级）",
     activityHeatmap: "学习活跃度",
     studyTrends: "每周学习趋势",
