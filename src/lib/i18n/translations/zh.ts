@@ -189,6 +189,7 @@ export interface Translations {
     vocabPractice: string;
     admin: string;
     explore: string;
+    userMenu: string;
   };
   paths: {
     title: string;
@@ -568,6 +569,7 @@ export const zh: Translations = {
     vocabPractice: "词汇练习",
     admin: "管理后台",
     explore: "探索",
+    userMenu: "账户",
   },
 
   // Paths

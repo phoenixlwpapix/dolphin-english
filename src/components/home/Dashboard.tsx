@@ -4,15 +4,12 @@ import { useState, useMemo } from "react";
 import { useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../../convex/_generated/api";
-import { Sidebar, type SidebarTab } from "@/components/layout";
+import { type NavTab } from "@/components/layout";
 import {
     Card,
     CardContent,
     BookOpenIcon,
     LibraryIcon,
-    BarChart3Icon,
-    BookAIcon,
-    ShieldIcon,
     SettingsIcon,
     UserIcon,
     LogOutIcon,
@@ -31,12 +28,13 @@ import { ExploreView } from "./ExploreView";
 type SortOrder = "lastStudied" | "addedDate";
 
 interface DashboardProps {
+    activeTab: NavTab;
     onCreateCourse: () => void;
     onCreatePath?: () => void;
     onEditPath?: (pathId: string) => void;
 }
 
-export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: DashboardProps) {
+export function Dashboard({ activeTab, onCreateCourse, onCreatePath, onEditPath }: DashboardProps) {
     const { t } = useI18n();
     const { signOut } = useAuthActions();
     const currentUser = useQuery(api.users.getCurrentUser);
@@ -46,7 +44,6 @@ export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: Dashboar
     const publicPathsList = useQuery(api.learningPaths.listPublic);
     const myPathsList = useQuery(api.learningPaths.listMyPaths);
 
-    const [activeTab, setActiveTab] = useState<SidebarTab>("my");
     const [isSigningOut, setIsSigningOut] = useState(false);
 
     // Filter / sort state
@@ -195,43 +192,8 @@ export function Dashboard({ onCreateCourse, onCreatePath, onEditPath }: Dashboar
     const isCourseListTab = activeTab === "my" || activeTab === "explore";
 
     return (
-        <div className="flex bg-background min-h-[calc(100vh-80px)]">
-            <Sidebar className="hidden md:block sticky top-20 h-[calc(100vh-80px)]" activeTab={activeTab} onTabChange={setActiveTab} />
-
-            <main className="flex-1 container mx-auto px-4 py-8 max-w-7xl animate-slide-up">
-                {/* Mobile Tab Switcher */}
-                <div className="md:hidden flex items-center gap-2 mb-6">
-                    <div className="flex-1 flex items-center gap-1 p-1 bg-muted/50 rounded-xl">
-                        <button
-                            onClick={() => setActiveTab("my")}
-                            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === "my" ? "bg-accent text-white shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-                        >
-                            <BookOpenIcon className="w-4 h-4" />
-                            {t.sidebar.myCourses}
-                        </button>
-                        <button
-                            onClick={() => setActiveTab("explore")}
-                            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === "explore" ? "bg-accent text-white shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-                        >
-                            <LibraryIcon className="w-4 h-4" />
-                            {t.sidebar.explore}
-                        </button>
-                    </div>
-                    <button onClick={() => setActiveTab("vocab")} className={`p-2.5 rounded-xl transition-all ${activeTab === "vocab" ? "bg-accent/10 text-accent" : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"}`} aria-label={t.sidebar.vocabPractice}>
-                        <BookAIcon className="w-5 h-5" />
-                    </button>
-                    <button onClick={() => setActiveTab("analytics")} className={`p-2.5 rounded-xl transition-all ${activeTab === "analytics" ? "bg-accent/10 text-accent" : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"}`} aria-label={t.sidebar.analytics}>
-                        <BarChart3Icon className="w-5 h-5" />
-                    </button>
-                    {currentUser?.role === "admin" && (
-                        <button onClick={() => setActiveTab("admin")} className={`p-2.5 rounded-xl transition-all ${activeTab === "admin" ? "bg-accent/10 text-accent" : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"}`} aria-label={t.sidebar.admin}>
-                            <ShieldIcon className="w-5 h-5" />
-                        </button>
-                    )}
-                    <button onClick={() => setActiveTab("settings")} className={`p-2.5 rounded-xl transition-all ${activeTab === "settings" ? "bg-accent/10 text-accent" : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"}`} aria-label={t.sidebar.settings}>
-                        <SettingsIcon className="w-5 h-5" />
-                    </button>
-                </div>
+        <div className="bg-background min-h-[calc(100vh-64px)]">
+            <main className="container mx-auto px-4 py-8 max-w-7xl animate-slide-up">
 
                 {/* Tab content routing */}
                 {activeTab === "admin" && currentUser?.role === "admin" ? (

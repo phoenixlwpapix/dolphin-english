@@ -1,47 +1,47 @@
 @import "tailwindcss";
 @variant dark (&:where(.dark, .dark *));
 
-/* Design Tokens — Ocean Blue palette */
+/* Design Tokens — Dolphin Blue palette */
 @theme {
-  /* Primary palette — ocean blue */
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e3a8a;
-  --color-primary-900: #172554;
+  /* Primary palette — Dolphin Blue */
+  --color-primary-50: #EBF0FA;
+  --color-primary-100: #D6E2F5;
+  --color-primary-200: #ADC5EB;
+  --color-primary-300: #7BBFFF;
+  --color-primary-400: #4A95F7;
+  --color-primary-500: #2072F5;
+  --color-primary-600: #1A5DD4;
+  --color-primary-700: #1348B3;
+  --color-primary-800: #003B91;
+  --color-primary-900: #002A6B;
 
-  /* Accent palette — cyan */
-  --color-accent-50: #ecfeff;
-  --color-accent-100: #cffafe;
-  --color-accent-200: #a5f3fc;
-  --color-accent-300: #67e8f9;
-  --color-accent-400: #22d3ee;
-  --color-accent-500: #06b6d4;
-  --color-accent-600: #0891b2;
+  /* Accent palette — Active Wave Blue */
+  --color-accent-50: #EBF3FE;
+  --color-accent-100: #D6E7FD;
+  --color-accent-200: #ADC5EB;
+  --color-accent-300: #7BBFFF;
+  --color-accent-400: #4A95F7;
+  --color-accent-500: #2072F5;
+  --color-accent-600: #1A5DD4;
 
   /* Semantic Colors */
-  --color-primary: #172554;
-  --color-secondary: #fbdd74;
-  --color-accent: #06b6d4;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-destructive: #ef4444;
-  --color-info: #3b82f6;
+  --color-primary: #003B91;
+  --color-secondary: #F6F6F2;
+  --color-accent: #2072F5;
+  --color-success: #1ABC9C;
+  --color-warning: #F39C12;
+  --color-error: #E74C3C;
+  --color-destructive: #E74C3C;
+  --color-info: #8E44AD;
 
   /* Base Colors */
-  --color-background: #f8fafc;
-  --color-foreground: #172554;
-  --color-muted: #eff6ff;
-  --color-muted-foreground: #475985;
-  --color-surface: #ffffff;
-  --color-border: #dbeafe;
-  --color-card: #ffffff;
+  --color-background: #F8F9FA;
+  --color-foreground: #2A2A2A;
+  --color-muted: #F6F6F2;
+  --color-muted-foreground: #757575;
+  --color-surface: #FCFCFA;
+  --color-border: #E8E8E4;
+  --color-card: #FFFFFF;
 
   /* Typography */
   --font-sans: var(--font-sans);
@@ -58,58 +58,58 @@
 
   /* Shadows - Subtle depth for premium feel */
   --shadow-none: 0 0 #0000;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.03);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.03);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.03);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.02);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.06), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.06), 0 8px 10px -6px rgb(0 0 0 / 0.03);
   --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.15);
   --shadow-glow: 0 0 40px -10px;
 }
 
 /* Dark mode overrides */
 .dark {
-  /* Primary palette — inverted for dark backgrounds */
-  --color-primary-50: #172554;
-  --color-primary-100: #1e3a5f;
-  --color-primary-200: #1e3a8a;
-  --color-primary-300: #2563eb;
-  --color-primary-400: #3b82f6;
-  --color-primary-500: #60a5fa;
-  --color-primary-600: #93c5fd;
-  --color-primary-700: #bfdbfe;
-  --color-primary-800: #dbeafe;
-  --color-primary-900: #eff6ff;
+  /* Primary palette — lighter end for dark backgrounds */
+  --color-primary-50: #0C1A2E;
+  --color-primary-100: #152238;
+  --color-primary-200: #1C2D45;
+  --color-primary-300: #2A3F5C;
+  --color-primary-400: #4A95F7;
+  --color-primary-500: #5DA3F8;
+  --color-primary-600: #7BBFFF;
+  --color-primary-700: #ADC5EB;
+  --color-primary-800: #D6E2F5;
+  --color-primary-900: #EBF0FA;
 
   /* Accent palette — brighter for dark backgrounds */
-  --color-accent-50: #0c3644;
-  --color-accent-100: #134e5e;
-  --color-accent-200: #155e75;
-  --color-accent-300: #0891b2;
-  --color-accent-400: #06b6d4;
-  --color-accent-500: #22d3ee;
+  --color-accent-50: #0C1A2E;
+  --color-accent-100: #152238;
+  --color-accent-200: #1C2D45;
+  --color-accent-300: #2072F5;
+  --color-accent-400: #4A95F7;
+  --color-accent-500: #5DA3F8;
 
   /* Semantic Colors */
-  --color-primary: #dbeafe;
-  --color-accent: #22d3ee;
-  --color-success: #34d399;
-  --color-warning: #fbbf24;
-  --color-error: #f87171;
-  --color-destructive: #f87171;
-  --color-info: #60a5fa;
+  --color-primary: #D6E2F5;
+  --color-accent: #4A95F7;
+  --color-success: #2EDBA8;
+  --color-warning: #F5B041;
+  --color-error: #F1948A;
+  --color-destructive: #F1948A;
+  --color-info: #BB8FCE;
 
   /* Base Colors */
-  --color-background: #0f172a;
-  --color-foreground: #eff6ff;
-  --color-muted: #1e293b;
-  --color-muted-foreground: #94a3b8;
-  --color-surface: #1e293b;
-  --color-border: #334155;
-  --color-card: #1e293b;
+  --color-background: #0C1A2E;
+  --color-foreground: #E8EEF5;
+  --color-muted: #1C2D45;
+  --color-muted-foreground: #8899AD;
+  --color-surface: #152238;
+  --color-border: #2A3F5C;
+  --color-card: #152238;
 
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.15);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.15);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.25), 0 4px 6px -4px rgb(0 0 0 / 0.15);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.15);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.2);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.25), 0 2px 4px -2px rgb(0 0 0 / 0.2);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.2);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.35), 0 8px 10px -6px rgb(0 0 0 / 0.2);
 
   color-scheme: dark;
 }
@@ -139,7 +139,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #93c5fd;
+  background: #7BBFFF;
 }
 
 /* Text selection — cyan highlight */
@@ -315,11 +315,11 @@ body {
 
 /* Dark mode scrollbar */
 .dark ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #2A3F5C;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #4A95F7;
 }
 
 /* Utility to ensure standard border width */

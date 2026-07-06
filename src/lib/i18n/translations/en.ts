@@ -222,6 +222,7 @@ export const en: Translations = {
     vocabPractice: "Vocabulary",
     admin: "Admin",
     explore: "Explore",
+    userMenu: "Account",
   },
 
   // Paths

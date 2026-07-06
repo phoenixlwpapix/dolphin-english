@@ -53,6 +53,8 @@ import {
   X,
   Sun,
   Moon,
+  Menu,
+  ChevronUp,
   LucideProps,
 } from "lucide-react";
 
@@ -329,5 +331,15 @@ export function MoonIcon(props: IconProps) {
 /** Shuffle icon for vocabulary shuffle */
 export function ShuffleIcon(props: IconProps) {
   return <Shuffle {...props} />;
+}
+
+/** Menu / hamburger icon for mobile nav */
+export function MenuIcon(props: IconProps) {
+  return <Menu {...props} />;
+}
+
+/** Chevron up icon for dropdown collapse */
+export function ChevronUpIcon(props: IconProps) {
+  return <ChevronUp {...props} />;
 }
 

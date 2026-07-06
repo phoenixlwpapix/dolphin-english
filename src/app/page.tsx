@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { Header } from "@/components/layout";
+import { Header, type NavTab } from "@/components/layout";
 import { CreateCourseModal } from "@/components/course/CreateCourseModal";
 import { CreatePathModal, type EditPathData } from "@/components/paths";
 import { Dashboard, LandingPage } from "@/components/home";
@@ -15,6 +15,7 @@ export default function HomePage() {
   const [isCreatePathModalOpen, setIsCreatePathModalOpen] = useState(false);
   const [editPathData, setEditPathData] = useState<EditPathData | undefined>(undefined);
   const [isSignInOpen, setIsSignInOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<NavTab>("my");
 
   // Show loading state while checking authentication
   if (currentUser === undefined) {
@@ -31,10 +32,13 @@ export default function HomePage() {
         isSignInOpen={isSignInOpen}
         onSignInOpenChange={setIsSignInOpen}
         variant={currentUser ? "default" : "landing"}
+        activeTab={activeTab}
+        onTabChange={currentUser ? setActiveTab : undefined}
       />
 
       {currentUser ? (
         <Dashboard
+          activeTab={activeTab}
           onCreateCourse={() => setIsCreateModalOpen(true)}
           onCreatePath={() => {
             setEditPathData(undefined);
