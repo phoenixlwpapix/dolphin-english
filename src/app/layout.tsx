@@ -24,7 +24,7 @@ const zcoolKuaiLe = ZCOOL_KuaiLe({
 });
 
 export const metadata: Metadata = {
-  title: "Dolphin English - 通过真实文章学习英语",
+  title: "海豚英语 - 让每篇文章都变成一堂英语课",
   description:
     "覆盖 A1-C2 全 CEFR 等级的英语学习应用，通过真实文章完成 30 分钟系统学习课程",
 };
