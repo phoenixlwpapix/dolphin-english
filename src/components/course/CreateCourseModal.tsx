@@ -463,13 +463,15 @@ function CourseCreationLoader({ mode, language }: { mode: 'text' | 'image'; lang
         <div className="py-12 px-6 flex flex-col items-center justify-center space-y-8 animate-in fade-in zoom-in-95 duration-300">
             {/* Pulsing Glowing Circle */}
             <div className="relative w-24 h-24 flex items-center justify-center">
-                {/* Outermost rippling ring */}
-                <div className="absolute inset-0 rounded-full bg-primary/10 animate-ping opacity-60" />
+                {/* Outermost rippling ring (primary color) */}
+                <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping [animation-duration:2s]" />
+                {/* Secondary rippling ring (accent color) */}
+                <div className="absolute inset-2 rounded-full bg-accent/15 animate-ping [animation-duration:3s] [animation-delay:0.5s]" />
                 {/* Rotating dashed border ring */}
-                <div className="absolute inset-2 rounded-full border-2 border-dashed border-primary/40 animate-spin [animation-duration:12s]" />
-                {/* Central solid circle with icon */}
-                <div className="relative w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-lg shadow-primary/5">
-                    <SparklesIcon className="w-8 h-8 text-primary animate-pulse" />
+                <div className="absolute inset-2 rounded-full border-2 border-dashed border-primary/50 animate-spin [animation-duration:10s]" />
+                {/* Central solid primary circle with icon */}
+                <div className="relative w-16 h-16 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30 text-white animate-float">
+                    <SparklesIcon className="w-8 h-8 text-white animate-pulse" />
                 </div>
             </div>
 
@@ -478,7 +480,7 @@ function CourseCreationLoader({ mode, language }: { mode: 'text' | 'image'; lang
                 <h3 className="text-xl font-bold text-foreground tracking-tight">
                     {language === 'zh' ? '正在创建 AI 课程' : 'Creating AI Course'}
                 </h3>
-                <p className="text-sm text-muted-foreground font-medium h-5 flex items-center justify-center text-center">
+                <p className="text-sm text-primary font-semibold h-5 flex items-center justify-center text-center">
                     {steps[step]}
                 </p>
             </div>
@@ -492,14 +494,14 @@ function CourseCreationLoader({ mode, language }: { mode: 'text' | 'image'; lang
                     />
                 </div>
                 <div className="flex justify-between text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
-                    <span>{progress}%</span>
-                    <span>Gemini 3.5 Flash</span>
+                    <span className="text-primary font-bold">{progress}%</span>
+                    <span className="text-accent font-bold">Gemini 3.5 Flash</span>
                 </div>
             </div>
 
-            {/* Reassuring tips card */}
-            <div className="w-full max-w-sm p-4 bg-muted/40 border border-border/60 rounded-2xl text-center min-h-[72px] flex items-center justify-center transition-all duration-500 animate-in fade-in duration-500">
-                <p className="text-xs text-muted-foreground/80 leading-relaxed font-medium">
+            {/* Reassuring tips card with primary tint */}
+            <div className="w-full max-w-sm p-4 bg-primary/5 border border-primary/10 rounded-2xl text-center min-h-[72px] flex items-center justify-center transition-all duration-500 animate-in fade-in duration-500">
+                <p className="text-xs text-primary/80 leading-relaxed font-medium">
                     {tips[tipIndex]}
                 </p>
             </div>
