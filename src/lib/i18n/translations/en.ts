@@ -226,6 +226,9 @@ export const en: Translations = {
     admin: "Admin",
     explore: "Explore",
     userMenu: "Account",
+    creditBalance: "Credit Balance",
+    creditsUnit: "credits",
+    adminCreditsFree: "Admin free",
   },
 
   // Paths

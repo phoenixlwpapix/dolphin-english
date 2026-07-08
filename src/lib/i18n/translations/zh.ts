@@ -193,6 +193,9 @@ export interface Translations {
     admin: string;
     explore: string;
     userMenu: string;
+    creditBalance: string;
+    creditsUnit: string;
+    adminCreditsFree: string;
   };
   paths: {
     title: string;
@@ -660,6 +663,9 @@ export const zh: Translations = {
     admin: "管理后台",
     explore: "探索",
     userMenu: "账户",
+    creditBalance: "积分余额",
+    creditsUnit: "点",
+    adminCreditsFree: "管理员免扣",
   },
 
   // Paths

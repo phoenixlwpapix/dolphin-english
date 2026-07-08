@@ -32,6 +32,7 @@ import {
   User,
   LogOut,
   Globe,
+  Gem,
   Lock,
   Library,
   BarChart3,
@@ -229,6 +230,11 @@ export function LogOutIcon(props: IconProps) {
 /** Globe icon for public courses */
 export function GlobeIcon(props: IconProps) {
   return <Globe {...props} />;
+}
+
+/** Gem icon for credits and point balances */
+export function GemIcon(props: IconProps) {
+  return <Gem {...props} />;
 }
 
 /** Lock icon for private courses */

@@ -16,6 +16,7 @@ import {
   SettingsIcon,
   LogOutIcon,
   UserIcon,
+  GemIcon,
   MenuIcon,
   XIcon,
 } from "@/components/ui/Icons";
@@ -46,6 +47,7 @@ export function Header({
   const { signOut } = useAuthActions();
   const pathname = usePathname();
   const currentUser = useQuery(api.users.getCurrentUser);
+  const creditInfo = useQuery(api.credits.getBalance);
   const [internalSignInOpen, setInternalSignInOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -54,6 +56,9 @@ export function Header({
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   const isAdmin = currentUser?.role === "admin";
+  const creditBalanceText = creditInfo === undefined
+    ? "..."
+    : String(creditInfo?.balance ?? 0);
 
   useEffect(() => {
     if (variant !== "landing") return;
@@ -202,6 +207,34 @@ export function Header({
                       <p className="text-xs text-muted-foreground mt-0.5">
                         {isAdmin ? "Admin" : t.sidebar.userMenu}
                       </p>
+                      <div className="mt-3 rounded-xl border border-accent/20 bg-accent/5 p-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex min-w-0 items-center gap-2.5">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                              <GemIcon className="h-5 w-5" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-xs font-medium text-muted-foreground">
+                                {t.sidebar.creditBalance}
+                              </p>
+                              <p className="text-sm font-bold text-foreground">
+                                {isAdmin
+                                  ? t.sidebar.adminCreditsFree
+                                  : `${creditBalanceText} ${t.sidebar.creditsUnit}`}
+                              </p>
+                            </div>
+                          </div>
+                          {!isAdmin && (
+                            <Link
+                              href="/pricing"
+                              onClick={() => setIsUserMenuOpen(false)}
+                              className="shrink-0 rounded-lg border border-accent/30 px-2.5 py-1.5 text-xs font-semibold text-accent transition-colors hover:bg-accent/10"
+                            >
+                              {t.pricing.buyCredits}
+                            </Link>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     {/* Menu Items */}
