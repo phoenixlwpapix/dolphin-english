@@ -45,11 +45,19 @@ import {
   Upload,
   Users,
   Brain,
+  BrainCircuit,
   Sparkles,
+  Rocket,
+  Quote,
+  Zap,
   Lightbulb,
   MessageSquare,
   Layers,
   Fish,
+  Twitter,
+  Facebook,
+  Linkedin,
+  Github,
   X,
   Sun,
   Moon,
@@ -293,9 +301,29 @@ export function BrainIcon(props: IconProps) {
   return <Brain {...props} />;
 }
 
+/** Brain circuit icon for AI features */
+export function BrainCircuitIcon(props: IconProps) {
+  return <BrainCircuit {...props} />;
+}
+
 /** Sparkles icon for AI generation */
 export function SparklesIcon(props: IconProps) {
   return <Sparkles {...props} />;
+}
+
+/** Rocket icon for launch/start CTAs */
+export function RocketIcon(props: IconProps) {
+  return <Rocket {...props} />;
+}
+
+/** Quote icon for testimonial sections */
+export function QuoteIcon(props: IconProps) {
+  return <Quote {...props} />;
+}
+
+/** Zap icon for energy/highlight CTAs */
+export function ZapIcon(props: IconProps) {
+  return <Zap {...props} />;
 }
 
 /** Lightbulb icon for hints */
@@ -316,6 +344,26 @@ export function LayersIcon(props: IconProps) {
 /** Fish icon for dolphin summary */
 export function FishIcon(props: IconProps) {
   return <Fish {...props} />;
+}
+
+/** Twitter social icon */
+export function TwitterIcon(props: IconProps) {
+  return <Twitter {...props} />;
+}
+
+/** Facebook social icon */
+export function FacebookIcon(props: IconProps) {
+  return <Facebook {...props} />;
+}
+
+/** LinkedIn social icon */
+export function LinkedinIcon(props: IconProps) {
+  return <Linkedin {...props} />;
+}
+
+/** GitHub social icon */
+export function GithubIcon(props: IconProps) {
+  return <Github {...props} />;
 }
 
 /** Sun icon for light mode */

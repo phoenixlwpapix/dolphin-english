@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Image from "next/image";
 import { useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../../convex/_generated/api";
@@ -192,8 +193,22 @@ export function Dashboard({ activeTab, onCreateCourse, onCreatePath, onEditPath 
     const isCourseListTab = activeTab === "my" || activeTab === "explore";
 
     return (
-        <div className="bg-background min-h-[calc(100vh-64px)]">
-            <main className="container mx-auto px-4 py-8 max-w-7xl animate-slide-up">
+        <div className="relative isolate min-h-[calc(100vh-64px)] overflow-hidden bg-background">
+            <div
+                aria-hidden="true"
+                className="pointer-events-none fixed -right-24 bottom-4 z-0 hidden h-[min(62vh,640px)] w-[min(48vw,700px)] opacity-10 sm:block dark:opacity-[0.06]"
+            >
+                <Image
+                    src="/dolphin-1-mascot.png"
+                    alt=""
+                    fill
+                    sizes="760px"
+                    className="object-contain object-right-top"
+                    priority={false}
+                />
+            </div>
+
+            <main className="relative z-10 container mx-auto px-4 py-8 max-w-7xl animate-slide-up">
 
                 {/* Tab content routing */}
                 {activeTab === "admin" && currentUser?.role === "admin" ? (
@@ -215,29 +230,31 @@ export function Dashboard({ activeTab, onCreateCourse, onCreatePath, onEditPath 
                 ) : (
                     <>
                         {/* Course list header */}
-                        <div className="flex items-center justify-between mb-8">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-xl bg-primary-100 text-primary-700">
-                                    {activeTab === "my" ? <BookOpenIcon className="w-6 h-6" /> : <LibraryIcon className="w-6 h-6" />}
+                        <div className="relative mb-8 overflow-hidden rounded-xl border border-border bg-surface px-4 py-4 shadow-sm sm:px-5">
+                            <div className="relative z-10 flex items-center justify-between gap-4">
+                                <div className="flex min-w-0 items-center gap-3">
+                                    <div className="shrink-0 p-2 rounded-xl bg-primary-100 text-primary-700">
+                                        {activeTab === "my" ? <BookOpenIcon className="w-6 h-6" /> : <LibraryIcon className="w-6 h-6" />}
+                                    </div>
+                                    <div className="flex min-w-0 items-baseline gap-3">
+                                        <h2 className="truncate text-2xl font-bold text-foreground">
+                                            {activeTab === "my" ? t.sidebar.myCourses : t.sidebar.explore}
+                                        </h2>
+                                        {!isLoading && (
+                                            <span className="shrink-0 px-2.5 py-0.5 text-xs font-semibold text-accent bg-accent/10 rounded-full">
+                                                {activeTab === "my" ? (myCourses?.length ?? 0) : (publicCourses?.length ?? 0)}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
-                                <div className="flex items-baseline gap-3">
-                                    <h2 className="text-2xl font-bold text-foreground">
-                                        {activeTab === "my" ? t.sidebar.myCourses : t.sidebar.explore}
-                                    </h2>
-                                    {!isLoading && (
-                                        <span className="px-2.5 py-0.5 text-xs font-semibold text-accent bg-accent/10 rounded-full">
-                                            {activeTab === "my" ? (myCourses?.length ?? 0) : (publicCourses?.length ?? 0)}
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
 
-                            {activeTab === "my" && (
-                                <Button onClick={onCreateCourse} className="rounded-xl flex items-center gap-1.5 shadow-md">
-                                    <PlusIcon className="w-4 h-4" />
-                                    {t.home.newCourse}
-                                </Button>
-                            )}
+                                {activeTab === "my" && (
+                                    <Button onClick={onCreateCourse} className="shrink-0 rounded-xl flex items-center gap-1.5 shadow-md">
+                                        <PlusIcon className="w-4 h-4" />
+                                        {t.home.newCourse}
+                                    </Button>
+                                )}
+                            </div>
                         </div>
 
                         <FilterBar

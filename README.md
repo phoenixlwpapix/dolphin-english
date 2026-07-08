@@ -29,6 +29,8 @@ An English learning app for A1-C2 learners that transforms real-world articles i
   - **AI Quiz Mode** - Gemini-generated personalized quizzes with three question types (definition matching, fill-in-the-blank, Chinese-English translation), scoring, and wrong-answer review
   - **AI Example Sentences** - On-demand AI-generated contextual example sentences with Chinese translations for any word
 - **Course Separation** - In-progress and completed courses displayed separately
+- **Brand Mascot UI** - Dolphin mascot artwork appears on the landing page and main dashboard for stronger product identity
+- **Redesigned Landing Page** - Cleaner product-first landing page with mascot hero artwork, article-to-course flow, module overview, and richer learning value sections
 - **Admin Panel** - Dedicated management interface for public courses and learning paths with enrollment stats, inline editing, and batch operations
 - **Access Controls** - Public course/path previews expose only safe metadata; full course content and progress mutations require author or enrolled-user access
 

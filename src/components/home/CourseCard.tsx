@@ -8,6 +8,7 @@ import {
     ChartBarIcon,
     CalendarIcon,
     ClockIcon,
+    ChevronRightIcon,
 } from "@/components/ui";
 import { useI18n } from "@/lib/i18n";
 import { TOTAL_MODULES, DIFFICULTY_CONFIG } from "@/lib/constants";
@@ -80,7 +81,7 @@ export function CourseCard({ course, isPublicTab = false, isJoined = false, inPa
                             
                             <span className="text-[11px] font-bold text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-0.5">
                                 {t.create.startLearning}
-                                <svg className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                <ChevronRightIcon className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" />
                             </span>
                         </div>
 

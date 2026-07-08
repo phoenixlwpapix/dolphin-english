@@ -327,6 +327,8 @@ export const en: Translations = {
     heroTitle: "Dolphin English",
     heroSubtitle:
       "Improve your English reading and listening with real-world content. All CEFR levels from A1 to C2.",
+    heroNote:
+      "Paste an English article and turn it into a complete lesson with goals, listening, paragraph analysis, vocabulary, comprehension checks, and reproduction practice.",
     startLearning: "Start Learning",
     learnMore: "Learn More",
     readyToStart: "Ready to start your journey?",
@@ -338,6 +340,34 @@ export const en: Translations = {
       levels: "CEFR Levels",
       ai: "AI-Generated",
       free: "Free",
+    },
+    proof: {
+      time: "minute lessons",
+      range: "level range",
+    },
+    flowLabel: "Learning Flow",
+    flowTitle: "From one article to a complete learning path",
+    flowDesc:
+      "Dolphin English does more than translate. It turns real content into a rhythm you can listen to, read closely, practice, and retell.",
+    flow: {
+      importTitle: "Import real articles",
+      importDesc: "Paste text or upload an image, then use the content you actually want to read.",
+      analyzeTitle: "AI structures the lesson",
+      analyzeDesc: "Difficulty, key points, language notes, vocabulary tiers, and quizzes are generated automatically.",
+      practiceTitle: "Work through modules",
+      practiceDesc: "Move from goals to reproduction with a clear, resumable, trackable study flow.",
+    },
+    modulesLabel: "Course Structure",
+    modulesTitle: "Six modules for fully absorbing an article",
+    modulesDesc:
+      "Each lesson trains listening, close reading, language analysis, vocabulary transfer, comprehension, and output around the same article.",
+    moduleDescriptions: {
+      objectives: "Know the target skills and language points before you begin.",
+      listening: "Listen through the full article to build context and rhythm.",
+      analysis: "Break down paragraphs, sentence patterns, expressions, and bilingual explanations.",
+      vocabulary: "Study words in essential, transferable, and extended tiers.",
+      quiz: "Check understanding through main idea, detail, and vocabulary questions.",
+      reproduction: "Practice output with ordering, keywords, and paraphrasing.",
     },
     quote: {
       text1: "To have another language",

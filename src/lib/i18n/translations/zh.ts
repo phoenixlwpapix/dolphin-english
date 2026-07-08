@@ -288,6 +288,7 @@ export interface Translations {
   landing: {
     heroTitle: string;
     heroSubtitle: string;
+    heroNote: string;
     startLearning: string;
     learnMore: string;
     readyToStart: string;
@@ -299,6 +300,32 @@ export interface Translations {
       levels: string;
       ai: string;
       free: string;
+    };
+    proof: {
+      time: string;
+      range: string;
+    };
+    flowLabel: string;
+    flowTitle: string;
+    flowDesc: string;
+    flow: {
+      importTitle: string;
+      importDesc: string;
+      analyzeTitle: string;
+      analyzeDesc: string;
+      practiceTitle: string;
+      practiceDesc: string;
+    };
+    modulesLabel: string;
+    modulesTitle: string;
+    modulesDesc: string;
+    moduleDescriptions: {
+      objectives: string;
+      listening: string;
+      analysis: string;
+      vocabulary: string;
+      quiz: string;
+      reproduction: string;
     };
     quote: {
       text1: string;
@@ -673,6 +700,7 @@ export const zh: Translations = {
   landing: {
     heroTitle: "Dolphin English",
     heroSubtitle: "通过真实文章提升你的英语听说读写能力。覆盖 A1-C2 全 CEFR 等级。",
+    heroNote: "粘贴一篇英文文章，系统会自动拆解为目标、听读、精讲、词汇、测验和复现练习，让一篇素材真正变成一堂可完成的课。",
     startLearning: "开始学习",
     learnMore: "了解更多",
     readyToStart: "准备好开启你的旅程了吗？",
@@ -684,6 +712,32 @@ export const zh: Translations = {
       levels: "CEFR 等级",
       ai: "AI 生成",
       free: "免费",
+    },
+    proof: {
+      time: "分钟课程",
+      range: "难度覆盖",
+    },
+    flowLabel: "学习流程",
+    flowTitle: "从一篇文章，到一套完整学习路径",
+    flowDesc: "海豚英语不是简单翻译文章，而是把真实内容拆成可以听、可以读、可以练、可以复述的学习节奏。",
+    flow: {
+      importTitle: "导入真实文章",
+      importDesc: "粘贴文本或上传图片，把你真正想读的内容变成课程素材。",
+      analyzeTitle: "AI 结构化拆解",
+      analyzeDesc: "自动识别难度、段落重点、语言点、词汇层级和理解题。",
+      practiceTitle: "按模块完成训练",
+      practiceDesc: "从目标到复现逐步推进，学习过程清晰、可继续、可追踪。",
+    },
+    modulesLabel: "课程结构",
+    modulesTitle: "六个模块，覆盖一篇文章的完整吸收过程",
+    modulesDesc: "每节课围绕同一篇文章展开，训练听读理解、语言分析、词汇迁移和输出复现。",
+    moduleDescriptions: {
+      objectives: "先明确本课要掌握的能力和语言点。",
+      listening: "完整听读文章，建立整体语感和上下文。",
+      analysis: "逐段拆解句子、语法、表达和中文解释。",
+      vocabulary: "按必须理解、可迁移、拓展了解三层学习词汇。",
+      quiz: "用主旨、细节和词义题检测理解质量。",
+      reproduction: "通过排序、关键词和改写完成输出练习。",
     },
     quote: {
       text1: "拥有另一种语言",

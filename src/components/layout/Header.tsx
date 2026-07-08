@@ -103,7 +103,7 @@ export function Header({
   const headerClasses = variant === "landing"
     ? `fixed z-50 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled
       ? "top-0 left-0 w-full rounded-none border-b border-border bg-surface shadow-sm"
-      : "top-6 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-7xl rounded-full border border-border bg-surface/90 backdrop-blur-sm shadow-lg"
+      : "top-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-7xl rounded-xl border border-border bg-surface/95 backdrop-blur-sm shadow-sm"
     }`
     : "sticky top-0 z-40 w-full bg-surface border-b border-border shadow-sm";
 
