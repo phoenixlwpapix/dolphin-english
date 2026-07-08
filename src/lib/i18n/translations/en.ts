@@ -74,6 +74,9 @@ export const en: Translations = {
     clickOrDrop: "Click to upload or drag and drop",
     difficultyLabel: "Difficulty",
     difficultyAuto: "Auto Detect",
+    aiCourseCost: "This AI course generation costs {cost} credits. Current balance: {balance}.",
+    insufficientCredits: "Not enough credits: generating a course needs {cost} credits. Current balance: {balance}.",
+    adminCreditsFree: "Admins can generate courses without spending credits.",
   },
 
   // Course Learning
@@ -392,6 +395,89 @@ export const en: Translations = {
         title: "AI Analysis",
         desc: "Deep analysis of vocabulary and sentence structure.",
       },
+    },
+  },
+
+  // Pricing
+  pricing: {
+    label: "Credit Pricing",
+    title: "Use credits for AI course generation",
+    subtitle: "New users receive 60 free credits. AI course generation consumes credits; studying, reviewing, and revisiting generated lessons does not.",
+    recommended: "Recommended",
+    buyCredits: "Get Credits",
+    highlights: [
+      {
+        value: "60",
+        title: "Free signup credits",
+        desc: "Enough to try the full AI course generation workflow.",
+      },
+      {
+        value: "10",
+        title: "Credits per course",
+        desc: "Generating one complete article-based course costs 10 credits.",
+      },
+      {
+        value: "0",
+        title: "Studying generated courses",
+        desc: "Listening, analysis, quizzes, and progress tracking stay free.",
+      },
+    ],
+    creditModelLabel: "Usage Rules",
+    creditModelTitle: "Credits are spent only on AI generation",
+    creditModelDesc: "This keeps frequent study affordable: credits are used when creating new AI content, extra practice, or example sentences. Generated courses can be reviewed repeatedly.",
+    usage: {
+      course: {
+        cost: "10 credits",
+        title: "AI course generation",
+        desc: "Generate objectives, listening, analysis, vocabulary, quiz, and reproduction modules from one article.",
+      },
+      quiz: {
+        cost: "3 credits",
+        title: "Extra AI quiz",
+        desc: "Create a fresh personalized practice set from course vocabulary or mistakes.",
+      },
+      sentences: {
+        cost: "1 credit",
+        title: "AI example sentences",
+        desc: "Generate contextual examples and Chinese explanations for vocabulary transfer.",
+      },
+    },
+    packagesLabel: "Credit Packs",
+    packagesTitle: "From light trials to long-term study",
+    packagesDesc: "Credit packs are designed for on-demand purchase. This structure can validate user demand before payment integration.",
+    packages: {
+      starter: {
+        name: "Starter",
+        desc: "For occasionally turning good articles into lessons.",
+        price: "$3",
+        credits: "100 credits, about 10 AI courses",
+        featured: false,
+        features: ["For light users", "AI course generation", "Extra quizzes and examples", "Credits valid for 12 months"],
+      },
+      growth: {
+        name: "Growth",
+        desc: "The main plan for steady weekly learning.",
+        price: "$7",
+        credits: "300 credits, about 30 AI courses",
+        featured: true,
+        features: ["Lower cost per course", "For 5-7 articles per week", "Full learning history support", "Credits valid for 12 months"],
+      },
+      pro: {
+        name: "Pro",
+        desc: "For heavy learners and content creators.",
+        price: "$14",
+        credits: "800 credits, about 80 AI courses",
+        featured: false,
+        features: ["Best credit value", "Batch course generation", "Long-term study reserve", "Credits valid for 12 months"],
+      },
+    },
+    notes: {
+      rolloverTitle: "Clear credit validity",
+      rolloverDesc: "Purchased credits are valid for 12 months, and credits closest to expiry are used first.",
+      transparentTitle: "Confirm before spending",
+      transparentDesc: "Before generating AI content, users see the expected credit cost and confirm generation.",
+      freeTitle: "Free study remains free",
+      freeDesc: "Public courses, generated courses, and daily learning progress do not cost extra credits.",
     },
   },
 

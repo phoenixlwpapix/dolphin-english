@@ -89,6 +89,8 @@ export default defineSchema({
   users: defineTable({
     email: v.optional(v.string()),
     role: v.union(v.literal("user"), v.literal("admin")),
+    creditBalance: v.optional(v.number()),
+    freeCreditsGrantedAt: v.optional(v.number()),
     name: v.optional(v.string()),
     image: v.optional(v.string()),
     emailVerificationTime: v.optional(v.number()),
@@ -106,6 +108,23 @@ export default defineSchema({
     isPublic: v.optional(v.boolean()),
     authorId: v.optional(v.string()),
   }),
+
+  creditTransactions: defineTable({
+    userId: v.id("users"),
+    amount: v.number(),
+    balanceAfter: v.number(),
+    type: v.union(
+      v.literal("signup_bonus"),
+      v.literal("ai_course_generation"),
+      v.literal("admin_adjustment"),
+      v.literal("purchase"),
+    ),
+    courseId: v.optional(v.id("courses")),
+    description: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_userId_createdAt", ["userId", "createdAt"]),
 
   userCourses: defineTable({
     userId: v.string(),

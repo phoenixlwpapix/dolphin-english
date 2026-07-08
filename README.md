@@ -31,6 +31,8 @@ An English learning app for A1-C2 learners that transforms real-world articles i
 - **Course Separation** - In-progress and completed courses displayed separately
 - **Brand Mascot UI** - Dolphin mascot artwork appears on the landing page and main dashboard for stronger product identity
 - **Redesigned Landing Page** - Cleaner product-first landing page with mascot hero artwork, article-to-course flow, module overview, and richer learning value sections
+- **Credit Pricing Page** - Pricing page with signup bonus credits, AI generation credit costs, and three credit-pack options
+- **Credit Backend Enforcement** - Convex tracks credit balances and transaction history; AI course generation costs credits for regular users while admins generate courses for free
 - **Admin Panel** - Dedicated management interface for public courses and learning paths with enrollment stats, inline editing, and batch operations
 - **Access Controls** - Public course/path previews expose only safe metadata; full course content and progress mutations require author or enrolled-user access
 

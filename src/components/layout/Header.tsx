@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Button, LanguageSwitcher, ThemeToggle, Modal } from "@/components/ui";
@@ -43,6 +44,7 @@ export function Header({
 }: HeaderProps) {
   const { t } = useI18n();
   const { signOut } = useAuthActions();
+  const pathname = usePathname();
   const currentUser = useQuery(api.users.getCurrentUser);
   const [internalSignInOpen, setInternalSignInOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -159,6 +161,19 @@ export function Header({
           {/* Right — Controls */}
           <div className="flex items-center gap-2">
             {children}
+
+            {variant === "landing" && (
+              <Link
+                href="/pricing"
+                className={`hidden rounded-lg border px-4 py-2 text-sm font-semibold transition-colors sm:inline-flex ${
+                  pathname === "/pricing"
+                    ? "border-accent bg-accent/10 text-accent"
+                    : "border-border text-foreground hover:border-accent/50 hover:text-accent"
+                }`}
+              >
+                {t.footer.pricing}
+              </Link>
+            )}
 
             <ThemeToggle />
             <LanguageSwitcher />

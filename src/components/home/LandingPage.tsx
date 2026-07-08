@@ -332,7 +332,7 @@ function LandingFooter() {
                         <h4 className="mb-4 font-semibold text-foreground">{t.footer.product}</h4>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li><a href="#" className="transition-colors hover:text-accent">{t.footer.features}</a></li>
-                            <li><a href="#" className="transition-colors hover:text-accent">{t.footer.pricing}</a></li>
+                            <li><a href="/pricing" className="transition-colors hover:text-accent">{t.footer.pricing}</a></li>
                             <li><a href="#" className="transition-colors hover:text-accent">{t.landing.stats.ai}</a></li>
                         </ul>
                     </div>

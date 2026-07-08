@@ -1,8 +1,9 @@
-import { query, mutation } from "./_generated/server";
+import { query, mutation, type MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 import { auth } from "./auth";
 import { difficultyValidator } from "./schema";
-import type { Doc } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
+import { AI_COURSE_CREDIT_COST, SIGNUP_BONUS_CREDITS } from "./creditConfig";
 import {
   canPreviewCourse,
   canStudyCourse,
@@ -77,6 +78,26 @@ function toCourseCardData(course: Doc<"courses">) {
   };
 }
 
+async function ensureCreditBalance(ctx: MutationCtx, userId: Id<"users">) {
+  const user = await ctx.db.get(userId);
+  if (!user) throw new Error("User not found");
+  if (user.creditBalance !== undefined) return user.creditBalance;
+
+  await ctx.db.patch(user._id, {
+    creditBalance: SIGNUP_BONUS_CREDITS,
+    freeCreditsGrantedAt: Date.now(),
+  });
+  await ctx.db.insert("creditTransactions", {
+    userId: user._id,
+    amount: SIGNUP_BONUS_CREDITS,
+    balanceAfter: SIGNUP_BONUS_CREDITS,
+    type: "signup_bonus",
+    description: "Signup bonus credits",
+    createdAt: Date.now(),
+  });
+  return SIGNUP_BONUS_CREDITS;
+}
+
 export const list = query({
   args: {},
   handler: async (ctx) => {
@@ -147,6 +168,18 @@ export const create = mutation({
     const user = await ctx.db.get(userId);
     const isAdmin = user?.role === "admin";
     const isPublic = isAdmin && args.isPublic === true ? true : false;
+    const shouldChargeCredits = !isAdmin && args.analyzedData !== undefined;
+
+    let balanceAfterCharge: number | null = null;
+    if (shouldChargeCredits) {
+      const currentBalance = await ensureCreditBalance(ctx, userId);
+      if (currentBalance < AI_COURSE_CREDIT_COST) {
+        throw new Error(
+          `INSUFFICIENT_CREDITS: AI course generation requires ${AI_COURSE_CREDIT_COST} credits`,
+        );
+      }
+      balanceAfterCharge = currentBalance - AI_COURSE_CREDIT_COST;
+    }
 
     // Create the course
     const courseId = await ctx.db.insert("courses", {
@@ -166,6 +199,19 @@ export const create = mutation({
         userId: userId.toString(),
         courseId,
         addedAt: Date.now(),
+      });
+    }
+
+    if (shouldChargeCredits && balanceAfterCharge !== null) {
+      await ctx.db.patch(userId, { creditBalance: balanceAfterCharge });
+      await ctx.db.insert("creditTransactions", {
+        userId,
+        amount: -AI_COURSE_CREDIT_COST,
+        balanceAfter: balanceAfterCharge,
+        type: "ai_course_generation",
+        courseId,
+        description: `AI course generation: ${args.title}`,
+        createdAt: Date.now(),
       });
     }
 

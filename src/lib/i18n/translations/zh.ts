@@ -64,6 +64,9 @@ export interface Translations {
     clickOrDrop: string;
     difficultyLabel: string;
     difficultyAuto: string;
+    aiCourseCost: string;
+    insufficientCredits: string;
+    adminCreditsFree: string;
   };
   course: {
     module: string;
@@ -340,6 +343,63 @@ export interface Translations {
       ai: { title: string; desc: string };
     };
   };
+  pricing: {
+    label: string;
+    title: string;
+    subtitle: string;
+    recommended: string;
+    buyCredits: string;
+    highlights: Array<{
+      value: string;
+      title: string;
+      desc: string;
+    }>;
+    creditModelLabel: string;
+    creditModelTitle: string;
+    creditModelDesc: string;
+    usage: {
+      course: { cost: string; title: string; desc: string };
+      quiz: { cost: string; title: string; desc: string };
+      sentences: { cost: string; title: string; desc: string };
+    };
+    packagesLabel: string;
+    packagesTitle: string;
+    packagesDesc: string;
+    packages: {
+      starter: {
+        name: string;
+        desc: string;
+        price: string;
+        credits: string;
+        featured: boolean;
+        features: string[];
+      };
+      growth: {
+        name: string;
+        desc: string;
+        price: string;
+        credits: string;
+        featured: boolean;
+        features: string[];
+      };
+      pro: {
+        name: string;
+        desc: string;
+        price: string;
+        credits: string;
+        featured: boolean;
+        features: string[];
+      };
+    };
+    notes: {
+      rolloverTitle: string;
+      rolloverDesc: string;
+      transparentTitle: string;
+      transparentDesc: string;
+      freeTitle: string;
+      freeDesc: string;
+    };
+  };
   admin: {
     title: string;
     courses: string;
@@ -449,6 +509,9 @@ export const zh: Translations = {
     clickOrDrop: "点击上传或拖拽文件至此",
     difficultyLabel: "难度",
     difficultyAuto: "自动检测",
+    aiCourseCost: "本次 AI 生成课程将扣除 {cost} 点，当前余额 {balance} 点。",
+    insufficientCredits: "点数不足：生成课程需要 {cost} 点，当前余额 {balance} 点。",
+    adminCreditsFree: "管理员生成课程不扣点数。",
   },
 
   // Course Learning
@@ -762,6 +825,89 @@ export const zh: Translations = {
         title: "AI 深度分析",
         desc: "对文章词汇和句式的深度解析。",
       },
+    },
+  },
+
+  // Pricing
+  pricing: {
+    label: "点数定价",
+    title: "用点数生成 AI 课程，学多少买多少",
+    subtitle: "新用户注册送 60 点。AI 生成课程会按点数扣除，普通学习、复习、查看已生成课程不扣点。",
+    recommended: "推荐",
+    buyCredits: "获取点数",
+    highlights: [
+      {
+        value: "60",
+        title: "新用户赠送点数",
+        desc: "注册即可获得，可用于体验完整 AI 课程生成。",
+      },
+      {
+        value: "10",
+        title: "生成一门课程",
+        desc: "每次从文章生成完整课程扣 10 点。",
+      },
+      {
+        value: "0",
+        title: "学习已生成课程",
+        desc: "听读、精讲、测验、复习进度不再额外扣点。",
+      },
+    ],
+    creditModelLabel: "扣点规则",
+    creditModelTitle: "点数只花在 AI 生成上",
+    creditModelDesc: "这样定价更适合高频学习：你只在创建新内容、生成额外练习或 AI 例句时消耗点数，已经生成的课程可以反复学习。",
+    usage: {
+      course: {
+        cost: "10 点",
+        title: "AI 生成课程",
+        desc: "从一篇文章生成目标、听读、精讲、词汇、测验和复现模块。",
+      },
+      quiz: {
+        cost: "3 点",
+        title: "额外 AI 测验",
+        desc: "针对课程词汇或错题生成一组新的个性化练习。",
+      },
+      sentences: {
+        cost: "1 点",
+        title: "AI 例句",
+        desc: "为单词生成上下文例句和中文解释，帮助迁移使用。",
+      },
+    },
+    packagesLabel: "点数包",
+    packagesTitle: "从轻量体验到长期学习",
+    packagesDesc: "点数包适合按需购买。正式接入支付前，可先用这套结构验证用户接受度。",
+    packages: {
+      starter: {
+        name: "Starter",
+        desc: "适合偶尔把好文章变成课程。",
+        price: "¥19",
+        credits: "100 点，约 10 门 AI 课程",
+        featured: false,
+        features: ["适合轻量用户", "支持 AI 课程生成", "支持额外测验和例句", "点数 12 个月有效"],
+      },
+      growth: {
+        name: "Growth",
+        desc: "适合每周稳定学习的主力方案。",
+        price: "¥49",
+        credits: "300 点，约 30 门 AI 课程",
+        featured: true,
+        features: ["单门课程成本更低", "适合每周 5-7 篇文章", "支持完整学习记录", "点数 12 个月有效"],
+      },
+      pro: {
+        name: "Pro",
+        desc: "适合重度学习者或内容创建者。",
+        price: "¥99",
+        credits: "800 点，约 80 门 AI 课程",
+        featured: false,
+        features: ["最低点数单价", "适合批量生成课程", "支持长期学习储备", "点数 12 个月有效"],
+      },
+    },
+    notes: {
+      rolloverTitle: "点数有效期清晰",
+      rolloverDesc: "购买点数 12 个月有效，系统优先消耗即将过期的点数。",
+      transparentTitle: "扣点前明确提示",
+      transparentDesc: "生成课程或额外 AI 内容前显示预计扣点，用户确认后再生成。",
+      freeTitle: "免费学习不受影响",
+      freeDesc: "公开课程、已生成课程和日常学习进度不额外扣点。",
     },
   },
 

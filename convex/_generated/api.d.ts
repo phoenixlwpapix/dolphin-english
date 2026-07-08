@@ -12,6 +12,8 @@ import type * as _lib_permissions from "../_lib/permissions.js";
 import type * as analytics from "../analytics.js";
 import type * as auth from "../auth.js";
 import type * as courses from "../courses.js";
+import type * as creditConfig from "../creditConfig.js";
+import type * as credits from "../credits.js";
 import type * as http from "../http.js";
 import type * as learningPaths from "../learningPaths.js";
 import type * as progress from "../progress.js";
@@ -29,6 +31,8 @@ declare const fullApi: ApiFromModules<{
   analytics: typeof analytics;
   auth: typeof auth;
   courses: typeof courses;
+  creditConfig: typeof creditConfig;
+  credits: typeof credits;
   http: typeof http;
   learningPaths: typeof learningPaths;
   progress: typeof progress;

@@ -7,7 +7,7 @@ import { api } from "../../../convex/_generated/api";
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { useI18n } from '@/lib/i18n'
-import { FileTextIcon, ImageIcon, UploadIcon, SparklesIcon, BrainIcon } from '@/components/ui/Icons'
+import { FileTextIcon, ImageIcon, UploadIcon, SparklesIcon, ZapIcon } from '@/components/ui/Icons'
 import { CEFR_LEVELS, DIFFICULTY_CONFIG, type DifficultyLevel } from '@/lib/constants'
 import type { CourseAnalysis } from '@/lib/schemas/article'
 
@@ -31,6 +31,7 @@ interface AnalyzeResponse {
 export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseModalProps) {
     const { t, language } = useI18n()
     const currentUser = useQuery(api.users.getCurrentUser)
+    const creditInfo = useQuery(api.credits.getBalance)
     const isAdmin = currentUser?.role === 'admin'
     const createCourse = useMutation(api.courses.create)
     const createProgress = useMutation(api.progress.create)
@@ -86,6 +87,18 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
         setError(null)
 
         try {
+            if (!isAdmin) {
+                const balance = creditInfo?.balance ?? 0
+                const cost = creditInfo?.aiCourseCost ?? 10
+                if (balance < cost) {
+                    throw new Error(
+                        t.create.insufficientCredits
+                            .replace('{cost}', String(cost))
+                            .replace('{balance}', String(balance))
+                    )
+                }
+            }
+
             let articleText = text
 
             // If image mode, first extract text via OCR
@@ -138,7 +151,14 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
 
             onSuccess(courseId)
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Something went wrong')
+            const message = err instanceof Error ? err.message : 'Something went wrong'
+            setError(
+                message.startsWith('INSUFFICIENT_CREDITS')
+                    ? t.create.insufficientCredits
+                        .replace('{cost}', String(creditInfo?.aiCourseCost ?? 10))
+                        .replace('{balance}', String(creditInfo?.balance ?? 0))
+                    : message
+            )
         } finally {
             setIsAnalyzing(false)
         }
@@ -159,7 +179,12 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
         onClose()
     }
 
-    const canSubmit = (mode === 'text' && wordCount >= 50) || (mode === 'image' && imageFile !== null)
+    const hasEnoughCredits = isAdmin || ((creditInfo?.balance ?? 0) >= (creditInfo?.aiCourseCost ?? 10))
+    const creditsReady = isAdmin || creditInfo !== undefined
+    const hasInput = (mode === 'text' && wordCount >= 50) || (mode === 'image' && imageFile !== null)
+    const canSubmit = hasInput && creditsReady && hasEnoughCredits
+    const displayCreditCost = creditInfo?.aiCourseCost ?? 10
+    const displayCreditBalance = creditInfo === undefined ? '...' : String(creditInfo?.balance ?? 0)
 
     return (
         <Modal
@@ -348,6 +373,28 @@ export function CreateCourseModal({ isOpen, onClose, onSuccess }: CreateCourseMo
                         </div>
                     )}
 
+                    <div className="mt-4 flex items-start gap-3 rounded-xl border border-border/50 bg-muted/30 p-3">
+                        <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                            <ZapIcon className="h-4 w-4" />
+                        </div>
+                        <div className="min-w-0">
+                            <p className="text-sm font-semibold text-foreground">
+                                {isAdmin
+                                    ? t.create.adminCreditsFree
+                                    : t.create.aiCourseCost
+                                        .replace('{cost}', String(displayCreditCost))
+                                        .replace('{balance}', displayCreditBalance)}
+                            </p>
+                            {!isAdmin && !hasEnoughCredits && creditInfo != null && (
+                                <p className="mt-1 text-xs font-medium text-destructive">
+                                    {t.create.insufficientCredits
+                                        .replace('{cost}', String(creditInfo.aiCourseCost))
+                                        .replace('{balance}', String(creditInfo.balance))}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
                     {/* Actions */}
                     <div className="mt-8 flex justify-end gap-3 pt-4 border-t border-border/50">
                         <Button variant="ghost" onClick={handleClose} disabled={isAnalyzing}>
@@ -399,7 +446,6 @@ function DifficultySelect({ value, onChange, disabled, label, autoLabel }: Diffi
 }
 
 function CourseCreationLoader({ mode, language }: { mode: 'text' | 'image'; language: string }) {
-    const { t } = useI18n()
     const [step, setStep] = useState(0)
     const [tipIndex, setTipIndex] = useState(0)
 
